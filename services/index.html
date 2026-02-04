@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- SEO -->
+  <title>Услуги вЂ” SEO-PROD</title>
+  <meta name="description" content="Что мы делаем в рамках проекта SEO-PROD.">
+  <meta name="robots" content="index, follow">
+
+  <!-- hreflang (placeholder) -->
+  <link rel="alternate" hreflang="ru" href="/services/" />
+  <link rel="alternate" hreflang="x-default" href="/services/" />
+
+  <!-- Open Graph (Telegram + VK) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SEO-PROD">
+  <meta property="og:title" content="Услуги вЂ” SEO-PROD">
+  <meta property="og:description" content="Что мы делаем в рамках проекта SEO-PROD.">
+  <meta property="og:image" content="/og.png">
+
+  <!-- config.js + auto canonical/og:url + absolute og:image -->
+  <script src="/config.js"></script>
+  <script>
+    (function () {
+      var base = (window.SITE_URL || "").replace(/\/$/, "");
+      if (!base) return;
+
+      var path = window.location.pathname;
+      if (!path.endsWith("/")) path += "/";
+
+      // canonical
+      var link = document.querySelector('link[rel="canonical"]');
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "canonical";
+        document.head.appendChild(link);
+      }
+      link.href = base + path;
+
+      // og:url
+      var og = document.querySelector('meta[property="og:url"]');
+      if (!og) {
+        og = document.createElement("meta");
+        og.setAttribute("property", "og:url");
+        document.head.appendChild(og);
+      }
+      og.setAttribute("content", base + path);
+
+      // og:image (absolute)
+      var img = document.querySelector('meta[property="og:image"]');
+      if (img) img.setAttribute("content", base + "/og.png");
+    })();
+  </script>
+
+  <!-- BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"/"},
+      {"@type":"ListItem","position":2,"name":"Услуги","item":"/services/"}
+    ]
+  }
+  </script>
+
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; max-width: 900px; margin: auto; line-height: 1.6; }
+    nav a { margin-right: 12px; }
+    .muted { opacity: 0.8; }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/blog/">Blog</a>
+    <a href="/about/">About</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+
+  <h1>Услуги</h1>
+  <p class="muted">Что мы делаем в рамках проекта SEO-PROD.</p>
+
+  <p>РљРѕРЅС‚РµРЅС‚ Р±СѓРґРµС‚ РґРѕР±Р°РІР»РµРЅ РїРѕР·Р¶Рµ.</p>
+
+  <footer>
+    <hr>
+    <p>В© 2026 SEO-PROD</p>
+  </footer>
+</body>
+</html>
