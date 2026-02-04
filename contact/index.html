@@ -65,6 +65,11 @@
       document.head.appendChild(og);
     }
     og.setAttribute("content", base + path);
+    // og:image → absolute
+    var img = document.querySelector('meta[property="og:image"]');
+    if (img) {
+      img.setAttribute("content", base + "/og.png");
+    }
   })();
 </script>
 <script type="application/ld+json">
