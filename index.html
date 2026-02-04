@@ -2,85 +2,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- SEO: Google / Yandex / Bing -->
   <title>SEO-PROD — тестовый SEO-проект</title>
-  <meta name="description" content="SEO-PROD — тестовый SEO-проект. Деплой через Git и VPS, правильная структура сайта без домена.">
+  <meta name="description" content="SEO-PROD — тестовый SEO-проект. Деплой через Git и VPS, домен-независимая архитектура.">
   <meta name="robots" content="index, follow">
 
-  <!-- Canonical -->
-  <link rel="canonical" href="http://94.228.112.75/">
-
-  <!-- Open Graph (Telegram + VK + мессенджеры) -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SEO-PROD">
   <meta property="og:title" content="SEO-PROD — тестовый SEO-проект">
   <meta property="og:description" content="Каркас SEO-проекта: деплой через Git, VPS, подготовка к продвижению.">
-  <meta property="og:url" content="http://94.228.112.75/">
 
-  <!-- og:image добавим, когда будет картинка -->
-  <!-- <meta property="og:image" content="http://94.228.112.75/og.png"> -->
-
-  <!-- Минимальные стили -->
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
-      max-width: 900px;
-      margin: auto;
-      line-height: 1.6;
-    }
-    nav a { margin-right: 12px; }
-  </style>
-<script src="/config.js"></script>
-<script>
-  (function () {
-    var base = (window.SITE_URL || "").replace(/\/$/, "");
-    if (!base) return;
-
-    var path = window.location.pathname;
-    if (!path.endsWith("/")) path += "/";
-
-    // canonical
-    var link = document.querySelector('link[rel="canonical"]');
-    if (!link) {
-      link = document.createElement("link");
-      link.rel = "canonical";
-      document.head.appendChild(link);
-    }
-    link.href = base + path;
-
-    // og:url
-    var og = document.querySelector('meta[property="og:url"]');
-    if (!og) {
-      og = document.createElement("meta");
-      og.setAttribute("property", "og:url");
-      document.head.appendChild(og);
-    }
-    og.setAttribute("content", base + path);
-  })();
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "SEO-PROD",
-  "url": "",
-  "logo": "",
-  "sameAs": []
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "SEO-PROD",
-  "url": "",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "/?q={search_term_string}",
-    "query-input": "required name=search_term_string"
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SEO-PROD",
+    "url": "",
+    "logo": "",
+    "sameAs": []
   }
-}
-</script>
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SEO-PROD",
+    "url": "",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
 </head>
