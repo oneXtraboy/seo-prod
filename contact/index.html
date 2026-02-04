@@ -11,6 +11,9 @@
 
   <!-- Важно: canonical и og:url добавим, когда появится домен -->
 
+<link rel="alternate" hreflang="ru" href="/contact/" />
+<link rel="alternate" hreflang="x-default" href="/contact/" />
+
   <!-- Open Graph (Telegram + VK) -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SEO-PROD">
@@ -63,6 +66,27 @@
     og.setAttribute("content", base + path);
   })();
 </script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {
+      "@type":"ListItem",
+      "position":1,
+      "name":"Home",
+      "item":"/"
+    },
+    {
+      "@type":"ListItem",
+      "position":2,
+      "name":"Contact",
+      "item":"/contact/"
+    }
+  ]
+}
+</script>
+
 </head>
 
 <body>
