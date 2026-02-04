@@ -1,18 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="utf-8">
-  <title>About</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- SEO: Google / Yandex / Bing -->
+  <title>О проекте — SEO-PROD</title>
+  <meta name="description" content="О проекте SEO-PROD: зачем он создан, как устроен деплой через Git и VPS, и как мы строим домен-независимую SEO-архитектуру.">
+  <meta name="robots" content="index, follow">
+
+  <!-- Важно: canonical и og:url добавим, когда появится домен.
+       Сейчас не фиксируем IP, чтобы не плодить технический долг. -->
+
+  <!-- Open Graph (Telegram + VK) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SEO-PROD">
+  <meta property="og:title" content="О проекте — SEO-PROD">
+  <meta property="og:description" content="Зачем создан SEO-PROD и как устроена домен-независимая SEO-архитектура.">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    nav a { margin-right: 12px; }
+    .muted { opacity: 0.8; }
+    .card {
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    ul { padding-left: 18px; }
+  </style>
 </head>
+
 <body>
   <nav>
-    <a href="/">Home</a> |
-    <a href="/blog/">Blog</a> |
-    <a href="/about/">About</a> |
+    <a href="/">Home</a>
+    <a href="/blog/">Blog</a>
+    <a href="/about/">About</a>
     <a href="/contact/">Contact</a>
   </nav>
 
-  <h1>About</h1>
-  <p>Страница о проекте.</p>
+  <h1>О проекте</h1>
+
+  <p>
+    <strong>SEO-PROD</strong> — это практический проект, в котором мы строим SEO-ориентированный сайт
+    “надолго” (условно — до 2030), начиная с правильного фундамента:
+    структура URL, деплой, стабильность, понятные правила роста.
+  </p>
+
+  <div class="card">
+    <h2>Что мы фиксируем с самого начала</h2>
+    <ul>
+      <li><strong>Домен-независимая архитектура</strong>: URL-структура не завязана на бренд и домен.</li>
+      <li><strong>Прозрачный деплой</strong>: изменения → Git → VPS → проверка в браузере.</li>
+      <li><strong>Чистые метаданные</strong>: title/description/OG без “мусора” и устаревших SEO-хаков.</li>
+      <li><strong>Масштабируемость</strong>: новые страницы добавляются по шаблону, без ломки старых.</li>
+    </ul>
+    <p class="muted">
+      Примечание: canonical и точные URL в Open Graph добавим после покупки домена и включения HTTPS.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Куда мы идём дальше</h2>
+    <ul>
+      <li>Приведение всех страниц к единому стандарту head.</li>
+      <li>Добавление <code>robots.txt</code> и <code>sitemap.xml</code>.</li>
+      <li>Базовая микроразметка schema.org (Organization / WebSite).</li>
+      <li>Потом — домен и HTTPS без переделок.</li>
+    </ul>
+  </div>
+
+  <footer>
+    <hr>
+    <p>© 2026 SEO-PROD</p>
+  </footer>
 </body>
 </html>

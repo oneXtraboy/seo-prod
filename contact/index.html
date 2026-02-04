@@ -1,18 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="utf-8">
-  <title>Contact</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- SEO: Google / Yandex / Bing -->
+  <title>Контакты — SEO-PROD</title>
+  <meta name="description" content="Контактная информация проекта SEO-PROD. Как связаться, задать вопрос или обсудить сотрудничество.">
+  <meta name="robots" content="index, follow">
+
+  <!-- Важно: canonical и og:url добавим, когда появится домен -->
+
+  <!-- Open Graph (Telegram + VK) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SEO-PROD">
+  <meta property="og:title" content="Контакты — SEO-PROD">
+  <meta property="og:description" content="Как связаться с проектом SEO-PROD. Контактная информация и каналы связи.">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    nav a { margin-right: 12px; }
+    .card {
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .muted { opacity: 0.8; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; }
+  </style>
 </head>
+
 <body>
   <nav>
-    <a href="/">Home</a> |
-    <a href="/blog/">Blog</a> |
-    <a href="/about/">About</a> |
+    <a href="/">Home</a>
+    <a href="/blog/">Blog</a>
+    <a href="/about/">About</a>
     <a href="/contact/">Contact</a>
   </nav>
 
-  <h1>Contact</h1>
-  <p>Email: hello@example.com</p>
+  <h1>Контакты</h1>
+
+  <p>
+    Если у вас есть вопросы по проекту, предложения или вы хотите обсудить идеи —
+    используйте любой удобный способ связи ниже.
+  </p>
+
+  <div class="card">
+    <h2>Основной контакт</h2>
+    <p>
+      Email: <code>hello@example.com</code>
+    </p>
+    <p class="muted">
+      (в будущем можно заменить на доменную почту без изменения структуры страницы)
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Социальные и мессенджеры</h2>
+    <ul>
+      <li>Telegram — будет добавлен</li>
+      <li>VK — будет добавлен</li>
+    </ul>
+    <p class="muted">
+      Ссылки добавляются позже, когда появится домен и финальное позиционирование.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Примечание</h2>
+    <p class="muted">
+      Эта страница создана как часть домен-независимой архитектуры.
+      Canonical, og:url и HTTPS будут добавлены после покупки домена.
+    </p>
+  </div>
+
+  <footer>
+    <hr>
+    <p>© 2026 SEO-PROD</p>
+  </footer>
 </body>
 </html>
