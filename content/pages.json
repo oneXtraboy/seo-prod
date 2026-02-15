@@ -1,0 +1,53 @@
+[
+  {
+    "slug": "/",
+    "title": "SEO-PROD — Content-driven SEO solutions",
+    "description": "Practical SEO solutions for business growth: audits, strategy, and measurable results.",
+    "heading": "SEO-PROD",
+    "body": [
+      "We build sustainable organic growth with clear priorities and transparent execution.",
+      "Use this static generator to publish fast pages with consistent structure and metadata."
+    ]
+  },
+  {
+    "slug": "/about",
+    "title": "About — SEO-PROD",
+    "description": "Learn about SEO-PROD and our approach to technical SEO and content strategy.",
+    "heading": "About",
+    "body": [
+      "SEO-PROD focuses on technical quality, semantic relevance, and conversion-aware content.",
+      "Our process is lightweight, measurable, and adapted for long-term search visibility."
+    ]
+  },
+  {
+    "slug": "/services",
+    "title": "Services — SEO-PROD",
+    "description": "Explore SEO-PROD services: audits, on-page optimization, content plans, and reporting.",
+    "heading": "Services",
+    "body": [
+      "Technical audits and crawl diagnostics.",
+      "On-page optimization, semantic clustering, and performance-focused recommendations.",
+      "Content planning and publication workflows aligned to business goals."
+    ]
+  },
+  {
+    "slug": "/blog",
+    "title": "Blog — SEO-PROD",
+    "description": "SEO-PROD blog with practical notes on SEO implementation and content operations.",
+    "heading": "Blog",
+    "body": [
+      "This section can be expanded by adding more page records into pages.json.",
+      "Because pages are JSON-driven, publishing new content is predictable and repeatable."
+    ]
+  },
+  {
+    "slug": "/contact",
+    "title": "Contact — SEO-PROD",
+    "description": "Contact SEO-PROD by phone or Telegram for collaboration and SEO support.",
+    "heading": "Contact",
+    "body": [
+      "Phone: +79819466247",
+      "Telegram: https://t.me/+79819466247"
+    ]
+  }
+]
