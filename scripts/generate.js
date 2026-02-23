@@ -93,6 +93,7 @@ ${urls.map(loc => `  <url>\n    <loc>${loc}</loc>\n  </url>`).join('\n')}
 
 function generate() {
   const site = readJson(path.join(contentDir, 'site.json'));
+  const baseUrl = (site && site.baseUrl) ? site.baseUrl : '';
   const pages = readJson(path.join(contentDir, 'pages.json'));
 
   if (!Array.isArray(pages)) throw new Error('pages.json must contain an array');
