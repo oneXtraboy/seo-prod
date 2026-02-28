@@ -1,122 +1,69 @@
-#!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const { renderLayout, escapeHtml } = require('../templates/layout');
+const fs = require("fs");
+const path = require("path");
 
-const rootDir = path.resolve(__dirname, '..');
-const contentDir = path.join(rootDir, 'content');
-const publicDir = path.join(rootDir, 'public');
+const config = require("../config");
 
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-}
+const content = require("../content/pages.json");
 
-function cleanPublicDir() {
-  fs.rmSync(publicDir, { recursive: true, force: true });
-  fs.mkdirSync(publicDir, { recursive: true });
-}
+const templatesDir = path.join(__dirname, "../templates");
+const publicDir = path.join(__dirname, "../public");
 
-function outputPathForSlug(slug) {
-  if (!slug || slug === '/') return path.join(publicDir, 'index.html');
-  const normalized = slug.replace(/^\/+|\/+$/g, '');
-  return path.join(publicDir, normalized, 'index.html');
-}
-
-function renderPageContent(page) {
-  // supports blocks format (our current content) and legacy body format
-  if (Array.isArray(page.blocks)) {
-    const h1 = page.h1 || page.heading || page.title || 'Untitled';
-    const blocksHtml = page.blocks.map((b) => {
-      const t = b?.title ? `<h2>${escapeHtml(b.title)}</h2>` : '';
-      const p = b?.text ? `<p>${escapeHtml(b.text)}</p>` : '';
-      return `<section>\n${t}\n${p}\n</section>`;
-    }).join('\n');
-    return `<h1>${escapeHtml(h1)}</h1>\n${blocksHtml}`;
-  }
-
-  const heading = page.heading || page.h1 || page.title || 'Untitled';
-  const body = Array.isArray(page.body) ? page.body : [];
-  const paragraphs = body.map((line) => `<p>${escapeHtml(line)}</p>`).join('\n');
-  return `<h1>${escapeHtml(heading)}</h1>\n${paragraphs}`;
-}
-
-function writeText(filePath, text) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, text, 'utf8');
-}
-
-function writeHtml(filePath, html) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, html, 'utf8');
-}
-
-function validatePage(page, index) {
-  if (!page || typeof page !== 'object') {
-    throw new Error(`pages.json item #${index} must be an object`);
-  }
-  if (typeof page.slug !== 'string' || !page.slug.startsWith('/')) {
-    throw new Error(`pages.json item #${index} must include slug starting with "/"`);
+function ensureDir(dir) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
 }
 
-function normalizeBaseUrl(site) {
-  const raw = (site && typeof site.baseUrl === 'string') ? site.baseUrl.trim() : '';
-  return raw ? raw.replace(/\/+$/, '') : '';
+function loadTemplate(name) {
+  return fs.readFileSync(
+    path.join(templatesDir, name),
+    "utf8"
+  );
 }
 
-function buildCanonical(baseUrl, slug) {
-  if (!baseUrl) return '';
-  if (!slug || slug === '/') return `${baseUrl}/`;
-  const normalized = slug.startsWith('/') ? slug : `/${slug}`;
-  return `${baseUrl}${normalized.endsWith('/') ? normalized : normalized + '/'}`;
+function render(page) {
+
+  const layout = loadTemplate("layout.html");
+
+  let html = layout;
+
+  html = html.replace(/{{title}}/g, page.title || "");
+  html = html.replace(/{{description}}/g, page.description || "");
+  html = html.replace(/{{content}}/g, page.h1 || "");
+
+  return html;
 }
 
-function writeRobotsTxt(baseUrl) {
-  const lines = ['User-agent: *', 'Allow: /'];
-  if (baseUrl) lines.push(`Sitemap: ${baseUrl}/sitemap.xml`);
-  lines.push('');
-  writeText(path.join(publicDir, 'robots.txt'), lines.join('\n'));
-  console.log('Generated: public/robots.txt');
-}
+function build() {
 
-function writeSitemapXml(baseUrl, pages) {
-  const urls = pages.map((p) => buildCanonical(baseUrl, p.slug)).filter(Boolean);
-  const xml =
-`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(loc => `  <url>\n    <loc>${loc}</loc>\n  </url>`).join('\n')}
-</urlset>
-`;
-  writeText(path.join(publicDir, 'sitemap.xml'), xml);
-  console.log('Generated: public/sitemap.xml');
-}
+  ensureDir(publicDir);
 
-function generate() {
-  const site = readJson(path.join(contentDir, 'site.json'));
-  const baseUrl = (site && site.baseUrl) ? site.baseUrl : '';
-  const pages = readJson(path.join(contentDir, 'pages.json'));
+  content.forEach(page => {
 
-  if (!Array.isArray(pages)) throw new Error('pages.json must contain an array');
-  pages.forEach(validatePage);
+    const html = render(page);
 
-  cleanPublicDir();
+    let filePath;
 
-  const baseUrl = normalizeBaseUrl(site);
+    if (page.slug === "/") {
 
-  pages.forEach((page, index) => {
-    validatePage(page, index);
+      filePath = path.join(publicDir, "index.html");
 
-    const contentHtml = renderPageContent(page);
-    const canonical = buildCanonical(baseUrl, page.slug);
-    const html = renderLayout({ site, page, contentHtml, canonical });
-    const filePath = outputPathForSlug(page.slug);
+    } else {
 
-    writeHtml(filePath, html);
-    console.log(`Generated: ${path.relative(rootDir, filePath)}`);
+      const dir = path.join(publicDir, page.slug);
+
+      ensureDir(dir);
+
+      filePath = path.join(dir, "index.html");
+
+    }
+
+    fs.writeFileSync(filePath, html);
+
+    console.log("generated:", filePath);
+
   });
 
-  writeRobotsTxt(baseUrl);
-  writeSitemapXml(baseUrl, pages);
 }
 
-generate();
+build();
