@@ -12,11 +12,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build site
         run: |
           bash tools/build.sh
 
-      - name: Install SSH
+      - name: Install rsync + ssh
         run: |
           sudo apt-get update
           sudo apt-get install -y rsync openssh-client
@@ -28,6 +33,7 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H 94.228.112.75 >> ~/.ssh/known_hosts
 
-      - name: Deploy
+      - name: Deploy public/ to server
         run: |
-          rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519" public/ root@94.228.112.75:/var/www/seo-prod/public/
+          rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519" \
+            public/ root@94.228.112.75:/var/www/seo-prod/public/
