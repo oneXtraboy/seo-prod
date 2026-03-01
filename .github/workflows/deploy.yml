@@ -36,4 +36,4 @@ jobs:
       - name: Deploy public/ to server
         run: |
           rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519" \
-            public/ root@94.228.112.75:/var/www/seo-prod/public/
+            public/ deploy@94.228.112.75:/var/www/seo-prod/public/
