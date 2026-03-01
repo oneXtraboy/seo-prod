@@ -1,0 +1,158 @@
+From 25a3b4416a8880a395ced7e12de8c5233b8d7369 Mon Sep 17 00:00:00 2001
+From: onextra <1extraboy@gmail.com>
+Date: Mon, 23 Feb 2026 23:11:59 +0300
+Subject: [PATCH 2/2] Add build scripts and generate robots/sitemap/404
+
+---
+ scripts/generate.js | 62 ++++++++++++++++++++++++++++++++++++++++++++-
+ tools/build.ps1     | 24 ++++++++++++++++++
+ tools/build.sh      | 24 ++++++++++++++++++
+ 3 files changed, 109 insertions(+), 1 deletion(-)
+ create mode 100644 tools/build.ps1
+ create mode 100644 tools/build.sh
+
+diff --git a/scripts/generate.js b/scripts/generate.js
+index 951b0f9..de45df2 100755
+--- a/scripts/generate.js
++++ b/scripts/generate.js
+@@ -48,8 +48,65 @@ function validatePage(page, index) {
+   }
+ }
+ 
++
++
++function writeRobotsTxt(baseUrl) {
++  const origin = (baseUrl || '').replace(/\/+$/, '');
++  const sitemapLine = origin ? ('Sitemap: ' + origin + '/sitemap.xml') : 'Sitemap: /sitemap.xml';
++  const robots = [
++    'User-agent: *',
++    'Allow: /',
++    sitemapLine,
++    ''
++  ].join('\n');
++
++  writeHtml(path.join(publicDir, 'robots.txt'), robots);
++  console.log('Generated: public/robots.txt');
++}
++
++function writeSitemapXml(baseUrl, pages) {
++  const origin = (baseUrl || '').replace(/\/+$/, '');
++
++  const slugs = pages.map(p => p.slug).filter(Boolean);
++  if (!slugs.includes('/')) slugs.unshift('/');
++
++  const locs = slugs.map(slug => {
++    if (!origin) return slug;
++    if (slug === '/') return origin + '/';
++    return origin + slug + '/';
++  });
++
++  const xml =
++    '<?xml version="1.0" encoding="UTF-8"?>\n' +
++    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
++    locs.map(loc => '  <url>\n    <loc>' + loc + '</loc>\n  </url>').join('\n') + '\n' +
++    '</urlset>\n';
++
++  writeHtml(path.join(publicDir, 'sitemap.xml'), xml);
++  console.log('Generated: public/sitemap.xml');
++}
++
++function write404Page(site, baseUrl) {
++  const slug = "/404";
++  const page = {
++    slug,
++    title: "404 — Страница не найдена",
++    description: "Похоже, такой страницы нет. Проверьте адрес или вернитесь на главную.",
++  };
++  const contentHtml = [
++    "<h1>Страница не найдена</h1>",
++    "<p>Похоже, такой страницы нет. Проверьте адрес или вернитесь на главную.</p>",
++    "<p><a href=\"/\">На главную</a></p>",
++  ].join("\n");
++
++  const html = renderLayout({ site, page, contentHtml });
++  writeHtml(path.join(publicDir, "404.html"), html);
++  console.log("Generated: public/404.html");
++}
++
+ function generate() {
+   const site = readJson(path.join(contentDir, 'site.json'));
++  const baseUrl = (site && site.baseUrl) ? site.baseUrl : '';
+   const pages = readJson(path.join(contentDir, 'pages.json'));
+ 
+   if (!Array.isArray(pages)) {
+@@ -68,6 +125,9 @@ function generate() {
+     writeHtml(filePath, html);
+     console.log(`Generated: ${path.relative(rootDir, filePath)}`);
+   });
++  write404Page(site, baseUrl);
++  writeRobotsTxt(baseUrl);
++  writeSitemapXml(baseUrl, pages);
+ }
+ 
+-generate();
++generate();
+\ No newline at end of file
+diff --git a/tools/build.ps1 b/tools/build.ps1
+new file mode 100644
+index 0000000..5275fa0
+--- /dev/null
++++ b/tools/build.ps1
+@@ -0,0 +1,24 @@
++﻿$ErrorActionPreference = "Stop"
++
++$RootDir = Resolve-Path (Join-Path $PSScriptRoot "..")
++Set-Location $RootDir
++
++if (Test-Path "public") {
++  Remove-Item "public" -Recurse -Force
++}
++
++node scripts/generate.js
++
++$requiredFiles = @(
++  "public/index.html",
++  "public/sitemap.xml",
++  "public/404.html"
++)
++
++foreach ($file in $requiredFiles) {
++  if (-not (Test-Path $file -PathType Leaf)) {
++    throw "Build failed: required file missing: $file"
++  }
++}
++
++Write-Host "Build completed successfully."
+diff --git a/tools/build.sh b/tools/build.sh
+new file mode 100644
+index 0000000..84a5b19
+--- /dev/null
++++ b/tools/build.sh
+@@ -0,0 +1,24 @@
++﻿#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
++cd "$ROOT_DIR"
++
++rm -rf public
++
++node scripts/generate.js
++
++required_files=(
++  "public/index.html"
++  "public/sitemap.xml"
++  "public/404.html"
++)
++
++for file in "${required_files[@]}"; do
++  if [[ ! -f "$file" ]]; then
++    echo "Build failed: required file missing: $file" >&2
++    exit 1
++  fi
++done
++
++echo "Build completed successfully."
+-- 
+2.43.0
+
