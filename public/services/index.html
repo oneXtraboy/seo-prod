@@ -1,120 +1,108 @@
-<!doctype html>
+﻿<!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Services — SEO-PROD</title>
-    <meta name="description" content="Explore SEO-PROD services: audits, on-page optimization, content plans, and reporting." />
-    <style>
-      :root {
-        color-scheme: dark;
-        --bg: #0f1115;
-        --panel: #171a21;
-        --text: #ebedf0;
-        --muted: #a8b0bd;
-        --accent: #4ea1ff;
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- SEO -->
+  <title>Услуги SEO — SEO-PROD</title>
+  <meta name="description" content="SEO-аудит, семантика, техническая оптимизация, контент-стратегия, рост органики. Личная работа.">
+  <meta name="robots" content="index, follow">
+
+<link rel="alternate" hreflang="ru" href="/" />
+<link rel="alternate" hreflang="x-default" href="/" />
+
+
+  <!-- Open Graph (Telegram + VK) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SEO-PROD">
+  <meta property="og:title" content="SEO-PROD — тестовый SEO-проект">
+  <meta property="og:description" content="Каркас SEO-проекта: деплой через Git, VPS, подготовка к продвижению.">
+  <meta property="og:image" content="/og.png">
+
+  <!-- config.js + auto canonical/og:url -->
+  <script src="/config.js"></script>
+  <script>
+    (function () {
+      var base = (window.SITE_URL || "").replace(/\/$/, "");
+      if (!base) return;
+
+      var path = window.location.pathname;
+      if (!path.endsWith("/")) path += "/";
+
+      // canonical
+      var link = document.querySelector('link[rel="canonical"]');
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "canonical";
+        document.head.appendChild(link);
       }
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        line-height: 1.6;
+      link.href = base + path;
+
+      // og:url
+      var og = document.querySelector('meta[property="og:url"]');
+      if (!og) {
+        og = document.createElement("meta");
+        og.setAttribute("property", "og:url");
+        document.head.appendChild(og);
       }
-      .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        background: rgba(15, 17, 21, 0.94);
-        backdrop-filter: blur(8px);
-        border-bottom: 1px solid #242936;
-      }
-      .header-inner,
-      .content {
-        width: min(960px, 92vw);
-        margin: 0 auto;
-      }
-      .header-inner {
-        min-height: 64px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 10px 0;
-      }
-      .brand {
-        font-size: 1.05rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        text-decoration: none;
-        color: var(--text);
-      }
-      .contact {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-      .contact a {
-        color: var(--accent);
-        text-decoration: none;
-        font-weight: 500;
-      }
-      .content {
-        padding-top: 98px;
-        padding-bottom: 48px;
-      }
-      .panel {
-        background: var(--panel);
-        border: 1px solid #242936;
-        border-radius: 12px;
-        padding: 24px;
-      }
-      h1 {
-        margin-top: 0;
-        margin-bottom: 16px;
-        line-height: 1.2;
-      }
-      p {
-        margin-top: 0;
-        margin-bottom: 12px;
-        color: var(--muted);
-      }
-      @media (max-width: 700px) {
-        .header-inner {
-          align-items: flex-start;
-          flex-direction: column;
-        }
-        .contact {
-          justify-content: flex-start;
-        }
-        .content {
-          padding-top: 132px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header class="header">
-      <div class="header-inner">
-        <a class="brand" href="/">SEO-PROD</a>
-        <nav class="contact">
-          <a href="tel:+79819466247">+79819466247</a>
-          <a href="https://t.me/+79819466247" target="_blank" rel="noopener noreferrer">Telegram</a>
-        </nav>
-      </div>
-    </header>
-    <main class="content">
-      <section class="panel">
-        <h1>Services</h1>
-<p>Technical audits and crawl diagnostics.</p>
-<p>On-page optimization, semantic clustering, and performance-focused recommendations.</p>
-<p>Content planning and publication workflows aligned to business goals.</p>
-      </section>
-    </main>
-  </body>
+      og.setAttribute("content", base + path);
+
+      // og:image (absolute)
+      var img = document.querySelector('meta[property="og:image"]');
+      if (img) img.setAttribute("content", base + "/og.png");
+    })();
+  </script>
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SEO-PROD",
+    "url": "",
+    "logo": "",
+    "sameAs": []
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SEO-PROD",
+    "url": "",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    nav a { margin-right: 12px; }
+    .muted { opacity: 0.8; }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/blog/">Blog</a>
+    <a href="/about/">About</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+
+  <h1>Услуги SEO</h1>
+  <p>SEO-проект: деплой через Git, VPS и домен-независимая архитектура.</p>
+  <p class="muted">Обновлено: 2026-02-04</p>
+</body>
 </html>
