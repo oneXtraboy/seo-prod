@@ -1,122 +1,83 @@
-#!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const { renderLayout, escapeHtml } = require('../templates/layout');
+const fs = require("fs");
+const path = require("path");
 
-const rootDir = path.resolve(__dirname, '..');
-const contentDir = path.join(rootDir, 'content');
-const publicDir = path.join(rootDir, 'public');
+const { SITE_URL } = require("../config");
+const pages = require("../content/pages.json");
 
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+// берем существующий корневой index.html как шаблон
+const templatePath = path.join(__dirname, "..", "index.html");
+const outDir = path.join(__dirname, "..", "public");
+
+function ensureDir(p) {
+  fs.mkdirSync(p, { recursive: true });
 }
 
-function cleanPublicDir() {
-  fs.rmSync(publicDir, { recursive: true, force: true });
-  fs.mkdirSync(publicDir, { recursive: true });
+function writeFile(filePath, content) {
+  ensureDir(path.dirname(filePath));
+  fs.writeFileSync(filePath, content, "utf8");
 }
 
-function outputPathForSlug(slug) {
-  if (!slug || slug === '/') return path.join(publicDir, 'index.html');
-  const normalized = slug.replace(/^\/+|\/+$/g, '');
-  return path.join(publicDir, normalized, 'index.html');
+function normalizeSiteUrl(u) {
+  return String(u || "").replace(/\/+$/, "");
 }
 
-function renderPageContent(page) {
-  // supports blocks format (our current content) and legacy body format
-  if (Array.isArray(page.blocks)) {
-    const h1 = page.h1 || page.heading || page.title || 'Untitled';
-    const blocksHtml = page.blocks.map((b) => {
-      const t = b?.title ? `<h2>${escapeHtml(b.title)}</h2>` : '';
-      const p = b?.text ? `<p>${escapeHtml(b.text)}</p>` : '';
-      return `<section>\n${t}\n${p}\n</section>`;
-    }).join('\n');
-    return `<h1>${escapeHtml(h1)}</h1>\n${blocksHtml}`;
+function renderFromTemplate(html, page) {
+  // Минимальные подстановки: title/description/h1
+  // Если в шаблоне нет маркеров — просто оставим как есть, сайт всё равно соберётся.
+  let out = html;
+
+  const title = page.title || "";
+  const description = page.description || "";
+  const h1 = page.h1 || page.title || "";
+
+  out = out.replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(title)}</title>`);
+
+  // meta description
+  if (out.includes('name="description"')) {
+    out = out.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/s, `<meta name="description" content="${escapeHtml(description)}">`);
   }
 
-  const heading = page.heading || page.h1 || page.title || 'Untitled';
-  const body = Array.isArray(page.body) ? page.body : [];
-  const paragraphs = body.map((line) => `<p>${escapeHtml(line)}</p>`).join('\n');
-  return `<h1>${escapeHtml(heading)}</h1>\n${paragraphs}`;
+  // h1
+  out = out.replace(/<h1[^>]*>.*?<\/h1>/s, `<h1>${escapeHtml(h1)}</h1>`);
+
+  // canonical (если есть placeholder)
+  const canonical = normalizeSiteUrl(SITE_URL) + (page.slug || "/");
+  out = out.replace(/{{\s*CANONICAL\s*}}/g, canonical);
+
+  return out;
 }
 
-function writeText(filePath, text) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, text, 'utf8');
+function escapeHtml(s) {
+  return String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
-function writeHtml(filePath, html) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, html, 'utf8');
-}
+function main() {
+  const template = fs.readFileSync(templatePath, "utf8");
 
-function validatePage(page, index) {
-  if (!page || typeof page !== 'object') {
-    throw new Error(`pages.json item #${index} must be an object`);
+  // главная
+  for (const page of pages) {
+    const slug = page.slug || "/";
+    const html = renderFromTemplate(template, page);
+
+    const filePath =
+      slug === "/"
+        ? path.join(outDir, "index.html")
+        : path.join(outDir, slug.replace(/^\//, ""), "index.html");
+
+    writeFile(filePath, html);
+    console.log("generated:", filePath);
   }
-  if (typeof page.slug !== 'string' || !page.slug.startsWith('/')) {
-    throw new Error(`pages.json item #${index} must include slug starting with "/"`);
-  }
+
+  // 404.html (простая)
+  const notFound = `<!doctype html><meta charset="utf-8"><title>404</title><h1>404</h1><p>Страница не найдена</p>`;
+  writeFile(path.join(outDir, "404.html"), notFound);
+
+  console.log("OK");
 }
 
-function normalizeBaseUrl(site) {
-  const raw = (site && typeof site.baseUrl === 'string') ? site.baseUrl.trim() : '';
-  return raw ? raw.replace(/\/+$/, '') : '';
-}
-
-function buildCanonical(baseUrl, slug) {
-  if (!baseUrl) return '';
-  if (!slug || slug === '/') return `${baseUrl}/`;
-  const normalized = slug.startsWith('/') ? slug : `/${slug}`;
-  return `${baseUrl}${normalized.endsWith('/') ? normalized : normalized + '/'}`;
-}
-
-function writeRobotsTxt(baseUrl) {
-  const lines = ['User-agent: *', 'Allow: /'];
-  if (baseUrl) lines.push(`Sitemap: ${baseUrl}/sitemap.xml`);
-  lines.push('');
-  writeText(path.join(publicDir, 'robots.txt'), lines.join('\n'));
-  console.log('Generated: public/robots.txt');
-}
-
-function writeSitemapXml(baseUrl, pages) {
-  const urls = pages.map((p) => buildCanonical(baseUrl, p.slug)).filter(Boolean);
-  const xml =
-`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(loc => `  <url>\n    <loc>${loc}</loc>\n  </url>`).join('\n')}
-</urlset>
-`;
-  writeText(path.join(publicDir, 'sitemap.xml'), xml);
-  console.log('Generated: public/sitemap.xml');
-}
-
-function generate() {
-  const site = readJson(path.join(contentDir, 'site.json'));
-  const baseUrl = (site && site.baseUrl) ? site.baseUrl : '';
-  const pages = readJson(path.join(contentDir, 'pages.json'));
-
-  if (!Array.isArray(pages)) throw new Error('pages.json must contain an array');
-  pages.forEach(validatePage);
-
-  cleanPublicDir();
-
-  const baseUrl = normalizeBaseUrl(site);
-
-  pages.forEach((page, index) => {
-    validatePage(page, index);
-
-    const contentHtml = renderPageContent(page);
-    const canonical = buildCanonical(baseUrl, page.slug);
-    const html = renderLayout({ site, page, contentHtml, canonical });
-    const filePath = outputPathForSlug(page.slug);
-
-    writeHtml(filePath, html);
-    console.log(`Generated: ${path.relative(rootDir, filePath)}`);
-  });
-
-  writeRobotsTxt(baseUrl);
-  writeSitemapXml(baseUrl, pages);
-}
-
-generate();
+main();
