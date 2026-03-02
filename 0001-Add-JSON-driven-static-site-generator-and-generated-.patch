@@ -1,0 +1,952 @@
+From 8637f8a5a77f96317f503688ac273c3be48e5de1 Mon Sep 17 00:00:00 2001
+From: oneXtraboy <124262732+oneXtraboy@users.noreply.github.com>
+Date: Sun, 15 Feb 2026 22:40:20 +0300
+Subject: [PATCH 1/2] Add JSON-driven static site generator and generated
+ public pages
+
+---
+ content/pages.json         |  53 +++++++++++++++
+ content/site.json          |   8 +++
+ public/about/index.html    | 119 +++++++++++++++++++++++++++++++++
+ public/blog/index.html     | 119 +++++++++++++++++++++++++++++++++
+ public/contact/index.html  | 119 +++++++++++++++++++++++++++++++++
+ public/index.html          | 119 +++++++++++++++++++++++++++++++++
+ public/services/index.html | 120 +++++++++++++++++++++++++++++++++
+ scripts/generate.js        |  73 ++++++++++++++++++++
+ templates/layout.js        | 133 +++++++++++++++++++++++++++++++++++++
+ 9 files changed, 863 insertions(+)
+ create mode 100644 content/pages.json
+ create mode 100644 content/site.json
+ create mode 100644 public/about/index.html
+ create mode 100644 public/blog/index.html
+ create mode 100644 public/contact/index.html
+ create mode 100644 public/index.html
+ create mode 100644 public/services/index.html
+ create mode 100755 scripts/generate.js
+ create mode 100644 templates/layout.js
+
+diff --git a/content/pages.json b/content/pages.json
+new file mode 100644
+index 0000000..883d4d1
+--- /dev/null
++++ b/content/pages.json
+@@ -0,0 +1,53 @@
++[
++  {
++    "slug": "/",
++    "title": "SEO-PROD — Content-driven SEO solutions",
++    "description": "Practical SEO solutions for business growth: audits, strategy, and measurable results.",
++    "heading": "SEO-PROD",
++    "body": [
++      "We build sustainable organic growth with clear priorities and transparent execution.",
++      "Use this static generator to publish fast pages with consistent structure and metadata."
++    ]
++  },
++  {
++    "slug": "/about",
++    "title": "About — SEO-PROD",
++    "description": "Learn about SEO-PROD and our approach to technical SEO and content strategy.",
++    "heading": "About",
++    "body": [
++      "SEO-PROD focuses on technical quality, semantic relevance, and conversion-aware content.",
++      "Our process is lightweight, measurable, and adapted for long-term search visibility."
++    ]
++  },
++  {
++    "slug": "/services",
++    "title": "Services — SEO-PROD",
++    "description": "Explore SEO-PROD services: audits, on-page optimization, content plans, and reporting.",
++    "heading": "Services",
++    "body": [
++      "Technical audits and crawl diagnostics.",
++      "On-page optimization, semantic clustering, and performance-focused recommendations.",
++      "Content planning and publication workflows aligned to business goals."
++    ]
++  },
++  {
++    "slug": "/blog",
++    "title": "Blog — SEO-PROD",
++    "description": "SEO-PROD blog with practical notes on SEO implementation and content operations.",
++    "heading": "Blog",
++    "body": [
++      "This section can be expanded by adding more page records into pages.json.",
++      "Because pages are JSON-driven, publishing new content is predictable and repeatable."
++    ]
++  },
++  {
++    "slug": "/contact",
++    "title": "Contact — SEO-PROD",
++    "description": "Contact SEO-PROD by phone or Telegram for collaboration and SEO support.",
++    "heading": "Contact",
++    "body": [
++      "Phone: +79819466247",
++      "Telegram: https://t.me/+79819466247"
++    ]
++  }
++]
+diff --git a/content/site.json b/content/site.json
+new file mode 100644
+index 0000000..3d50b0b
+--- /dev/null
++++ b/content/site.json
+@@ -0,0 +1,8 @@
++{
++  "brandName": "SEO-PROD",
++  "phone": "+79819466247",
++  "telegram": "https://t.me/+79819466247",
++  "defaultTitle": "SEO-PROD — SEO and web growth",
++  "defaultDescription": "SEO-PROD helps businesses grow through practical SEO, analytics, and content strategy.",
++  "language": "ru"
++}
+diff --git a/public/about/index.html b/public/about/index.html
+new file mode 100644
+index 0000000..88e11a5
+--- /dev/null
++++ b/public/about/index.html
+@@ -0,0 +1,119 @@
++<!doctype html>
++<html lang="ru">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <title>About — SEO-PROD</title>
++    <meta name="description" content="Learn about SEO-PROD and our approach to technical SEO and content strategy." />
++    <style>
++      :root {
++        color-scheme: dark;
++        --bg: #0f1115;
++        --panel: #171a21;
++        --text: #ebedf0;
++        --muted: #a8b0bd;
++        --accent: #4ea1ff;
++      }
++      * { box-sizing: border-box; }
++      body {
++        margin: 0;
++        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++        background: var(--bg);
++        color: var(--text);
++        line-height: 1.6;
++      }
++      .header {
++        position: fixed;
++        top: 0;
++        left: 0;
++        right: 0;
++        z-index: 1000;
++        background: rgba(15, 17, 21, 0.94);
++        backdrop-filter: blur(8px);
++        border-bottom: 1px solid #242936;
++      }
++      .header-inner,
++      .content {
++        width: min(960px, 92vw);
++        margin: 0 auto;
++      }
++      .header-inner {
++        min-height: 64px;
++        display: flex;
++        align-items: center;
++        justify-content: space-between;
++        gap: 12px;
++        padding: 10px 0;
++      }
++      .brand {
++        font-size: 1.05rem;
++        font-weight: 700;
++        letter-spacing: 0.05em;
++        text-decoration: none;
++        color: var(--text);
++      }
++      .contact {
++        display: flex;
++        align-items: center;
++        gap: 10px;
++        flex-wrap: wrap;
++        justify-content: flex-end;
++      }
++      .contact a {
++        color: var(--accent);
++        text-decoration: none;
++        font-weight: 500;
++      }
++      .content {
++        padding-top: 98px;
++        padding-bottom: 48px;
++      }
++      .panel {
++        background: var(--panel);
++        border: 1px solid #242936;
++        border-radius: 12px;
++        padding: 24px;
++      }
++      h1 {
++        margin-top: 0;
++        margin-bottom: 16px;
++        line-height: 1.2;
++      }
++      p {
++        margin-top: 0;
++        margin-bottom: 12px;
++        color: var(--muted);
++      }
++      @media (max-width: 700px) {
++        .header-inner {
++          align-items: flex-start;
++          flex-direction: column;
++        }
++        .contact {
++          justify-content: flex-start;
++        }
++        .content {
++          padding-top: 132px;
++        }
++      }
++    </style>
++  </head>
++  <body>
++    <header class="header">
++      <div class="header-inner">
++        <a class="brand" href="/">SEO-PROD</a>
++        <nav class="contact">
++          <a href="tel:+79819466247">+79819466247</a>
++          <a href="https://t.me/+79819466247" target="_blank" rel="noopener noreferrer">Telegram</a>
++        </nav>
++      </div>
++    </header>
++    <main class="content">
++      <section class="panel">
++        <h1>About</h1>
++<p>SEO-PROD focuses on technical quality, semantic relevance, and conversion-aware content.</p>
++<p>Our process is lightweight, measurable, and adapted for long-term search visibility.</p>
++      </section>
++    </main>
++  </body>
++</html>
+\ No newline at end of file
+diff --git a/public/blog/index.html b/public/blog/index.html
+new file mode 100644
+index 0000000..dec9f98
+--- /dev/null
++++ b/public/blog/index.html
+@@ -0,0 +1,119 @@
++<!doctype html>
++<html lang="ru">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <title>Blog — SEO-PROD</title>
++    <meta name="description" content="SEO-PROD blog with practical notes on SEO implementation and content operations." />
++    <style>
++      :root {
++        color-scheme: dark;
++        --bg: #0f1115;
++        --panel: #171a21;
++        --text: #ebedf0;
++        --muted: #a8b0bd;
++        --accent: #4ea1ff;
++      }
++      * { box-sizing: border-box; }
++      body {
++        margin: 0;
++        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++        background: var(--bg);
++        color: var(--text);
++        line-height: 1.6;
++      }
++      .header {
++        position: fixed;
++        top: 0;
++        left: 0;
++        right: 0;
++        z-index: 1000;
++        background: rgba(15, 17, 21, 0.94);
++        backdrop-filter: blur(8px);
++        border-bottom: 1px solid #242936;
++      }
++      .header-inner,
++      .content {
++        width: min(960px, 92vw);
++        margin: 0 auto;
++      }
++      .header-inner {
++        min-height: 64px;
++        display: flex;
++        align-items: center;
++        justify-content: space-between;
++        gap: 12px;
++        padding: 10px 0;
++      }
++      .brand {
++        font-size: 1.05rem;
++        font-weight: 700;
++        letter-spacing: 0.05em;
++        text-decoration: none;
++        color: var(--text);
++      }
++      .contact {
++        display: flex;
++        align-items: center;
++        gap: 10px;
++        flex-wrap: wrap;
++        justify-content: flex-end;
++      }
++      .contact a {
++        color: var(--accent);
++        text-decoration: none;
++        font-weight: 500;
++      }
++      .content {
++        padding-top: 98px;
++        padding-bottom: 48px;
++      }
++      .panel {
++        background: var(--panel);
++        border: 1px solid #242936;
++        border-radius: 12px;
++        padding: 24px;
++      }
++      h1 {
++        margin-top: 0;
++        margin-bottom: 16px;
++        line-height: 1.2;
++      }
++      p {
++        margin-top: 0;
++        margin-bottom: 12px;
++        color: var(--muted);
++      }
++      @media (max-width: 700px) {
++        .header-inner {
++          align-items: flex-start;
++          flex-direction: column;
++        }
++        .contact {
++          justify-content: flex-start;
++        }
++        .content {
++          padding-top: 132px;
++        }
++      }
++    </style>
++  </head>
++  <body>
++    <header class="header">
++      <div class="header-inner">
++        <a class="brand" href="/">SEO-PROD</a>
++        <nav class="contact">
++          <a href="tel:+79819466247">+79819466247</a>
++          <a href="https://t.me/+79819466247" target="_blank" rel="noopener noreferrer">Telegram</a>
++        </nav>
++      </div>
++    </header>
++    <main class="content">
++      <section class="panel">
++        <h1>Blog</h1>
++<p>This section can be expanded by adding more page records into pages.json.</p>
++<p>Because pages are JSON-driven, publishing new content is predictable and repeatable.</p>
++      </section>
++    </main>
++  </body>
++</html>
+\ No newline at end of file
+diff --git a/public/contact/index.html b/public/contact/index.html
+new file mode 100644
+index 0000000..ac93db0
+--- /dev/null
++++ b/public/contact/index.html
+@@ -0,0 +1,119 @@
++<!doctype html>
++<html lang="ru">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <title>Contact — SEO-PROD</title>
++    <meta name="description" content="Contact SEO-PROD by phone or Telegram for collaboration and SEO support." />
++    <style>
++      :root {
++        color-scheme: dark;
++        --bg: #0f1115;
++        --panel: #171a21;
++        --text: #ebedf0;
++        --muted: #a8b0bd;
++        --accent: #4ea1ff;
++      }
++      * { box-sizing: border-box; }
++      body {
++        margin: 0;
++        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++        background: var(--bg);
++        color: var(--text);
++        line-height: 1.6;
++      }
++      .header {
++        position: fixed;
++        top: 0;
++        left: 0;
++        right: 0;
++        z-index: 1000;
++        background: rgba(15, 17, 21, 0.94);
++        backdrop-filter: blur(8px);
++        border-bottom: 1px solid #242936;
++      }
++      .header-inner,
++      .content {
++        width: min(960px, 92vw);
++        margin: 0 auto;
++      }
++      .header-inner {
++        min-height: 64px;
++        display: flex;
++        align-items: center;
++        justify-content: space-between;
++        gap: 12px;
++        padding: 10px 0;
++      }
++      .brand {
++        font-size: 1.05rem;
++        font-weight: 700;
++        letter-spacing: 0.05em;
++        text-decoration: none;
++        color: var(--text);
++      }
++      .contact {
++        display: flex;
++        align-items: center;
++        gap: 10px;
++        flex-wrap: wrap;
++        justify-content: flex-end;
++      }
++      .contact a {
++        color: var(--accent);
++        text-decoration: none;
++        font-weight: 500;
++      }
++      .content {
++        padding-top: 98px;
++        padding-bottom: 48px;
++      }
++      .panel {
++        background: var(--panel);
++        border: 1px solid #242936;
++        border-radius: 12px;
++        padding: 24px;
++      }
++      h1 {
++        margin-top: 0;
++        margin-bottom: 16px;
++        line-height: 1.2;
++      }
++      p {
++        margin-top: 0;
++        margin-bottom: 12px;
++        color: var(--muted);
++      }
++      @media (max-width: 700px) {
++        .header-inner {
++          align-items: flex-start;
++          flex-direction: column;
++        }
++        .contact {
++          justify-content: flex-start;
++        }
++        .content {
++          padding-top: 132px;
++        }
++      }
++    </style>
++  </head>
++  <body>
++    <header class="header">
++      <div class="header-inner">
++        <a class="brand" href="/">SEO-PROD</a>
++        <nav class="contact">
++          <a href="tel:+79819466247">+79819466247</a>
++          <a href="https://t.me/+79819466247" target="_blank" rel="noopener noreferrer">Telegram</a>
++        </nav>
++      </div>
++    </header>
++    <main class="content">
++      <section class="panel">
++        <h1>Contact</h1>
++<p>Phone: +79819466247</p>
++<p>Telegram: https://t.me/+79819466247</p>
++      </section>
++    </main>
++  </body>
++</html>
+\ No newline at end of file
+diff --git a/public/index.html b/public/index.html
+new file mode 100644
+index 0000000..9fd2e7d
+--- /dev/null
++++ b/public/index.html
+@@ -0,0 +1,119 @@
++<!doctype html>
++<html lang="ru">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <title>SEO-PROD — Content-driven SEO solutions</title>
++    <meta name="description" content="Practical SEO solutions for business growth: audits, strategy, and measurable results." />
++    <style>
++      :root {
++        color-scheme: dark;
++        --bg: #0f1115;
++        --panel: #171a21;
++        --text: #ebedf0;
++        --muted: #a8b0bd;
++        --accent: #4ea1ff;
++      }
++      * { box-sizing: border-box; }
++      body {
++        margin: 0;
++        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++        background: var(--bg);
++        color: var(--text);
++        line-height: 1.6;
++      }
++      .header {
++        position: fixed;
++        top: 0;
++        left: 0;
++        right: 0;
++        z-index: 1000;
++        background: rgba(15, 17, 21, 0.94);
++        backdrop-filter: blur(8px);
++        border-bottom: 1px solid #242936;
++      }
++      .header-inner,
++      .content {
++        width: min(960px, 92vw);
++        margin: 0 auto;
++      }
++      .header-inner {
++        min-height: 64px;
++        display: flex;
++        align-items: center;
++        justify-content: space-between;
++        gap: 12px;
++        padding: 10px 0;
++      }
++      .brand {
++        font-size: 1.05rem;
++        font-weight: 700;
++        letter-spacing: 0.05em;
++        text-decoration: none;
++        color: var(--text);
++      }
++      .contact {
++        display: flex;
++        align-items: center;
++        gap: 10px;
++        flex-wrap: wrap;
++        justify-content: flex-end;
++      }
++      .contact a {
++        color: var(--accent);
++        text-decoration: none;
++        font-weight: 500;
++      }
++      .content {
++        padding-top: 98px;
++        padding-bottom: 48px;
++      }
++      .panel {
++        background: var(--panel);
++        border: 1px solid #242936;
++        border-radius: 12px;
++        padding: 24px;
++      }
++      h1 {
++        margin-top: 0;
++        margin-bottom: 16px;
++        line-height: 1.2;
++      }
++      p {
++        margin-top: 0;
++        margin-bottom: 12px;
++        color: var(--muted);
++      }
++      @media (max-width: 700px) {
++        .header-inner {
++          align-items: flex-start;
++          flex-direction: column;
++        }
++        .contact {
++          justify-content: flex-start;
++        }
++        .content {
++          padding-top: 132px;
++        }
++      }
++    </style>
++  </head>
++  <body>
++    <header class="header">
++      <div class="header-inner">
++        <a class="brand" href="/">SEO-PROD</a>
++        <nav class="contact">
++          <a href="tel:+79819466247">+79819466247</a>
++          <a href="https://t.me/+79819466247" target="_blank" rel="noopener noreferrer">Telegram</a>
++        </nav>
++      </div>
++    </header>
++    <main class="content">
++      <section class="panel">
++        <h1>SEO-PROD</h1>
++<p>We build sustainable organic growth with clear priorities and transparent execution.</p>
++<p>Use this static generator to publish fast pages with consistent structure and metadata.</p>
++      </section>
++    </main>
++  </body>
++</html>
+\ No newline at end of file
+diff --git a/public/services/index.html b/public/services/index.html
+new file mode 100644
+index 0000000..1724ed0
+--- /dev/null
++++ b/public/services/index.html
+@@ -0,0 +1,120 @@
++<!doctype html>
++<html lang="ru">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <title>Services — SEO-PROD</title>
++    <meta name="description" content="Explore SEO-PROD services: audits, on-page optimization, content plans, and reporting." />
++    <style>
++      :root {
++        color-scheme: dark;
++        --bg: #0f1115;
++        --panel: #171a21;
++        --text: #ebedf0;
++        --muted: #a8b0bd;
++        --accent: #4ea1ff;
++      }
++      * { box-sizing: border-box; }
++      body {
++        margin: 0;
++        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++        background: var(--bg);
++        color: var(--text);
++        line-height: 1.6;
++      }
++      .header {
++        position: fixed;
++        top: 0;
++        left: 0;
++        right: 0;
++        z-index: 1000;
++        background: rgba(15, 17, 21, 0.94);
++        backdrop-filter: blur(8px);
++        border-bottom: 1px solid #242936;
++      }
++      .header-inner,
++      .content {
++        width: min(960px, 92vw);
++        margin: 0 auto;
++      }
++      .header-inner {
++        min-height: 64px;
++        display: flex;
++        align-items: center;
++        justify-content: space-between;
++        gap: 12px;
++        padding: 10px 0;
++      }
++      .brand {
++        font-size: 1.05rem;
++        font-weight: 700;
++        letter-spacing: 0.05em;
++        text-decoration: none;
++        color: var(--text);
++      }
++      .contact {
++        display: flex;
++        align-items: center;
++        gap: 10px;
++        flex-wrap: wrap;
++        justify-content: flex-end;
++      }
++      .contact a {
++        color: var(--accent);
++        text-decoration: none;
++        font-weight: 500;
++      }
++      .content {
++        padding-top: 98px;
++        padding-bottom: 48px;
++      }
++      .panel {
++        background: var(--panel);
++        border: 1px solid #242936;
++        border-radius: 12px;
++        padding: 24px;
++      }
++      h1 {
++        margin-top: 0;
++        margin-bottom: 16px;
++        line-height: 1.2;
++      }
++      p {
++        margin-top: 0;
++        margin-bottom: 12px;
++        color: var(--muted);
++      }
++      @media (max-width: 700px) {
++        .header-inner {
++          align-items: flex-start;
++          flex-direction: column;
++        }
++        .contact {
++          justify-content: flex-start;
++        }
++        .content {
++          padding-top: 132px;
++        }
++      }
++    </style>
++  </head>
++  <body>
++    <header class="header">
++      <div class="header-inner">
++        <a class="brand" href="/">SEO-PROD</a>
++        <nav class="contact">
++          <a href="tel:+79819466247">+79819466247</a>
++          <a href="https://t.me/+79819466247" target="_blank" rel="noopener noreferrer">Telegram</a>
++        </nav>
++      </div>
++    </header>
++    <main class="content">
++      <section class="panel">
++        <h1>Services</h1>
++<p>Technical audits and crawl diagnostics.</p>
++<p>On-page optimization, semantic clustering, and performance-focused recommendations.</p>
++<p>Content planning and publication workflows aligned to business goals.</p>
++      </section>
++    </main>
++  </body>
++</html>
+\ No newline at end of file
+diff --git a/scripts/generate.js b/scripts/generate.js
+new file mode 100755
+index 0000000..951b0f9
+--- /dev/null
++++ b/scripts/generate.js
+@@ -0,0 +1,73 @@
++#!/usr/bin/env node
++const fs = require('fs');
++const path = require('path');
++const { renderLayout, escapeHtml } = require('../templates/layout');
++
++const rootDir = path.resolve(__dirname, '..');
++const contentDir = path.join(rootDir, 'content');
++const publicDir = path.join(rootDir, 'public');
++
++function readJson(filePath) {
++  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
++}
++
++function cleanPublicDir() {
++  fs.rmSync(publicDir, { recursive: true, force: true });
++  fs.mkdirSync(publicDir, { recursive: true });
++}
++
++function outputPathForSlug(slug) {
++  if (!slug || slug === '/') {
++    return path.join(publicDir, 'index.html');
++  }
++
++  const normalized = slug.replace(/^\/+|\/+$/g, '');
++  return path.join(publicDir, normalized, 'index.html');
++}
++
++function renderPageContent(page) {
++  const heading = page.heading || page.title || 'Untitled';
++  const body = Array.isArray(page.body) ? page.body : [];
++  const paragraphs = body.map((line) => `<p>${escapeHtml(line)}</p>`).join('\n');
++
++  return `<h1>${escapeHtml(heading)}</h1>\n${paragraphs}`;
++}
++
++function writeHtml(filePath, html) {
++  fs.mkdirSync(path.dirname(filePath), { recursive: true });
++  fs.writeFileSync(filePath, html, 'utf8');
++}
++
++function validatePage(page, index) {
++  if (!page || typeof page !== 'object') {
++    throw new Error(`pages.json item #${index} must be an object`);
++  }
++
++  if (typeof page.slug !== 'string' || !page.slug.startsWith('/')) {
++    throw new Error(`pages.json item #${index} must include slug starting with "/"`);
++  }
++}
++
++function generate() {
++  const site = readJson(path.join(contentDir, 'site.json'));
++  const pages = readJson(path.join(contentDir, 'pages.json'));
++
++  if (!Array.isArray(pages)) {
++    throw new Error('pages.json must contain an array');
++  }
++
++  cleanPublicDir();
++
++  pages.forEach((page, index) => {
++    validatePage(page, index);
++
++    const contentHtml = renderPageContent(page);
++    const html = renderLayout({ site, page, contentHtml });
++    const filePath = outputPathForSlug(page.slug);
++
++    writeHtml(filePath, html);
++    console.log(`Generated: ${path.relative(rootDir, filePath)}`);
++  });
++}
++
++generate();
+diff --git a/templates/layout.js b/templates/layout.js
+new file mode 100644
+index 0000000..474b7bf
+--- /dev/null
++++ b/templates/layout.js
+@@ -0,0 +1,133 @@
++function escapeHtml(value) {
++  return String(value)
++    .replace(/&/g, '&amp;')
++    .replace(/</g, '&lt;')
++    .replace(/>/g, '&gt;')
++    .replace(/"/g, '&quot;')
++    .replace(/'/g, '&#39;');
++}
++
++function renderLayout({ site, page, contentHtml }) {
++  const title = page.title || site.defaultTitle;
++  const description = page.description || site.defaultDescription;
++
++  return `<!doctype html>
++<html lang="${escapeHtml(site.language || 'en')}">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <title>${escapeHtml(title)}</title>
++    <meta name="description" content="${escapeHtml(description)}" />
++    <style>
++      :root {
++        color-scheme: dark;
++        --bg: #0f1115;
++        --panel: #171a21;
++        --text: #ebedf0;
++        --muted: #a8b0bd;
++        --accent: #4ea1ff;
++      }
++      * { box-sizing: border-box; }
++      body {
++        margin: 0;
++        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++        background: var(--bg);
++        color: var(--text);
++        line-height: 1.6;
++      }
++      .header {
++        position: fixed;
++        top: 0;
++        left: 0;
++        right: 0;
++        z-index: 1000;
++        background: rgba(15, 17, 21, 0.94);
++        backdrop-filter: blur(8px);
++        border-bottom: 1px solid #242936;
++      }
++      .header-inner,
++      .content {
++        width: min(960px, 92vw);
++        margin: 0 auto;
++      }
++      .header-inner {
++        min-height: 64px;
++        display: flex;
++        align-items: center;
++        justify-content: space-between;
++        gap: 12px;
++        padding: 10px 0;
++      }
++      .brand {
++        font-size: 1.05rem;
++        font-weight: 700;
++        letter-spacing: 0.05em;
++        text-decoration: none;
++        color: var(--text);
++      }
++      .contact {
++        display: flex;
++        align-items: center;
++        gap: 10px;
++        flex-wrap: wrap;
++        justify-content: flex-end;
++      }
++      .contact a {
++        color: var(--accent);
++        text-decoration: none;
++        font-weight: 500;
++      }
++      .content {
++        padding-top: 98px;
++        padding-bottom: 48px;
++      }
++      .panel {
++        background: var(--panel);
++        border: 1px solid #242936;
++        border-radius: 12px;
++        padding: 24px;
++      }
++      h1 {
++        margin-top: 0;
++        margin-bottom: 16px;
++        line-height: 1.2;
++      }
++      p {
++        margin-top: 0;
++        margin-bottom: 12px;
++        color: var(--muted);
++      }
++      @media (max-width: 700px) {
++        .header-inner {
++          align-items: flex-start;
++          flex-direction: column;
++        }
++        .contact {
++          justify-content: flex-start;
++        }
++        .content {
++          padding-top: 132px;
++        }
++      }
++    </style>
++  </head>
++  <body>
++    <header class="header">
++      <div class="header-inner">
++        <a class="brand" href="/">${escapeHtml(site.brandName)}</a>
++        <nav class="contact">
++          <a href="tel:${escapeHtml(site.phone)}">${escapeHtml(site.phone)}</a>
++          <a href="${escapeHtml(site.telegram)}" target="_blank" rel="noopener noreferrer">Telegram</a>
++        </nav>
++      </div>
++    </header>
++    <main class="content">
++      <section class="panel">
++        ${contentHtml}
++      </section>
++    </main>
++  </body>
++</html>`;
++}
++
++module.exports = { renderLayout, escapeHtml };
+-- 
+2.43.0
+
