@@ -1,18 +1,4 @@
 [
-  {
-    "slug": "alex-morozov",
-    "name": "Алекс Морозов",
-    "initials": "AM",
-    "role": "Author · SEO Strategist",
-    "experience": "9+ лет в SEO и growth-проектах",
-    "expertise": "Техническое SEO, архитектура посадочных, аналитика воронки"
-  },
-  {
-    "slug": "irina-sokolova",
-    "name": "Ирина Соколова",
-    "initials": "ИС",
-    "role": "Expert · Product Marketing",
-    "experience": "8+ лет в продуктовых коммуникациях",
-    "expertise": "Позиционирование, контент-стратегия, UX-тексты"
-  }
+  {"slug":"alex-morozov","name":"Алекс Морозов","initials":"AM","role":"Author · SEO Strategist","experience":"9+ лет в SEO и growth-проектах","expertise":"Техническое SEO, архитектура посадочных, аналитика воронки"},
+  {"slug":"irina-sokolova","name":"Ирина Соколова","initials":"ИС","role":"Expert · Product Marketing","experience":"8+ лет в продуктовых коммуникациях","expertise":"Позиционирование, контент-стратегия, UX-тексты"}
 ]

@@ -7,128 +7,117 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function renderLayout({ site, page, contentHtml, canonical = '' }) {
+function navLink(href, label) {
+  return `<a href="${href}">${escapeHtml(label)}</a>`;
+}
+
+function renderLayout({ site, page, contentHtml, canonical = '', railSections = [] }) {
   const title = page.title || site.defaultTitle;
   const description = page.description || site.defaultDescription;
+  const motionReduced = `window.matchMedia('(prefers-reduced-motion: reduce)').matches`;
+
+  const railHtml = page.enableRail && railSections.length
+    ? `<aside class="scroll-rail" aria-label="Навигация по секциям">
+        <button class="rail-nav" data-dir="prev" aria-label="Предыдущая секция">↑</button>
+        <div class="rail-track">
+          ${railSections.map((s, i) => `<button class="rail-tick" data-target="${escapeHtml(s.id)}" data-index="${i}" aria-label="${escapeHtml(s.title)}"><span class="rail-tip">${escapeHtml(s.title)}</span></button>`).join('')}
+        </div>
+        <button class="rail-nav" data-dir="next" aria-label="Следующая секция">↓</button>
+      </aside>
+      <button class="rail-mobile-toggle" aria-expanded="false" aria-controls="mobile-nav">Навигация по странице</button>
+      <div class="rail-mobile-sheet" id="mobile-nav" hidden>
+        ${railSections.map((s) => `<button class="mobile-nav-item" data-target="${escapeHtml(s.id)}">${escapeHtml(s.title)}</button>`).join('')}
+      </div>`
+    : '';
+
+  const railScript = page.enableRail && railSections.length
+    ? `<script>
+      (() => {
+        const sections = ${JSON.stringify(railSections.map((s) => s.id))};
+        const ticks = [...document.querySelectorAll('.rail-tick')];
+        const prefersReduced = ${motionReduced};
+        let active = 0;
+        function goTo(index) {
+          const id = sections[index];
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+        }
+        function setActive(index) {
+          active = index;
+          ticks.forEach((t, i) => t.classList.toggle('is-active', i === index));
+        }
+        ticks.forEach((tick, i) => tick.addEventListener('click', () => goTo(i)));
+        document.querySelectorAll('.mobile-nav-item').forEach((item, i) => item.addEventListener('click', () => goTo(i)));
+        document.querySelectorAll('.rail-nav').forEach((btn) => btn.addEventListener('click', () => {
+          const dir = btn.dataset.dir === 'next' ? 1 : -1;
+          const next = Math.max(0, Math.min(sections.length - 1, active + dir));
+          goTo(next);
+        }));
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const i = sections.indexOf(entry.target.id);
+              if (i >= 0) setActive(i);
+            }
+          });
+        }, { rootMargin: '-35% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach((id) => {
+          const node = document.getElementById(id);
+          if (node) obs.observe(node);
+        });
+        const toggle = document.querySelector('.rail-mobile-toggle');
+        const sheet = document.getElementById('mobile-nav');
+        if (toggle && sheet) {
+          toggle.addEventListener('click', () => {
+            const open = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', String(!open));
+            sheet.hidden = open;
+          });
+        }
+      })();
+    </script>`
+    : '';
 
   return `<!doctype html>
-<html lang="${escapeHtml(site.language || 'en')}">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${escapeHtml(title)}</title>
-    <meta name="description" content="${escapeHtml(description)}" />
-    ${canonical ? `<link rel="canonical" href="${escapeHtml(canonical)}">` : ''}
-    <style>
-      :root {
-        color-scheme: dark;
-        --bg: #0f1115;
-        --panel: #171a21;
-        --text: #ebedf0;
-        --muted: #a8b0bd;
-        --accent: #4ea1ff;
-      }
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        line-height: 1.6;
-      }
-      .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        background: rgba(15, 17, 21, 0.94);
-        backdrop-filter: blur(8px);
-        border-bottom: 1px solid #242936;
-      }
-      .header-inner,
-      .content {
-        width: min(960px, 92vw);
-        margin: 0 auto;
-      }
-      .header-inner {
-        min-height: 64px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 10px 0;
-      }
-      .brand {
-        font-size: 1.05rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        text-decoration: none;
-        color: var(--text);
-      }
-      .contact {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-      .contact a {
-        color: var(--accent);
-        text-decoration: none;
-        font-weight: 500;
-      }
-      .content {
-        padding-top: 98px;
-        padding-bottom: 48px;
-      }
-      .panel {
-        background: var(--panel);
-        border: 1px solid #242936;
-        border-radius: 12px;
-        padding: 24px;
-      }
-      h1 {
-        margin-top: 0;
-        margin-bottom: 16px;
-        line-height: 1.2;
-      }
-      p {
-        margin-top: 0;
-        margin-bottom: 12px;
-        color: var(--muted);
-      }
-      @media (max-width: 700px) {
-        .header-inner {
-          align-items: flex-start;
-          flex-direction: column;
-        }
-        .contact {
-          justify-content: flex-start;
-        }
-        .content {
-          padding-top: 132px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header class="header">
-      <div class="header-inner">
-        <a class="brand" href="/">${escapeHtml(site.brandName)}</a>
-        <nav class="contact">
-          <a href="tel:${escapeHtml(site.phone)}">${escapeHtml(site.phone)}</a>
-          <a href="${escapeHtml(site.telegram)}" target="_blank" rel="noopener noreferrer">Telegram</a>
-        </nav>
-      </div>
-    </header>
-    <main class="content">
-      <section class="panel">
-        ${contentHtml}
-      </section>
-    </main>
-  </body>
-</html>`;
+<html lang="${escapeHtml(site.language || 'ru')}">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>${escapeHtml(title)}</title>
+<meta name="description" content="${escapeHtml(description)}" />
+${canonical ? `<link rel="canonical" href="${escapeHtml(canonical)}" />` : ''}
+<style>
+:root{--bg:#F5F5F7;--bg2:#FBFBFD;--surface:#FFFFFF;--surface-muted:#F2F2F7;--border:#D2D2D7;--divider:#E5E5EA;--text:#1D1D1F;--text2:#3A3A3C;--text3:#6E6E73;--accent:#0066CC;--accent-hover:#0057B8;--focus:#0066CC66;--glass:#FFFFFFB3;--glass-border:#FFFFFF80;--glass-clear:#FFFFFF4D;--dimming:#0000000D;--frosted:#F2F2F7E6;--shadow1:0 1px 2px #0000000A,0 6px 20px #00000012;--shadow2:0 4px 10px #0000000F,0 20px 50px #00000018;--r12:12px;--r20:20px;--r24:24px;--pill:999px;--s8:8px;--s16:16px;--s24:24px;--s32:32px;--s48:48px;--font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--font-rounded:ui-rounded,ui-sans-serif,system-ui,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--font);color:var(--text);background:linear-gradient(var(--bg2),var(--bg));line-height:1.5}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}.section{padding:48px 0;border-bottom:1px solid var(--divider)}
+.header{position:sticky;top:0;z-index:20;background:var(--glass);backdrop-filter:blur(14px);border-bottom:1px solid var(--glass-border)}
+.header-in{display:flex;justify-content:space-between;align-items:center;min-height:72px}.brand{font-family:var(--font-rounded);font-weight:700;color:var(--text);text-decoration:none}.nav{display:flex;gap:16px}.nav a{color:var(--text2);text-decoration:none}
+.hero h1{font-size:clamp(32px,5vw,60px);line-height:1.05;margin:0 0 16px}.lead{font-size:1.1rem;color:var(--text2);max-width:68ch}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:var(--pill);border:1px solid var(--border);text-decoration:none;color:var(--text);background:var(--surface)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-primary:hover{background:var(--accent-hover)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r20);padding:24px;box-shadow:var(--shadow1)}
+.kpi{font:700 2rem/1 var(--font-rounded)}.muted{color:var(--text3)}
+.toc{background:var(--surface-muted);padding:16px;border-radius:var(--r12);border:1px solid var(--border)}
+.scroll-rail{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:30;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);box-shadow:var(--shadow1);border-radius:24px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.rail-track{display:flex;flex-direction:column;gap:8px}.rail-tick{position:relative;width:28px;height:8px;border:0;background:transparent;cursor:pointer}.rail-tick::before{content:"";display:block;height:2px;width:12px;background:var(--text3);border-radius:2px;margin-left:auto;transition:.2s}
+.rail-tick.is-active::before{width:24px;background:var(--accent)}.rail-tip{position:absolute;right:34px;top:50%;transform:translateY(-50%);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:12px;opacity:0;pointer-events:none;white-space:nowrap}
+.rail-tick.is-active .rail-tip,.rail-tick:hover .rail-tip{opacity:1}.rail-nav{border:1px solid var(--border);border-radius:999px;background:var(--surface);width:28px;height:28px;cursor:pointer}
+.rail-mobile-toggle,.rail-mobile-sheet{display:none}
+.author-card{display:flex;gap:12px;align-items:flex-start;background:var(--surface-muted);padding:16px;border:1px solid var(--border);border-radius:var(--r12)}
+.author-avatar{width:56px;height:56px;border-radius:50%;background:var(--divider);display:flex;align-items:center;justify-content:center;font-weight:700}
+@media (max-width:900px){.container{padding:0 16px}.grid{grid-template-columns:1fr;gap:16px}.scroll-rail{display:none}.rail-mobile-toggle{display:block;position:fixed;right:16px;bottom:16px;z-index:40;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:10px 14px}.rail-mobile-sheet{display:grid;position:fixed;left:16px;right:16px;bottom:72px;z-index:40;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px}}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.rail-tick::before{transition:none}}
+@media (prefers-contrast: more){:root{--border:#8e8e93;--text3:#4a4a4f}}
+@media (prefers-reduced-transparency: reduce){.header,.scroll-rail{background:var(--frosted);backdrop-filter:none}}
+</style>
+</head>
+<body>
+<header class="header"><div class="container header-in"><a class="brand" href="/">${escapeHtml(site.brandName)}</a><nav class="nav">${navLink('/', 'Главная')}${navLink('/blog/', 'Журнал')}${navLink('/contact/', 'Контакты')}</nav></div></header>
+${railHtml}
+<main>${contentHtml}</main>
+${railScript}
+</body></html>`;
 }
 
 module.exports = { renderLayout, escapeHtml };
