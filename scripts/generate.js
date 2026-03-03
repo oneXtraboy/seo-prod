@@ -28,6 +28,19 @@ function renderLanding(page) {
   return hero + packages + cases + process + trust + faq + contact + extras;
 }
 function renderBlogIndex(page) { return `<section class="section"><div class="section-container"><h1>${escapeHtml(page.h1)}</h1><p class="lead">${escapeHtml(page.lead)}</p><div class="cards-grid grid-1-2-3">${blog.map((post) => `<article class="card"><p class="muted">${escapeHtml(post.category)} · ${escapeHtml(post.date)}</p><h2><a href="/blog/${escapeHtml(post.slug)}/">${escapeHtml(post.title)}</a></h2><p>${escapeHtml(post.lead)}</p></article>`).join('')}</div></div></section>`; }
+function renderSimplePage(page) {
+  const cards = Array.isArray(page.cards) ? page.cards : [];
+  return `<section class="section"><div class="section-container"><h1>${escapeHtml(page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(page.lead || '')}</p>${cards.length ? `<div class="cards-grid grid-1-2-3">${cards.map((c) => `<article class="card"><h3>${escapeHtml(c.title || '')}</h3><p>${escapeHtml(c.text || '')}</p>${c.href ? `<p><a href="${escapeHtml(c.href)}">Подробнее</a></p>` : ''}</article>`).join('')}</div>` : ''}</div></section>`;
+}
+function renderJournalIndex(page) {
+  const posts = page.journal && Array.isArray(page.journal.posts) ? page.journal.posts : [];
+  const ctaHref = page.journal && page.journal.ctaHref ? page.journal.ctaHref : '/contact';
+  const ctaText = page.journal && page.journal.ctaText ? page.journal.ctaText : 'Связаться';
+  const hero = `<section class="section hero"><div class="section-container"><h1>${escapeHtml(page.h1 || 'Журнал')}</h1><p class="lead">${escapeHtml(page.lead || '')}</p></div></section>`;
+  const cards = section('journal-list', 'Свежие материалы', `<div class="cards-grid grid-1-2-3">${posts.map((p) => `<article class="card"><h3>${escapeHtml(p.title || '')}</h3><p>${escapeHtml(p.text || '')}</p><p><a href="${escapeHtml(p.href || '#')}">Читать →</a></p></article>`).join('')}</div>`, 'section-container');
+  const cta = section('journal-cta', 'Обсудим вашу задачу?', `<div class="card"><p><a class="btn btn-primary" href="${escapeHtml(ctaHref)}">${escapeHtml(ctaText)}</a></p></div>`, 'section-container');
+  return hero + cards + cta;
+}
 function renderAuthorCard(person) { return `<div class="author-card"><div class="author-avatar">${escapeHtml(person.initials)}</div><div><strong><a href="/authors/${escapeHtml(person.slug)}/">${escapeHtml(person.name)}</a></strong><div class="muted">${escapeHtml(person.role)}</div><p>${escapeHtml(person.expertise)}</p></div></div>`; }
 function renderPost(post) {
   const toc = `<nav class="toc"><strong>Содержание</strong><ol>${post.sections.map((s) => `<li><a href="#${escapeHtml(s.id)}">${escapeHtml(s.heading)}</a></li>`).join('')}</ol></nav>`;
@@ -49,7 +62,8 @@ function writePage(page, html, railSections = []) {
 function writeUtilities() {
   const robots = `User-agent: *\nAllow: /\nSitemap: ${norm(SITE_URL)}/sitemap.xml\n`;
   writeFile(path.join(outDir, 'robots.txt'), robots);
-  const urls = ['/', '/blog/', ...blog.map((p) => `/blog/${p.slug}/`), ...authors.map((a) => `/authors/${a.slug}/`), '/contact/'];
+  const pageUrls = pages.map((p) => p.slug);
+  const urls = [...new Set([...pageUrls, ...blog.map((p) => `/blog/${p.slug}/`), ...authors.map((a) => `/authors/${a.slug}/`)])];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${norm(SITE_URL)}${u}</loc></url>`).join('\n')}\n</urlset>\n`;
   writeFile(path.join(outDir, 'sitemap.xml'), sitemap);
   writeFile(path.join(outDir, '404.html'), '<!doctype html><meta charset="utf-8"><title>404</title><h1>404</h1><p>Страница не найдена</p>');
@@ -62,6 +76,8 @@ function main() {
   writePage(landing, renderLanding(landing), landing.railSections);
   writePage(blogIndex, renderBlogIndex(blogIndex));
   writePage(contact, `<section class="section"><div class="container"><h1>${escapeHtml(contact.h1)}</h1><p class="lead">${escapeHtml(contact.lead)}</p><div class="card"><p>Telegram: <a href="${escapeHtml(site.telegram)}">${escapeHtml(site.telegram)}</a></p><p>Телефон: <a href="tel:${escapeHtml(site.phone)}">${escapeHtml(site.phone)}</a></p></div></div></section>`);
+  pages.filter((p) => p.template === 'simple' && p.slug !== '/contact/').forEach((p) => writePage(p, renderSimplePage(p)));
+  pages.filter((p) => p.template === 'journal-index').forEach((p) => writePage(p, renderJournalIndex(p)));
   blog.forEach((post) => writePage({ slug: `/blog/${post.slug}/`, title: post.title, description: post.lead }, renderPost(post)));
   authors.forEach((a) => writePage({ slug: `/authors/${a.slug}/`, title: `${a.name} — автор`, description: a.expertise }, renderAuthorPage(a)));
   writeUtilities();

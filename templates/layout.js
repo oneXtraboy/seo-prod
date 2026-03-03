@@ -115,7 +115,7 @@ ${canonical ? `<link rel="canonical" href="${escapeHtml(canonical)}" />` : ''}
 </style>
 </head>
 <body>
-<header class="header"><div class="container header-in"><a class="brand" href="/">${escapeHtml(site.brandName)}</a><nav class="nav">${navLink('/', 'Главная')}${navLink('/blog/', 'Журнал')}${navLink('/contact/', 'Контакты')}</nav></div></header>
+<header class="header"><div class="container header-in"><a class="brand" href="/">${escapeHtml(site.brandName)}</a><nav class="nav">${navLink('/', 'Главная')}${navLink('/services', 'Услуги')}${navLink('/cases', 'Кейсы')}${navLink('/pricing', 'Цены')}${navLink('/journal', 'Журнал')}${navLink('/contact', 'Контакты')}</nav></div></header>
 ${railHtml}
 <main>${contentHtml}</main>
 ${railScript}
