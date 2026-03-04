@@ -113,12 +113,65 @@ ${page.schema ? `<script type="application/ld+json">${JSON.stringify(page.schema
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.rail-tick::before{transition:none}}
 @media (prefers-contrast: more){:root{--border:#8e8e93;--text3:#4a4a4f}}
 @media (prefers-reduced-transparency: reduce){.header,.scroll-rail{background:var(--frosted);backdrop-filter:none}}
+.site-footer{padding:48px 0;border-top:1px solid var(--divider);background:linear-gradient(var(--bg2),var(--bg))}
+.site-footer .footer-grid{align-items:start}
+.site-footer .footer-brand{font-family:var(--font-rounded);font-weight:800;letter-spacing:.02em}
+.site-footer .footer-title{font-weight:700;margin:0 0 10px}
+.site-footer .footer-links{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.site-footer .footer-links a{color:var(--text2);text-decoration:none}
+.site-footer .footer-links a:hover{color:var(--text);text-decoration:underline}
+.site-footer .footer-note,.site-footer .footer-micro{color:var(--text2);margin:10px 0 0}
+.site-footer .footer-bottom{margin-top:28px;padding-top:18px;border-top:1px solid var(--divider);display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.site-footer .footer-meta{display:flex;gap:10px;align-items:center;color:var(--text2)}
+.site-footer .footer-meta a{color:var(--text2);text-decoration:none}
+.site-footer .footer-meta a:hover{color:var(--text);text-decoration:underline}
 </style>
 </head>
 <body>
-<header class="header"><div class="container header-in"><a class="brand" href="/">${escapeHtml(site.brandName)}</a><nav class="nav">${navLink('/', 'Главная')}${navLink('/services', 'Услуги')}${navLink('/cases', 'Кейсы')}${navLink('/pricing', 'Цены')}${navLink('/journal', 'Журнал')}${navLink('/contact', 'Контакты')}</nav></div></header>
+<header class="header"><div class="container header-in"><a class="brand" href="/">${escapeHtml(site.brandName || 'SEO-PROD')}</a><nav class="nav">${navLink('/', 'Главная')}${navLink('/services/', 'Услуги')}${navLink('/cases/', 'Кейсы')}${navLink('/pricing/', 'Цены')}${navLink('/journal/', 'Журнал')}${navLink('/contact/', 'Контакты')}</nav></div></header>
 ${railHtml}
 <main>${contentHtml}</main>
+<footer class="site-footer">
+  <div class="section-container">
+    <div class="cards-grid grid-1-2-3 footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand">${escapeHtml(site.brandName || 'SEO-PROD')}</div>
+        <p class="footer-note">SEO с фокусом на заявки: GEO/AEO, контент, внедрения и контроль качества.</p>
+        <a class="btn btn-primary footer-cta" href="/contact/">Заполнить бриф</a>
+        <p class="footer-micro">Ответ в течение 15 минут • без спама</p>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Разделы</div>
+        <ul class="footer-links">
+          <li><a href="/">Главная</a></li>
+          <li><a href="/services/">Услуги</a></li>
+          <li><a href="/cases/">Кейсы</a></li>
+          <li><a href="/pricing/">Цены</a></li>
+          <li><a href="/journal/">Журнал</a></li>
+          <li><a href="/contact/">Контакты</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Контакты</div>
+        <ul class="footer-links">
+          <li><a href="https://t.me/USERNAME" target="_blank" rel="noopener">Telegram</a></li>
+          <li><a href="mailto:hello@seo-prod.ru">hello@seo-prod.ru</a></li>
+          <li><a href="tel:+79990000000">+7 (999) 000-00-00</a></li>
+        </ul>
+        <p class="footer-micro">TODO: замените USERNAME / email / телефон</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© ${new Date().getFullYear()} ${escapeHtml(site.brandName || 'SEO-PROD')}</div>
+      <div class="footer-meta">
+        <a href="/sitemap.xml">sitemap</a><span>·</span><a href="/robots.txt">robots</a>
+      </div>
+    </div>
+  </div>
+</footer>
 ${railScript}
 </body></html>`;
 }
