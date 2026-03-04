@@ -87,6 +87,7 @@ function renderLayout({ site, page, contentHtml, canonical = '', railSections = 
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}" />
 ${canonical ? `<link rel="canonical" href="${escapeHtml(canonical)}" />` : ''}
+${page.schema ? `<script type="application/ld+json">${JSON.stringify(page.schema)}</script>` : ''}
 <style>
 :root{--bg:#F5F5F7;--bg2:#FBFBFD;--surface:#FFFFFF;--surface-muted:#F2F2F7;--border:#D2D2D7;--divider:#E5E5EA;--text:#1D1D1F;--text2:#3A3A3C;--text3:#6E6E73;--accent:#0066CC;--accent-hover:#0057B8;--focus:#0066CC66;--glass:#FFFFFFB3;--glass-border:#FFFFFF80;--glass-clear:#FFFFFF4D;--dimming:#0000000D;--frosted:#F2F2F7E6;--shadow1:0 1px 2px #0000000A,0 6px 20px #00000012;--shadow2:0 4px 10px #0000000F,0 20px 50px #00000018;--r12:12px;--r20:20px;--r24:24px;--pill:999px;--s8:8px;--s16:16px;--s24:24px;--s32:32px;--s48:48px;--font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--font-rounded:ui-rounded,ui-sans-serif,system-ui,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--font);color:var(--text);background:linear-gradient(var(--bg2),var(--bg));line-height:1.5}
