@@ -160,15 +160,13 @@ ${railHtml}
           <li><a href="mailto:hello@seo-prod.ru">hello@seo-prod.ru</a></li>
           <li><a href="tel:+79990000000">+7 (999) 000-00-00</a></li>
         </ul>
-        <p class="footer-micro">TODO: замените USERNAME / email / телефон</p>
+        <p class="footer-micro">Telegram: https://t.me/seo-prod · hello@seo-prod.ru · +7 (999) 000-00-00</p>
       </div>
     </div>
 
     <div class="footer-bottom">
       <div class="footer-copy">© ${new Date().getFullYear()} ${escapeHtml(site.brandName || 'SEO-PROD')}</div>
-      <div class="footer-meta">
-        <a href="/sitemap.xml">sitemap</a><span>·</span><a href="/robots.txt">robots</a>
-      </div>
+      <div class="footer-meta"></div>
     </div>
   </div>
 </footer>
