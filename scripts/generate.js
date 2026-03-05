@@ -16,12 +16,34 @@ function routeToFile(slug) { return slug === '/' ? path.join(outDir, 'index.html
 function section(id, title, body, containerClass = 'container') { return `<section id="${id}" class="section"><div class="${containerClass}"><h2>${escapeHtml(title)}</h2>${body}</div></section>`; }
 
 function renderTextCard(text) {
-  return `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(text || '')}</p></article></div>`;
+  return `<div class="cards-grid grid-1-2-3"><article class="card"><p class="card-text">${escapeHtml(text || '')}</p></article></div>`;
+}
+
+function renderCardItems(items, kind) {
+  return items.map((item) => {
+    if (kind === 'client') {
+      return `<article class="card card--client"><h3 class="card-title">${escapeHtml(item.title || '')}</h3><p class="card-text">${escapeHtml(item.text || '')}</p></article>`;
+    }
+    if (kind === 'video') {
+      return `<article class="card card--video"><h3 class="card-title">Видео</h3><p class="card-text">${escapeHtml(item.text || '')}</p></article>`;
+    }
+    if (kind === 'quote') {
+      return `<article class="card card--quote"><blockquote class="quote">${escapeHtml(item.quote || '')}</blockquote><footer class="quote-meta">${escapeHtml(item.name || '')}${item.role ? ` — ${escapeHtml(item.role)}` : ''}</footer></article>`;
+    }
+    if (kind === 'team') {
+      return `<article class="card card--team"><h3 class="card-title">${escapeHtml(item.name || '')}</h3><p class="muted card-text">${escapeHtml(item.role || '')}</p><p class="card-text">${escapeHtml(item.text || '')}</p></article>`;
+    }
+    return `<article class="card"><p class="card-text">${escapeHtml(item.text || '')}</p></article>`;
+  }).join('');
+}
+
+function renderCardsGrid(items, kind) {
+  return `<div class="cards-grid grid-1-2-3">${renderCardItems(items, kind)}</div>`;
 }
 
 function renderClients(data) {
   if (Array.isArray(data.items) && data.items.length) {
-    return `<div class="cards-grid grid-1-2-3">${data.items.map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div>`;
+    return renderCardsGrid(data.items, 'client');
   }
   return renderTextCard(data.text);
 }
@@ -30,14 +52,14 @@ function renderReviews(data) {
   const videos = Array.isArray(data.videos) ? data.videos : [];
   const quotes = Array.isArray(data.quotes) ? data.quotes : [];
   if (videos.length || quotes.length) {
-    return `<div class="cards-grid grid-1-2-3">${videos.map((item) => `<article class="card"><h3>Видео</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}${quotes.map((item) => `<article class="card"><blockquote>${escapeHtml(item.quote || '')}</blockquote><footer>${escapeHtml(item.name || '')}${item.role ? ` — ${escapeHtml(item.role)}` : ''}</footer></article>`).join('')}</div>`;
+    return `<div class="cards-grid grid-1-2-3">${renderCardItems(videos, 'video')}${renderCardItems(quotes, 'quote')}</div>`;
   }
   return renderTextCard(data.text);
 }
 
 function renderTeam(data) {
   if (Array.isArray(data.members) && data.members.length) {
-    return `<div class="cards-grid grid-1-2-3">${data.members.map((item) => `<article class="card"><h3>${escapeHtml(item.name || '')}</h3><p class="muted">${escapeHtml(item.role || '')}</p><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div>`;
+    return renderCardsGrid(data.members, 'team');
   }
   return renderTextCard(data.text);
 }
