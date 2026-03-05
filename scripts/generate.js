@@ -15,6 +15,55 @@ function norm(u) { return String(u || '').replace(/\/+$/, ''); }
 function routeToFile(slug) { return slug === '/' ? path.join(outDir, 'index.html') : path.join(outDir, slug.replace(/^\//, ''), 'index.html'); }
 function section(id, title, body, containerClass = 'container') { return `<section id="${id}" class="section"><div class="${containerClass}"><h2>${escapeHtml(title)}</h2>${body}</div></section>`; }
 
+function renderTextCard(text) {
+  return `<div class="cards-grid grid-1-2-3"><article class="card"><p class="card-text">${escapeHtml(text || '')}</p></article></div>`;
+}
+
+function renderCardItems(items, kind) {
+  return items.map((item) => {
+    if (kind === 'client') {
+      return `<article class="card card--client"><h3 class="card-title">${escapeHtml(item.title || '')}</h3><p class="card-text">${escapeHtml(item.text || '')}</p></article>`;
+    }
+    if (kind === 'video') {
+      return `<article class="card card--video"><h3 class="card-title">Видео</h3><p class="card-text">${escapeHtml(item.text || '')}</p></article>`;
+    }
+    if (kind === 'quote') {
+      return `<article class="card card--quote"><blockquote class="quote">${escapeHtml(item.quote || '')}</blockquote><footer class="quote-meta">${escapeHtml(item.name || '')}${item.role ? ` — ${escapeHtml(item.role)}` : ''}</footer></article>`;
+    }
+    if (kind === 'team') {
+      return `<article class="card card--team"><h3 class="card-title">${escapeHtml(item.name || '')}</h3><p class="muted card-text">${escapeHtml(item.role || '')}</p><p class="card-text">${escapeHtml(item.text || '')}</p></article>`;
+    }
+    return `<article class="card"><p class="card-text">${escapeHtml(item.text || '')}</p></article>`;
+  }).join('');
+}
+
+function renderCardsGrid(items, kind) {
+  return `<div class="cards-grid grid-1-2-3">${renderCardItems(items, kind)}</div>`;
+}
+
+function renderClients(data) {
+  if (Array.isArray(data.items) && data.items.length) {
+    return renderCardsGrid(data.items, 'client');
+  }
+  return renderTextCard(data.text);
+}
+
+function renderReviews(data) {
+  const videos = Array.isArray(data.videos) ? data.videos : [];
+  const quotes = Array.isArray(data.quotes) ? data.quotes : [];
+  if (videos.length || quotes.length) {
+    return `<div class="cards-grid grid-1-2-3">${renderCardItems(videos, 'video')}${renderCardItems(quotes, 'quote')}</div>`;
+  }
+  return renderTextCard(data.text);
+}
+
+function renderTeam(data) {
+  if (Array.isArray(data.members) && data.members.length) {
+    return renderCardsGrid(data.members, 'team');
+  }
+  return renderTextCard(data.text);
+}
+
 function renderLanding(page) {
   const data = page.landing;
   const hero = `<section id="hero" class="section hero"><div class="section-container"><h1>${escapeHtml(data.hero.title)}</h1><p class="lead">${escapeHtml(data.hero.lead)}</p><div class="cards-grid grid-1-2-3">${(data.hero.stats || []).map((stat) => `<article class="card"><p class="kpi">${escapeHtml(stat)}</p></article>`).join('')}</div><p><a class="btn btn-primary" href="${escapeHtml(data.hero.ctaPrimary.href)}">${escapeHtml(data.hero.ctaPrimary.text)}</a> <a class="btn" href="${escapeHtml(data.hero.ctaSecondary.href)}">${escapeHtml(data.hero.ctaSecondary.text)}</a></p><p class="muted">${escapeHtml(data.hero.micro)}</p></div></section>`;
@@ -22,9 +71,9 @@ function renderLanding(page) {
   const results = section('results', data.results.title, `<div class="cards-grid grid-1-2-3">${data.results.cards.map((item) => `<article class="card"><h3>${escapeHtml(item.title)}</h3><p class="kpi">${escapeHtml(item.text)}</p></article>`).join('')}</div><p><a href="${escapeHtml(data.results.cta.href)}">${escapeHtml(data.results.cta.text)}</a></p>`, 'section-container');
   const process = section('process', data.process.title, `<div class="cards-grid grid-1-2-4">${data.process.steps.map((step, i) => `<article class="card"><p class="muted">Этап ${i + 1}</p><p>${escapeHtml(step)}</p></article>`).join('')}</div><p><a href="${escapeHtml(data.process.cta.href)}">${escapeHtml(data.process.cta.text)}</a></p>`, 'section-container');
   const pricing = section('pricing', data.pricing.title, `<div class="cards-grid grid-1-2-3">${data.pricing.cards.map((item) => `<article class="card"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.text)}</p></article>`).join('')}</div><p><a href="${escapeHtml(data.pricing.cta.href)}">${escapeHtml(data.pricing.cta.text)}</a></p>`, 'section-container');
-  const clients = section('clients', data.clients.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.clients.text)}</p></article></div>`, 'section-container');
-  const reviews = section('reviews', data.reviews.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.reviews.text)}</p></article></div>`, 'section-container');
-  const team = section('team', data.team.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.team.text)}</p></article></div>`, 'section-container');
+  const clients = section('clients', data.clients.title, renderClients(data.clients), 'section-container');
+  const reviews = section('reviews', data.reviews.title, renderReviews(data.reviews), 'section-container');
+  const team = section('team', data.team.title, renderTeam(data.team), 'section-container');
   const faq = section('faq', 'FAQ', `<div class="cards-grid grid-1-2-3">${data.faq.map((item) => `<article class="card"><details><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details></article>`).join('')}</div>`, 'section-container');
   const contact = section('contact', data.finalCta.title, `<div class="card"><ul>${data.finalCta.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join('')}</ul><p><a class="btn btn-primary" href="${escapeHtml(data.finalCta.cta.href)}">${escapeHtml(data.finalCta.cta.text)}</a></p></div>`, 'section-container');
   return hero + eeat + results + process + pricing + clients + reviews + team + faq + contact;
