@@ -34,6 +34,28 @@ function renderSimplePage(page) {
   const cards = Array.isArray(page.cards) ? page.cards : [];
   return `<section class="section"><div class="section-container"><h1>${escapeHtml(page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(page.lead || '')}</p>${cards.length ? `<div class="cards-grid grid-1-2-3">${cards.map((c) => `<article class="card"><h3>${escapeHtml(c.title || '')}</h3><p>${escapeHtml(c.text || '')}</p>${c.href ? `<p><a href="${escapeHtml(c.href)}">Подробнее</a></p>` : ''}</article>`).join('')}</div>` : ''}</div></section>`;
 }
+function renderContactPage(page) {
+  const data = page.contact || {};
+  const hero = data.hero || {};
+  const firstMessage = data.firstMessage || {};
+  const briefCards = data.briefCards || {};
+  const startFlow = data.startFlow || {};
+  const fit = data.fit || {};
+  const finalCta = data.finalCta || {};
+
+  const firstItems = Array.isArray(firstMessage.items) ? firstMessage.items : [];
+  const briefItems = Array.isArray(briefCards.cards) ? briefCards.cards : [];
+  const flowSteps = Array.isArray(startFlow.steps) ? startFlow.steps : [];
+  const fitGood = Array.isArray(fit.good) ? fit.good : [];
+  const fitBad = Array.isArray(fit.bad) ? fit.bad : [];
+
+  return `<section class="section hero"><div class="section-container"><h1>${escapeHtml(page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(page.lead || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((hero.primaryCta && hero.primaryCta.href) || site.telegram)}">${escapeHtml((hero.primaryCta && hero.primaryCta.text) || 'Написать в Telegram')}</a> <a class="btn" href="${escapeHtml((hero.secondaryCta && hero.secondaryCta.href) || `mailto:${site.email}`)}">${escapeHtml((hero.secondaryCta && hero.secondaryCta.text) || site.email || 'Email')}</a></p><p class="muted">${escapeHtml(hero.micro || '')}</p></div></section>
+  ${section('first-message', firstMessage.title || 'Что прислать в первом сообщении', `<div class="card"><ul>${firstItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>`, 'section-container')}
+  ${section('short-brief', briefCards.title || 'Короткий brief', `<div class="cards-grid grid-1-2-3">${briefItems.map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div>`, 'section-container')}
+  ${section('start', startFlow.title || 'Как проходит старт', `<div class="cards-grid grid-1-2-4">${flowSteps.map((step, index) => `<article class="card"><p class="muted">Шаг ${index + 1}</p><p>${escapeHtml(step)}</p></article>`).join('')}</div>`, 'section-container')}
+  ${section('fit', fit.title || 'Когда лучше писать', `<div class="cards-grid grid-1-2-3"><article class="card"><h3>${escapeHtml(fit.goodTitle || 'Подходит, если')}</h3><ul>${fitGood.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></article><article class="card"><h3>${escapeHtml(fit.badTitle || 'Не подходит, если')}</h3><ul>${fitBad.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></article></div>`, 'section-container')}
+  ${section('contact-cta', finalCta.title || 'Обсудить проект', `<div class="card"><p>${escapeHtml(finalCta.text || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.href) || site.telegram)}">${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.text) || 'Telegram')}</a> <a class="btn" href="${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.href) || `mailto:${site.email}`)}">${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.text) || site.email || 'Email')}</a></p></div>`, 'section-container')}`;
+}
 function renderJournalIndex(page) {
   const posts = page.journal && Array.isArray(page.journal.posts) ? page.journal.posts : [];
   const ctaHref = page.journal && page.journal.ctaHref ? page.journal.ctaHref : '/contact';
@@ -77,7 +99,7 @@ function main() {
   if (!landing || !blogIndex || !contact) throw new Error('Missing required pages');
   writePage(landing, renderLanding(landing), landing.railSections);
   writePage(blogIndex, renderBlogIndex(blogIndex));
-  writePage(contact, `<section class="section"><div class="container"><h1>${escapeHtml(contact.h1)}</h1><p class="lead">${escapeHtml(contact.lead)}</p><div class="card"><p>Telegram: <a href="${escapeHtml(site.telegram)}">${escapeHtml(site.telegram)}</a></p><p>Телефон: <a href="tel:${escapeHtml(site.phone)}">${escapeHtml(site.phone)}</a></p></div></div></section>`);
+  writePage(contact, renderContactPage(contact));
   pages.filter((p) => p.template === 'simple' && p.slug !== '/contact/').forEach((p) => writePage(p, renderSimplePage(p)));
   pages.filter((p) => p.template === 'journal-index').forEach((p) => writePage(p, renderJournalIndex(p)));
   blog.forEach((post) => writePage({ slug: `/blog/${post.slug}/`, title: post.title, description: post.lead }, renderPost(post)));
