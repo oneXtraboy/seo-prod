@@ -156,7 +156,7 @@ ${railHtml}
       <div class="footer-col">
         <div class="footer-title">Контакты</div>
         <ul class="footer-links">
-          <li><a href="https://t.me/USERNAME" target="_blank" rel="noopener">Telegram</a></li>
+          <li><a href="https://t.me/seo-prod" target="_blank" rel="noopener">Telegram</a></li>
           <li><a href="mailto:hello@seo-prod.ru">hello@seo-prod.ru</a></li>
           <li><a href="tel:+79990000000">+7 (999) 000-00-00</a></li>
         </ul>
