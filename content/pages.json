@@ -161,7 +161,7 @@
         ],
         "cta": {
           "text": "Посмотреть исследования →",
-          "href": "/journal"
+          "href": "/journal/"
         }
       },
       "results": {
@@ -274,7 +274,7 @@
         ],
         "cta": {
           "text": "Обсудить проект",
-          "href": "/contact"
+          "href": "/contact/"
         }
       }
     }
@@ -381,7 +381,7 @@
     }
   },
   {
-    "slug": "/services",
+    "slug": "/services/",
     "title": "Услуги — SEO-PROD",
     "description": "Коммерческая страница услуг: форматы работ, границы ответственности и запуск проекта.",
     "template": "services-offer",
@@ -496,7 +496,7 @@
     }
   },
   {
-    "slug": "/cases",
+    "slug": "/cases/",
     "title": "Кейсы и результаты — SEO-PROD",
     "description": "Кейсы как доказательства: стартовые условия, действия, результат и применимость к вашей задаче.",
     "template": "cases-proof",
@@ -619,7 +619,7 @@
     }
   },
   {
-    "slug": "/pricing",
+    "slug": "/pricing/",
     "title": "Цены — SEO-PROD",
     "description": "Пакеты работ и форматы сотрудничества.",
     "template": "simple",
@@ -653,7 +653,7 @@
     ]
   },
   {
-    "slug": "/about",
+    "slug": "/about/",
     "title": "Обо мне — SEO-PROD",
     "description": "Подход, метод и принципы работы.",
     "template": "simple",
@@ -687,7 +687,7 @@
     ]
   },
   {
-    "slug": "/journal",
+    "slug": "/journal/",
     "title": "Journal — SEO-PROD",
     "description": "Insights, notes, and editorial tracks on SEO strategy, technical systems, and AI-search.",
     "template": "journal-index",
@@ -698,7 +698,7 @@
         "text": "A working journal about strategy, technical execution, and content operations for teams that want repeatable SEO outcomes.",
         "primaryCta": {
           "text": "Join Telegram",
-          "href": "https://t.me/oneXtraboy"
+          "href": "https://t.me/seo-prod"
         },
         "secondaryCta": {
           "text": "Go to /contact/",
@@ -801,7 +801,7 @@
         "text": "If you want tailored guidance, share your context in Telegram or send a structured request via /contact/.",
         "primaryCta": {
           "text": "Write in Telegram",
-          "href": "https://t.me/oneXtraboy"
+          "href": "https://t.me/seo-prod"
         },
         "secondaryCta": {
           "text": "Open /contact/",
