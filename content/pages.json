@@ -688,46 +688,126 @@
   },
   {
     "slug": "/journal",
-    "title": "Журнал — SEO-PROD",
-    "description": "Практические заметки про SEO-операции, архитектуру и рост.",
+    "title": "Journal — SEO-PROD",
+    "description": "Insights, notes, and editorial tracks on SEO strategy, technical systems, and AI-search.",
     "template": "journal-index",
-    "h1": "Журнал",
-    "lead": "Пишу о том, как собирать SEO-систему без хаоса и с понятной отдачей.",
+    "h1": "Journal: insights, systems, and practical notes",
+    "lead": "This is the content index and SEO knowledge layer of SEO-PROD: what we publish, how topics are grouped, and where to start reading by your task.",
     "journal": {
-      "ctaText": "Заполнить бриф / связаться",
-      "ctaHref": "/contact",
-      "posts": [
-        {
-          "title": "Как запускать SEO-спринты",
-          "text": "Каркас процесса от backlog до ретро и фиксации эффекта.",
-          "href": "/blog/agency-os-landing-mvp/"
+      "hero": {
+        "text": "A working journal about strategy, technical execution, and content operations for teams that want repeatable SEO outcomes.",
+        "primaryCta": {
+          "text": "Join Telegram",
+          "href": "https://t.me/oneXtraboy"
         },
-        {
-          "title": "Архитектура посадочных",
-          "text": "Как строить страницы под спрос и избегать каннибализации.",
-          "href": "/blog/agency-os-landing-mvp/"
-        },
-        {
-          "title": "SEO + аналитика продукта",
-          "text": "Связка поискового трафика с MQL/SQL и выручкой.",
-          "href": "/blog/agency-os-landing-mvp/"
-        },
-        {
-          "title": "Технический минимум",
-          "text": "Что чинить в первую очередь при ограниченном ресурсе.",
-          "href": "/blog/agency-os-landing-mvp/"
-        },
-        {
-          "title": "Контент как операция",
-          "text": "Роли, SLA и контроль качества в контентном конвейере.",
-          "href": "/blog/agency-os-landing-mvp/"
-        },
-        {
-          "title": "North Star для SEO",
-          "text": "Какие KPI помогают управлять и не терять фокус.",
-          "href": "/blog/agency-os-landing-mvp/"
+        "secondaryCta": {
+          "text": "Go to /contact/",
+          "href": "/contact/"
         }
-      ]
+      },
+      "topicsTitle": "Featured topics and planned tracks",
+      "topics": [
+        {
+          "title": "SEO strategy",
+          "text": "Positioning, prioritization frameworks, and growth roadmaps tied to business outcomes.",
+          "stage": "Planned track"
+        },
+        {
+          "title": "Technical SEO",
+          "text": "Crawl control, rendering, indexation, internal linking, and release QA checklists.",
+          "stage": "Planned track"
+        },
+        {
+          "title": "Content systems",
+          "text": "Editorial workflows, production standards, and quality control for scalable content operations.",
+          "stage": "Planned track"
+        },
+        {
+          "title": "GEO / AEO / AI-search",
+          "text": "How to adapt assets for AI overviews, answer engines, and generative search behavior.",
+          "stage": "Planned track"
+        },
+        {
+          "title": "Analytics / experiments",
+          "text": "Measurement models, test design, and interpretation principles for SEO decisions.",
+          "stage": "Planned track"
+        },
+        {
+          "title": "Case notes / observations",
+          "text": "Field notes from implementations: what changed, what failed, and what repeated across projects.",
+          "stage": "Planned track"
+        }
+      ],
+      "archiveTitle": "Journal index (editorial shell)",
+      "archive": [
+        {
+          "title": "Strategy memos",
+          "text": "Upcoming long-form notes on SEO planning and prioritization.",
+          "status": "No publications yet — structure ready"
+        },
+        {
+          "title": "Technical deep dives",
+          "text": "Upcoming explainers on architecture, diagnostics, and implementation pitfalls.",
+          "status": "No publications yet — structure ready"
+        },
+        {
+          "title": "Content operations notes",
+          "text": "Upcoming practical guides for editorial systems and workflow governance.",
+          "status": "No publications yet — structure ready"
+        },
+        {
+          "title": "AI-search adaptation log",
+          "text": "Upcoming observations on GEO/AEO patterns and answer-surface behavior.",
+          "status": "No publications yet — structure ready"
+        },
+        {
+          "title": "Measurement and testing log",
+          "text": "Upcoming experiment summaries and analytics interpretation notes.",
+          "status": "No publications yet — structure ready"
+        },
+        {
+          "title": "Case observation ledger",
+          "text": "Upcoming concise implementation notes without inflated claims or vanity metrics.",
+          "status": "No publications yet — structure ready"
+        }
+      ],
+      "readingPathsTitle": "Reading paths and navigation help",
+      "readingPaths": [
+        {
+          "title": "For founders and heads of growth",
+          "text": "Start with Strategy + Analytics tracks to frame decisions, sequencing, and ROI conversations.",
+          "audience": "Best for: business owners and growth leaders"
+        },
+        {
+          "title": "For in-house SEO and product teams",
+          "text": "Start with Technical SEO + Content systems to align implementation and publishing cadence.",
+          "audience": "Best for: execution teams"
+        },
+        {
+          "title": "For teams entering AI-search",
+          "text": "Start with GEO/AEO + Case notes to understand constraints, opportunities, and realistic expectations.",
+          "audience": "Best for: teams adapting to generative search"
+        }
+      ],
+      "principlesTitle": "Editorial principles",
+      "principles": [
+        "We publish practical frameworks, implementation notes, and decision models grounded in real delivery work.",
+        "We do not publish fabricated case studies, fake publication dates, or vanity metrics without context.",
+        "Materials are directional, not absolute instructions: adapt every recommendation to your stack, market, and constraints.",
+        "When evidence is limited, we label assumptions explicitly and separate observation from interpretation."
+      ],
+      "finalCta": {
+        "title": "Continue in Telegram or move to /contact/",
+        "text": "If you want tailored guidance, share your context in Telegram or send a structured request via /contact/.",
+        "primaryCta": {
+          "text": "Write in Telegram",
+          "href": "https://t.me/oneXtraboy"
+        },
+        "secondaryCta": {
+          "text": "Open /contact/",
+          "href": "/contact/"
+        }
+      }
     }
   }
 ]
