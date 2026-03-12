@@ -169,7 +169,7 @@ ${railHtml}
 
     <div class="footer-bottom">
       <div class="footer-copy">© ${new Date().getFullYear()} ${escapeHtml(site.brandName || 'SEO-PROD')}</div>
-      <div class="footer-meta"></div>
+      <div class="footer-meta"><a href="/privacy/">Privacy</a><span>•</span><a href="/terms/">Terms</a></div>
     </div>
   </div>
 </footer>
