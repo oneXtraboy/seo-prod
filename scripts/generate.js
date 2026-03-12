@@ -91,13 +91,20 @@ function renderCasesProofPage(page) {
   ${section('final-cta', finalCta.title || 'Следующий шаг', `<div class="card"><p>${escapeHtml(finalCta.text || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.href) || site.telegram)}">${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.text) || 'Написать в Telegram')}</a> <a class="btn" href="${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.href) || '/contact/')}">${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.text) || 'Перейти в /contact/')}</a></p></div>`, 'section-container')}`;
 }
 function renderJournalIndex(page) {
-  const posts = page.journal && Array.isArray(page.journal.posts) ? page.journal.posts : [];
-  const ctaHref = page.journal && page.journal.ctaHref ? page.journal.ctaHref : '/contact';
-  const ctaText = page.journal && page.journal.ctaText ? page.journal.ctaText : 'Связаться';
-  const hero = `<section class="section hero"><div class="section-container"><h1>${escapeHtml(page.h1 || 'Журнал')}</h1><p class="lead">${escapeHtml(page.lead || '')}</p></div></section>`;
-  const cards = section('journal-list', 'Свежие материалы', `<div class="cards-grid grid-1-2-3">${posts.map((p) => `<article class="card"><h3>${escapeHtml(p.title || '')}</h3><p>${escapeHtml(p.text || '')}</p><p><a href="${escapeHtml(p.href || '#')}">Читать →</a></p></article>`).join('')}</div>`, 'section-container');
-  const cta = section('journal-cta', 'Обсудим вашу задачу?', `<div class="card"><p><a class="btn btn-primary" href="${escapeHtml(ctaHref)}">${escapeHtml(ctaText)}</a></p></div>`, 'section-container');
-  return hero + cards + cta;
+  const data = page.journal || {};
+  const heroData = data.hero || {};
+  const topics = Array.isArray(data.topics) ? data.topics : [];
+  const archive = Array.isArray(data.archive) ? data.archive : [];
+  const readingPaths = Array.isArray(data.readingPaths) ? data.readingPaths : [];
+  const principles = Array.isArray(data.principles) ? data.principles : [];
+  const finalCta = data.finalCta || {};
+  const hero = `<section class="section hero"><div class="section-container"><h1>${escapeHtml(page.h1 || 'Journal')}</h1><p class="lead">${escapeHtml(page.lead || '')}</p><p>${escapeHtml(heroData.text || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((heroData.primaryCta && heroData.primaryCta.href) || site.telegram)}">${escapeHtml((heroData.primaryCta && heroData.primaryCta.text) || 'Telegram')}</a> <a class="btn" href="${escapeHtml((heroData.secondaryCta && heroData.secondaryCta.href) || '/contact/')}">${escapeHtml((heroData.secondaryCta && heroData.secondaryCta.text) || 'Перейти в /contact/')}</a></p></div></section>`;
+  const topicsSection = section('topics', data.topicsTitle || 'Featured topics', `<div class="cards-grid grid-1-2-3">${topics.map((topic) => `<article class="card"><h3>${escapeHtml(topic.title || '')}</h3><p>${escapeHtml(topic.text || '')}</p><p class="muted">${escapeHtml(topic.stage || '')}</p></article>`).join('')}</div>`, 'section-container');
+  const archiveSection = section('archive', data.archiveTitle || 'Journal index', `<div class="cards-grid grid-1-2-3">${archive.map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p><p class="muted">${escapeHtml(item.status || '')}</p></article>`).join('')}</div>`, 'section-container');
+  const readingPathsSection = section('reading-paths', data.readingPathsTitle || 'Reading paths', `<div class="cards-grid grid-1-2-3">${readingPaths.map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p><p class="muted">${escapeHtml(item.audience || '')}</p></article>`).join('')}</div>`, 'section-container');
+  const principlesSection = section('principles', data.principlesTitle || 'Editorial principles', `<div class="card"><ul>${principles.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>`, 'section-container');
+  const finalCtaSection = section('journal-cta', finalCta.title || 'Continue the conversation', `<div class="card"><p>${escapeHtml(finalCta.text || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.href) || site.telegram)}">${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.text) || 'Telegram')}</a> <a class="btn" href="${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.href) || '/contact/')}">${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.text) || 'Перейти в /contact/')}</a></p></div>`, 'section-container');
+  return hero + topicsSection + archiveSection + readingPathsSection + principlesSection + finalCtaSection;
 }
 function renderAuthorCard(person) { return `<div class="author-card"><div class="author-avatar">${escapeHtml(person.initials)}</div><div><strong><a href="/authors/${escapeHtml(person.slug)}/">${escapeHtml(person.name)}</a></strong><div class="muted">${escapeHtml(person.role)}</div><p>${escapeHtml(person.expertise)}</p></div></div>`; }
 function renderPost(post) {
