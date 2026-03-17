@@ -79,12 +79,29 @@ function renderCasesProofPage(page) {
   const hero = data.hero || {};
   const cases = Array.isArray(data.cases) ? data.cases : [];
   const proof = data.proof || {};
+  const evaluation = data.evaluation || {};
   const patterns = Array.isArray(data.patterns) ? data.patterns : [];
   const fit = data.fit || {};
   const finalCta = data.finalCta || {};
 
+  const casesSection = section('cases-list', data.casesTitle || 'Кейсы', `<div class="cards-grid grid-1-2-3">${cases.map((item) => {
+    const context = item.context || item.start || '';
+    const task = item.task || '';
+    const actions = Array.isArray(item.actionsList) ? item.actionsList : (item.actions ? [item.actions] : []);
+    const implementation = Array.isArray(item.implementation) ? item.implementation : [];
+    const result = item.result || '';
+    const metrics = Array.isArray(item.metrics) ? item.metrics : [];
+    const evidence = item.evidence || {};
+    const summary = item.takeaway || item.summary || '';
+
+    return `<article class="card"><p class="muted">${escapeHtml(item.niche || '')}</p><h3>${escapeHtml(item.title || '')}</h3><p><strong>Контекст:</strong> ${escapeHtml(context)}</p>${task ? `<p><strong>Задача:</strong> ${escapeHtml(task)}</p>` : ''}${actions.length ? `<p><strong>Что делали:</strong></p><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${implementation.length ? `<p><strong>Что внедряли:</strong></p><ul>${implementation.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}<p><strong>Результат:</strong> ${escapeHtml(result)}</p>${metrics.length ? `<p><strong>Метрики:</strong></p><ul>${metrics.map((metric) => `<li><strong>${escapeHtml(metric.label || '')}:</strong> ${escapeHtml(metric.value || 'Доступно в рабочей отчётности')} ${metric.period ? `(${escapeHtml(metric.period)})` : ''}${metric.note ? ` — ${escapeHtml(metric.note)}` : ''}</li>`).join('')}</ul>` : '<p class="muted"><strong>Метрики:</strong> Публичные цифры не раскрываются; фиксируются в рабочей аналитике проекта.</p>'}<p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p>${evidence.note ? `<p class="muted"><strong>Пруф:</strong> ${escapeHtml(evidence.note)}</p>` : ''}${summary ? `<p class="muted">${escapeHtml(summary)}</p>` : ''}</article>`;
+  }).join('')}</div>`, 'section-container');
+
+  const evaluationSection = section('cases-evaluation', evaluation.title || 'Как оцениваем результат', `<div class="card"><p>${escapeHtml(evaluation.lead || 'Оцениваем не по одной метрике, а по связке продуктовых и коммерческих сигналов.')}</p><div class="cards-grid grid-1-2-3">${(evaluation.dimensions || []).map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div></div>`, 'section-container');
+
   return `<section id="cases-hero" class="section hero"><div class="section-container"><h1>${escapeHtml(hero.title || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(hero.lead || page.lead || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((hero.primaryCta && hero.primaryCta.href) || site.telegram)}">${escapeHtml((hero.primaryCta && hero.primaryCta.text) || 'Написать в Telegram')}</a> <a class="btn" href="${escapeHtml((hero.secondaryCta && hero.secondaryCta.href) || '/contact/')}">${escapeHtml((hero.secondaryCta && hero.secondaryCta.text) || 'Перейти в /contact/')}</a></p></div></section>
-  ${section('cases-list', data.casesTitle || 'Кейсы', `<div class="cards-grid grid-1-2-3">${cases.map((item) => `<article class="card"><p class="muted">${escapeHtml(item.niche || '')}</p><h3>${escapeHtml(item.title || '')}</h3><p><strong>Старт:</strong> ${escapeHtml(item.start || '')}</p><p><strong>Что делали:</strong> ${escapeHtml(item.actions || '')}</p><p><strong>Результат:</strong> ${escapeHtml(item.result || '')}</p><p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p><p class="muted">${escapeHtml(item.takeaway || '')}</p></article>`).join('')}</div>`, 'section-container')}
+  ${casesSection}
+  ${evaluationSection}
   ${section('proof-style', proof.title || 'Как читать эти кейсы', `<div class="card"><ul>${(proof.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>`, 'section-container')}
   ${section('approach-patterns', data.patternsTitle || 'Повторяющиеся подходы', `<div class="cards-grid grid-1-2-3">${patterns.map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div>`, 'section-container')}
   ${section('fit-filter', fit.title || 'Кому релевантны кейсы', `<div class="cards-grid grid-1-2-2"><article class="card"><h3>${escapeHtml(fit.goodTitle || 'Релевантно, если')}</h3><ul>${(fit.good || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></article><article class="card"><h3>${escapeHtml(fit.badTitle || 'Не стоит переносить напрямую, если')}</h3><ul>${(fit.bad || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></article></div>`, 'section-container')}
