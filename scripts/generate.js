@@ -7,6 +7,7 @@ const site = require('../content/site.json');
 const pages = require('../content/pages.json');
 const blog = require('../content/blog.json');
 const authors = require('../content/authors.json');
+const journalPosts = require('../content/journal-posts.json');
 
 const outDir = path.join(__dirname, '..', 'public');
 function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
@@ -111,17 +112,28 @@ function renderJournalIndex(page) {
   const data = page.journal || {};
   const heroData = data.hero || {};
   const topics = Array.isArray(data.topics) ? data.topics : [];
-  const archive = Array.isArray(data.archive) ? data.archive : [];
   const readingPaths = Array.isArray(data.readingPaths) ? data.readingPaths : [];
   const principles = Array.isArray(data.principles) ? data.principles : [];
   const finalCta = data.finalCta || {};
+  const posts = Array.isArray(journalPosts) ? journalPosts : [];
   const hero = `<section class="section hero"><div class="section-container"><h1>${escapeHtml(page.h1 || 'Journal')}</h1><p class="lead">${escapeHtml(page.lead || '')}</p><p>${escapeHtml(heroData.text || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((heroData.primaryCta && heroData.primaryCta.href) || site.telegram)}">${escapeHtml((heroData.primaryCta && heroData.primaryCta.text) || 'Telegram')}</a> <a class="btn" href="${escapeHtml((heroData.secondaryCta && heroData.secondaryCta.href) || '/contact/')}">${escapeHtml((heroData.secondaryCta && heroData.secondaryCta.text) || 'Перейти в /contact/')}</a></p></div></section>`;
+  const postsSection = section('journal-posts', data.archiveTitle || 'Материалы', `<div class="cards-grid grid-1-2-3">${posts.map((post) => `<article class="card"><p class="muted">${escapeHtml(post.date || '')}</p><h3><a href="/journal/${escapeHtml(post.slug || '')}/">${escapeHtml(post.title || '')}</a></h3><p>${escapeHtml(post.excerpt || '')}</p><p><a href="/journal/${escapeHtml(post.slug || '')}/">Читать статью</a></p></article>`).join('')}</div>`, 'section-container');
   const topicsSection = section('topics', data.topicsTitle || 'Featured topics', `<div class="cards-grid grid-1-2-3">${topics.map((topic) => `<article class="card"><h3>${escapeHtml(topic.title || '')}</h3><p>${escapeHtml(topic.text || '')}</p><p class="muted">${escapeHtml(topic.stage || '')}</p></article>`).join('')}</div>`, 'section-container');
-  const archiveSection = section('archive', data.archiveTitle || 'Journal index', `<div class="cards-grid grid-1-2-3">${archive.map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p><p class="muted">${escapeHtml(item.status || '')}</p></article>`).join('')}</div>`, 'section-container');
   const readingPathsSection = section('reading-paths', data.readingPathsTitle || 'Reading paths', `<div class="cards-grid grid-1-2-3">${readingPaths.map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p><p class="muted">${escapeHtml(item.audience || '')}</p></article>`).join('')}</div>`, 'section-container');
   const principlesSection = section('principles', data.principlesTitle || 'Editorial principles', `<div class="card"><ul>${principles.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>`, 'section-container');
   const finalCtaSection = section('journal-cta', finalCta.title || 'Continue the conversation', `<div class="card"><p>${escapeHtml(finalCta.text || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.href) || site.telegram)}">${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.text) || 'Telegram')}</a> <a class="btn" href="${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.href) || '/contact/')}">${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.text) || 'Перейти в /contact/')}</a></p></div>`, 'section-container');
-  return hero + topicsSection + archiveSection + readingPathsSection + principlesSection + finalCtaSection;
+
+  return hero + postsSection + topicsSection + readingPathsSection + principlesSection + finalCtaSection;
+}
+function renderJournalPost(post) {
+  const blocks = Array.isArray(post.content) ? post.content : [];
+  const body = blocks.map((block) => {
+    if (block.type === 'heading') return `<h2>${escapeHtml(block.text || '')}</h2>`;
+    if (block.type === 'list') return `<ul>${(block.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+    return `<p>${escapeHtml(block.text || '')}</p>`;
+  }).join('');
+
+  return `<section class="section"><div class="section-container"><p class="muted">${escapeHtml(post.date || '')}</p><h1>${escapeHtml(post.title || '')}</h1><p class="lead">${escapeHtml(post.excerpt || '')}</p><article class="card">${body}</article><p><a href="/journal/">← Вернуться в Journal</a></p></div></section>`;
 }
 function renderPricingOfferPage(page) {
   const data = page.pricingOffer || {};
@@ -165,7 +177,7 @@ function writeUtilities() {
   const robots = `User-agent: *\nAllow: /\nSitemap: ${norm(SITE_URL)}/sitemap.xml\n`;
   writeFile(path.join(outDir, 'robots.txt'), robots);
   const pageUrls = pages.map((p) => p.slug);
-  const urls = [...new Set([...pageUrls, ...blog.map((p) => `/blog/${p.slug}/`), ...authors.map((a) => `/authors/${a.slug}/`)])];
+  const urls = [...new Set([...pageUrls, ...blog.map((p) => `/blog/${p.slug}/`), ...authors.map((a) => `/authors/${a.slug}/`), ...journalPosts.map((p) => `/journal/${p.slug}/`)])];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${norm(SITE_URL)}${u}</loc></url>`).join('\n')}\n</urlset>\n`;
   writeFile(path.join(outDir, 'sitemap.xml'), sitemap);
   writeFile(path.join(outDir, '404.html'), '<!doctype html><meta charset="utf-8"><title>404</title><h1>404</h1><p>Страница не найдена</p>');
@@ -185,6 +197,7 @@ function main() {
   pages.filter((p) => p.template === 'journal-index').forEach((p) => writePage(p, renderJournalIndex(p)));
   blog.forEach((post) => writePage({ slug: `/blog/${post.slug}/`, title: post.title, description: post.lead }, renderPost(post)));
   authors.forEach((a) => writePage({ slug: `/authors/${a.slug}/`, title: `${a.name} — автор`, description: a.expertise }, renderAuthorPage(a)));
+  journalPosts.forEach((post) => writePage({ slug: `/journal/${post.slug}/`, title: post.title, description: post.description || post.excerpt }, renderJournalPost(post)));
   writeUtilities();
 }
 main();

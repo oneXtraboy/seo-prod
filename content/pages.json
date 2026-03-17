@@ -834,24 +834,24 @@
   },
   {
     "slug": "/journal/",
-    "title": "Journal — SEO-PROD",
-    "description": "Insights, notes, and editorial tracks on SEO strategy, technical systems, and AI-search.",
+    "title": "Журнал — SEO-PROD",
+    "description": "Практические материалы по SEO-стратегии, внедрению и аналитике без завышенных обещаний.",
     "template": "journal-index",
-    "h1": "Journal: insights, systems, and practical notes",
-    "lead": "This is the content index and SEO knowledge layer of SEO-PROD: what we publish, how topics are grouped, and where to start reading by your task.",
+    "h1": "Журнал: практические материалы по SEO и внедрению",
+    "lead": "Здесь публикуются рабочие статьи: как принимать SEO-решения, как внедрять изменения без хаоса и как оценивать результат без самообмана.",
     "journal": {
       "hero": {
-        "text": "A working journal about strategy, technical execution, and content operations for teams that want repeatable SEO outcomes.",
+        "text": "Раздел с прикладными материалами для команд, которым нужен управляемый SEO-процесс и прогнозируемый рост коммерческого эффекта.",
         "primaryCta": {
-          "text": "Join Telegram",
+          "text": "Написать в Telegram",
           "href": "https://t.me/seo-prod"
         },
         "secondaryCta": {
-          "text": "Go to /contact/",
+          "text": "Перейти в /contact/",
           "href": "/contact/"
         }
       },
-      "topicsTitle": "Featured topics and planned tracks",
+      "topicsTitle": "Ключевые направления",
       "topics": [
         {
           "title": "SEO strategy",
@@ -884,7 +884,7 @@
           "stage": "Planned track"
         }
       ],
-      "archiveTitle": "Journal index (editorial shell)",
+      "archiveTitle": "Свежие материалы",
       "archive": [
         {
           "title": "Strategy memos",
@@ -917,7 +917,7 @@
           "status": "No publications yet — structure ready"
         }
       ],
-      "readingPathsTitle": "Reading paths and navigation help",
+      "readingPathsTitle": "С чего начать чтение",
       "readingPaths": [
         {
           "title": "For founders and heads of growth",
@@ -935,7 +935,7 @@
           "audience": "Best for: teams adapting to generative search"
         }
       ],
-      "principlesTitle": "Editorial principles",
+      "principlesTitle": "Принципы редакции",
       "principles": [
         "We publish practical frameworks, implementation notes, and decision models grounded in real delivery work.",
         "We do not publish fabricated case studies, fake publication dates, or vanity metrics without context.",
@@ -943,14 +943,14 @@
         "When evidence is limited, we label assumptions explicitly and separate observation from interpretation."
       ],
       "finalCta": {
-        "title": "Continue in Telegram or move to /contact/",
-        "text": "If you want tailored guidance, share your context in Telegram or send a structured request via /contact/.",
+        "title": "Обсудить вашу ситуацию",
+        "text": "Если нужен разбор под ваш проект, напишите в Telegram или отправьте вводные через /contact/.",
         "primaryCta": {
-          "text": "Write in Telegram",
+          "text": "Написать в Telegram",
           "href": "https://t.me/seo-prod"
         },
         "secondaryCta": {
-          "text": "Open /contact/",
+          "text": "Открыть /contact/",
           "href": "/contact/"
         }
       }
