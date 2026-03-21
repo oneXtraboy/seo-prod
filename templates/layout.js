@@ -172,6 +172,8 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 .clients-carousel-nav:hover,.clients-carousel-nav:focus-visible{background:var(--surface-muted)}
 .section-container-clients h2{max-width:18ch}
 .section-container-clients .lead{max-width:72ch}
+.clients-cta-wrap{margin-top:var(--space-stack-lg);text-align:center}
+.clients-cta-btn{margin:0 auto}
 @media (min-width:768px){.cards-grid{--cols:var(--cols-md,2)}}
 @media (min-width:1200px){.cards-grid{--cols:var(--cols-lg,3)}}
 @media (max-width:1100px){.clients-card{grid-template-columns:1fr}.clients-carousel-wrap{grid-template-columns:1fr}.clients-carousel-nav{display:none}}
