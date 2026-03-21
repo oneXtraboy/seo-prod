@@ -281,10 +281,10 @@
   },
   {
     "slug": "/blog/",
-    "title": "Journal — SEO-PROD",
-    "description": "Блог по паттерну Topvisor Journal: рубрика, дата, лид, TOC, авторы и эксперты.",
+    "title": "Журнал — SEO-PROD",
+    "description": "Блог по паттерну Topvisor Journal: рубрика, дата, лид, оглавление, авторы и эксперты.",
     "template": "blog-index",
-    "h1": "Journal: заметки про SEO-системы",
+    "h1": "Журнал: заметки про SEO-системы",
     "lead": "Материалы в формате: рубрика + дата + H1 + лид + содержание + карточки автора и эксперта."
   },
   {
@@ -854,93 +854,93 @@
       "topicsTitle": "Ключевые направления",
       "topics": [
         {
-          "title": "SEO strategy",
-          "text": "Positioning, prioritization frameworks, and growth roadmaps tied to business outcomes.",
-          "stage": "Planned track"
+          "title": "SEO-стратегия",
+          "text": "Позиционирование, приоритизация и дорожные карты роста, привязанные к бизнес-результату.",
+          "stage": "Запланированная линия"
         },
         {
-          "title": "Technical SEO",
-          "text": "Crawl control, rendering, indexation, internal linking, and release QA checklists.",
-          "stage": "Planned track"
+          "title": "Техническое SEO",
+          "text": "Управление обходом, рендеринг, индексация, перелинковка и чек-листы релизного QA.",
+          "stage": "Запланированная линия"
         },
         {
-          "title": "Content systems",
-          "text": "Editorial workflows, production standards, and quality control for scalable content operations.",
-          "stage": "Planned track"
+          "title": "Контент-системы",
+          "text": "Редакционные процессы, стандарты производства и контроль качества для масштабируемого контента.",
+          "stage": "Запланированная линия"
         },
         {
-          "title": "GEO / AEO / AI-search",
-          "text": "How to adapt assets for AI overviews, answer engines, and generative search behavior.",
-          "stage": "Planned track"
+          "title": "GEO / AEO / AI-поиск",
+          "text": "Как адаптировать активы под AI Overviews, answer engines и генеративные сценарии поиска.",
+          "stage": "Запланированная линия"
         },
         {
-          "title": "Analytics / experiments",
-          "text": "Measurement models, test design, and interpretation principles for SEO decisions.",
-          "stage": "Planned track"
+          "title": "Аналитика и эксперименты",
+          "text": "Модели измерения, дизайн экспериментов и принципы интерпретации SEO-решений.",
+          "stage": "Запланированная линия"
         },
         {
-          "title": "Case notes / observations",
-          "text": "Field notes from implementations: what changed, what failed, and what repeated across projects.",
-          "stage": "Planned track"
+          "title": "Кейс-заметки и наблюдения",
+          "text": "Полевые заметки с внедрений: что сработало, что не сработало и какие паттерны повторяются.",
+          "stage": "Запланированная линия"
         }
       ],
       "archiveTitle": "Свежие материалы",
       "archive": [
         {
-          "title": "Strategy memos",
-          "text": "Upcoming long-form notes on SEO planning and prioritization.",
-          "status": "No publications yet — structure ready"
+          "title": "Стратегические заметки",
+          "text": "Скоро: длинные материалы по SEO-планированию и приоритизации.",
+          "status": "Публикации скоро — структура уже готова"
         },
         {
-          "title": "Technical deep dives",
-          "text": "Upcoming explainers on architecture, diagnostics, and implementation pitfalls.",
-          "status": "No publications yet — structure ready"
+          "title": "Технические разборы",
+          "text": "Скоро: детальные объяснения по архитектуре, диагностике и рискам внедрения.",
+          "status": "Публикации скоро — структура уже готова"
         },
         {
-          "title": "Content operations notes",
-          "text": "Upcoming practical guides for editorial systems and workflow governance.",
-          "status": "No publications yet — structure ready"
+          "title": "Заметки по контент-операциям",
+          "text": "Скоро: практические гайды по редакционным системам и управлению процессом.",
+          "status": "Публикации скоро — структура уже готова"
         },
         {
-          "title": "AI-search adaptation log",
-          "text": "Upcoming observations on GEO/AEO patterns and answer-surface behavior.",
-          "status": "No publications yet — structure ready"
+          "title": "Журнал адаптации к AI-поиску",
+          "text": "Скоро: наблюдения по паттернам GEO/AEO и поведению answer-surface.",
+          "status": "Публикации скоро — структура уже готова"
         },
         {
-          "title": "Measurement and testing log",
-          "text": "Upcoming experiment summaries and analytics interpretation notes.",
-          "status": "No publications yet — structure ready"
+          "title": "Журнал измерений и тестов",
+          "text": "Скоро: сводки экспериментов и заметки по интерпретации аналитики.",
+          "status": "Публикации скоро — структура уже готова"
         },
         {
-          "title": "Case observation ledger",
-          "text": "Upcoming concise implementation notes without inflated claims or vanity metrics.",
-          "status": "No publications yet — structure ready"
+          "title": "Реестр кейс-наблюдений",
+          "text": "Скоро: короткие заметки по внедрениям без завышенных обещаний и vanity-метрик.",
+          "status": "Публикации скоро — структура уже готова"
         }
       ],
       "readingPathsTitle": "С чего начать чтение",
       "readingPaths": [
         {
-          "title": "For founders and heads of growth",
-          "text": "Start with Strategy + Analytics tracks to frame decisions, sequencing, and ROI conversations.",
-          "audience": "Best for: business owners and growth leaders"
+          "title": "Для фаундеров и growth-руководителей",
+          "text": "Начните с линий «Стратегия» и «Аналитика», чтобы собрать рамку решений, приоритизации и ROI-диалога.",
+          "audience": "Оптимально для: владельцев бизнеса и growth-лидов"
         },
         {
-          "title": "For in-house SEO and product teams",
-          "text": "Start with Technical SEO + Content systems to align implementation and publishing cadence.",
-          "audience": "Best for: execution teams"
+          "title": "Для in-house SEO и продуктовых команд",
+          "text": "Начните с «Технического SEO» и «Контент-систем», чтобы синхронизировать внедрения и ритм публикаций.",
+          "audience": "Оптимально для: команд исполнения"
         },
         {
-          "title": "For teams entering AI-search",
-          "text": "Start with GEO/AEO + Case notes to understand constraints, opportunities, and realistic expectations.",
-          "audience": "Best for: teams adapting to generative search"
+          "title": "Для команд, входящих в AI-поиск",
+          "text": "Начните с GEO/AEO и кейс-заметок, чтобы понять ограничения, возможности и реалистичные ожидания.",
+          "audience": "Оптимально для: команд, адаптирующихся к генеративному поиску"
         }
       ],
       "principlesTitle": "Принципы редакции",
       "principles": [
-        "We publish practical frameworks, implementation notes, and decision models grounded in real delivery work.",
-        "We do not publish fabricated case studies, fake publication dates, or vanity metrics without context.",
-        "Materials are directional, not absolute instructions: adapt every recommendation to your stack, market, and constraints.",
-        "When evidence is limited, we label assumptions explicitly and separate observation from interpretation."
+        "Публикуем практические фреймворки, заметки по внедрению и модели принятия решений, основанные на реальной работе.",
+        "Не публикуем вымышленные кейсы, фиктивные даты публикации и vanity-метрики без контекста.",
+        "Материалы задают направление, а не универсальные инструкции: адаптируйте рекомендации под свой стек, рынок и ограничения.",
+        "Если доказательств недостаточно, явно помечаем допущения и разделяем наблюдения и интерпретацию."
       ],
       "finalCta": {
         "title": "Обсудить вашу ситуацию",
