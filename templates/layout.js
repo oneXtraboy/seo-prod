@@ -20,17 +20,25 @@ function normalizePath(pathname) {
 }
 
 const NAV_ITEMS = [
-  { key: 'home', href: '/', label: 'Главная', matcher: (path) => path === '/' },
-  { key: 'services', href: '/services/', label: 'Услуги', matcher: (path) => path === '/services/' },
-  { key: 'cases', href: '/cases/', label: 'Кейсы', matcher: (path) => path === '/cases/' },
-  { key: 'pricing', href: '/pricing/', label: 'Цены', matcher: (path) => path === '/pricing/' },
-  { key: 'journal', href: '/journal/', label: 'Журнал', matcher: (path) => path === '/journal/' || path.startsWith('/journal/') },
-  { key: 'contact', href: '/contact/', label: 'Контакты', matcher: (path) => path === '/contact/' }
+  { key: 'home', href: '/', label: 'Главная', matchMode: 'exact' },
+  { key: 'services', href: '/services/', label: 'Услуги', matchMode: 'exact' },
+  { key: 'cases', href: '/cases/', label: 'Кейсы', matchMode: 'section' },
+  { key: 'pricing', href: '/pricing/', label: 'Цены', matchMode: 'exact' },
+  { key: 'journal', href: '/journal/', label: 'Журнал', matchMode: 'section' },
+  { key: 'contact', href: '/contact/', label: 'Контакты', matchMode: 'exact' }
 ];
+
+function navItemMatchesPath(item, currentPath) {
+  const basePath = normalizePath(item.href);
+  if (item.matchMode === 'section') {
+    return currentPath === basePath || currentPath.startsWith(basePath);
+  }
+  return currentPath === basePath;
+}
 
 function getCurrentNavKey(currentSlug) {
   const currentPath = normalizePath(currentSlug);
-  const currentNav = NAV_ITEMS.find((item) => item.matcher(currentPath));
+  const currentNav = NAV_ITEMS.find((item) => navItemMatchesPath(item, currentPath));
   return currentNav ? currentNav.key : null;
 }
 
