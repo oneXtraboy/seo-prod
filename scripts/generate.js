@@ -45,7 +45,7 @@ function renderLanding(page) {
     .filter((item) => item.featuredOnHome)
     .sort((a, b) => (a.orderOnHome || Number.MAX_SAFE_INTEGER) - (b.orderOnHome || Number.MAX_SAFE_INTEGER))
     .slice(0, 6);
-  const clients = section('clients', data.clients.title, `<p class="lead">${escapeHtml(data.clients.lead || '')}</p>
+  const clients = `<section id="clients" class="section"><div class="section-container section-container-wide section-container-clients content-flow clients-section-flow"><div class="clients-intro"><h2>${escapeHtml(data.clients.title)}</h2><p class="lead">${escapeHtml(data.clients.lead || '')}</p></div>
     <div class="clients-carousel-wrap">
       <button class="clients-carousel-nav" type="button" data-dir="prev" aria-label="Предыдущие кейсы">←</button>
       <div class="clients-carousel-track" data-clients-carousel tabindex="0" aria-label="Карусель кейсов клиентов">
@@ -94,7 +94,7 @@ function renderLanding(page) {
           root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
         });
       })();
-    </script>`, 'section-container section-container-wide section-container-clients');
+    </script></div></section>`;
   const reviews = section('reviews', data.reviews.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.reviews.text)}</p></article></div>`, 'section-container');
   const team = section('team', data.team.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.team.text)}</p></article></div>`, 'section-container');
   const faq = section('faq', 'FAQ', `<div class="cards-grid grid-1-2-3">${data.faq.map((item) => `<article class="card"><details><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details></article>`).join('')}</div>`, 'section-container');
