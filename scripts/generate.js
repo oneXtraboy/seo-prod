@@ -8,6 +8,7 @@ const pages = require('../content/pages.json');
 const blog = require('../content/blog.json');
 const authors = require('../content/authors.json');
 const journalPosts = require('../content/journal-posts.json');
+const casesData = require('../content/cases.json');
 
 const outDir = path.join(__dirname, '..', 'public');
 function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
@@ -16,6 +17,23 @@ function norm(u) { return String(u || '').replace(/\/+$/, ''); }
 function routeToFile(slug) { return slug === '/' ? path.join(outDir, 'index.html') : path.join(outDir, slug.replace(/^\//, ''), 'index.html'); }
 function section(id, title, body, containerClass = 'container') { return `<section id="${id}" class="section"><div class="${containerClass} content-flow"><h2>${escapeHtml(title)}</h2>${body}</div></section>`; }
 
+function getCasesCollection(page) {
+  const legacyCases = Array.isArray(page.casesProof && page.casesProof.cases) ? page.casesProof.cases : [];
+  return Array.isArray(casesData) && casesData.length ? casesData : legacyCases;
+}
+
+function normalizeCaseAnchor(item, index) {
+  const raw = item.caseAnchor || item.id || item.slug || `case-${index + 1}`;
+  return String(raw).trim().toLowerCase().replace(/[^a-z0-9-_]+/g, '-');
+}
+
+function renderCaseVisual(item) {
+  if (item.topvisorImage) {
+    return `<img class="clients-card-image" src="${escapeHtml(item.topvisorImage)}" alt="${escapeHtml(item.topvisorImageAlt || item.shortTitle || item.title || 'Визуал кейса')}" loading="lazy" decoding="async" />`;
+  }
+  return `<div class="clients-card-image-placeholder" role="img" aria-label="${escapeHtml(item.topvisorImageAlt || item.shortTitle || item.title || 'Слот под визуал кейса')}">Слот под реальный скрин Topvisor</div>`;
+}
+
 function renderLanding(page) {
   const data = page.landing;
   const hero = `<section id="hero" class="section hero"><div class="section-container content-flow"><h1>${escapeHtml(data.hero.title)}</h1><p class="lead">${escapeHtml(data.hero.lead)}</p><div class="cards-grid grid-1-2-3">${(data.hero.stats || []).map((stat) => `<article class="card"><p class="kpi">${escapeHtml(stat)}</p></article>`).join('')}</div><p><a class="btn btn-primary" href="${escapeHtml(data.hero.ctaPrimary.href)}">${escapeHtml(data.hero.ctaPrimary.text)}</a> <a class="btn" href="${escapeHtml(data.hero.ctaSecondary.href)}">${escapeHtml(data.hero.ctaSecondary.text)}</a></p><p class="muted">${escapeHtml(data.hero.micro)}</p></div></section>`;
@@ -23,7 +41,57 @@ function renderLanding(page) {
   const results = section('results', data.results.title, `<div class="cards-grid grid-1-2-3">${data.results.cards.map((item) => `<article class="card"><h3>${escapeHtml(item.title)}</h3><p class="kpi">${escapeHtml(item.text)}</p></article>`).join('')}</div><p><a href="${escapeHtml(data.results.cta.href)}">${escapeHtml(data.results.cta.text)}</a></p>`, 'section-container');
   const process = section('process', data.process.title, `<div class="cards-grid grid-1-2-4">${data.process.steps.map((step, i) => `<article class="card"><p class="muted">Этап ${i + 1}</p><p>${escapeHtml(step)}</p></article>`).join('')}</div><p><a href="${escapeHtml(data.process.cta.href)}">${escapeHtml(data.process.cta.text)}</a></p>`, 'section-container');
   const pricing = section('pricing', data.pricing.title, `<div class="cards-grid grid-1-2-3">${data.pricing.cards.map((item) => `<article class="card"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.text)}</p></article>`).join('')}</div><p><a href="${escapeHtml(data.pricing.cta.href)}">${escapeHtml(data.pricing.cta.text)}</a></p>`, 'section-container');
-  const clients = section('clients', data.clients.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.clients.text)}</p></article></div>`, 'section-container');
+  const featuredCases = getCasesCollection(page)
+    .filter((item) => item.featuredOnHome)
+    .sort((a, b) => (a.orderOnHome || Number.MAX_SAFE_INTEGER) - (b.orderOnHome || Number.MAX_SAFE_INTEGER))
+    .slice(0, 6);
+  const clients = section('clients', data.clients.title, `<p class="lead">${escapeHtml(data.clients.lead || '')}</p>
+    <div class="clients-carousel-wrap">
+      <button class="clients-carousel-nav" type="button" data-dir="prev" aria-label="Предыдущие кейсы">←</button>
+      <div class="clients-carousel-track" data-clients-carousel tabindex="0" aria-label="Карусель кейсов клиентов">
+        ${featuredCases.map((item, index) => {
+    const anchor = normalizeCaseAnchor(item, index);
+    const href = `/cases/#${anchor}`;
+    const metrics = Array.isArray(item.metricsPreview) ? item.metricsPreview.slice(0, 3) : [];
+    return `<article class="card clients-card" id="home-case-${escapeHtml(anchor)}">
+              <div class="clients-card-copy">
+                <p class="clients-card-category">${escapeHtml(item.category || item.niche || '')}</p>
+                <h3>${escapeHtml(item.shortTitle || item.title || '')}</h3>
+                <p>${escapeHtml(item.shortSummary || item.context || '')}</p>
+                ${metrics.length ? `<ul class="clients-card-metrics">${metrics.map((metric) => `<li>${escapeHtml(metric)}</li>`).join('')}</ul>` : ''}
+                <p><a href="${escapeHtml(href)}">Смотреть кейс</a></p>
+              </div>
+              <div class="clients-card-visual">${renderCaseVisual(item)}</div>
+            </article>`;
+  }).join('')}
+      </div>
+      <button class="clients-carousel-nav" type="button" data-dir="next" aria-label="Следующие кейсы">→</button>
+    </div>
+    <p><a href="${escapeHtml((data.clients.cta && data.clients.cta.href) || '/cases/')}">${escapeHtml((data.clients.cta && data.clients.cta.text) || 'Смотреть все кейсы')}</a></p>
+    <script>
+      (() => {
+        const root = document.querySelector('[data-clients-carousel]');
+        if (!root) return;
+        const navButtons = document.querySelectorAll('.clients-carousel-nav');
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const getStep = () => {
+          const card = root.querySelector('.clients-card');
+          return card ? card.getBoundingClientRect().width + 20 : root.clientWidth;
+        };
+        navButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const dir = button.dataset.dir === 'next' ? 1 : -1;
+            root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
+          });
+        });
+        root.addEventListener('keydown', (event) => {
+          if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+          event.preventDefault();
+          const dir = event.key === 'ArrowRight' ? 1 : -1;
+          root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
+        });
+      })();
+    </script>`, 'section-container');
   const reviews = section('reviews', data.reviews.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.reviews.text)}</p></article></div>`, 'section-container');
   const team = section('team', data.team.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.team.text)}</p></article></div>`, 'section-container');
   const faq = section('faq', 'FAQ', `<div class="cards-grid grid-1-2-3">${data.faq.map((item) => `<article class="card"><details><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details></article>`).join('')}</div>`, 'section-container');
@@ -78,14 +146,14 @@ function renderServicesOfferPage(page) {
 function renderCasesProofPage(page) {
   const data = page.casesProof || {};
   const hero = data.hero || {};
-  const cases = Array.isArray(data.cases) ? data.cases : [];
+  const cases = getCasesCollection(page);
   const proof = data.proof || {};
   const evaluation = data.evaluation || {};
   const patterns = Array.isArray(data.patterns) ? data.patterns : [];
   const fit = data.fit || {};
   const finalCta = data.finalCta || {};
 
-  const casesSection = section('cases-list', data.casesTitle || 'Кейсы', `<div class="cards-grid grid-1-2-3">${cases.map((item) => {
+  const casesSection = section('cases-list', data.casesTitle || 'Кейсы', `<div class="cards-grid grid-1-2-3">${cases.map((item, index) => {
     const context = item.context || item.start || '';
     const task = item.task || '';
     const actions = Array.isArray(item.actionsList) ? item.actionsList : (item.actions ? [item.actions] : []);
@@ -95,7 +163,12 @@ function renderCasesProofPage(page) {
     const evidence = item.evidence || {};
     const summary = item.takeaway || item.summary || '';
 
-    return `<article class="card"><p class="muted">${escapeHtml(item.niche || '')}</p><h3>${escapeHtml(item.title || '')}</h3><p><strong>Контекст:</strong> ${escapeHtml(context)}</p>${task ? `<p><strong>Задача:</strong> ${escapeHtml(task)}</p>` : ''}${actions.length ? `<p><strong>Что делали:</strong></p><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${implementation.length ? `<p><strong>Что внедряли:</strong></p><ul>${implementation.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}<p><strong>Результат:</strong> ${escapeHtml(result)}</p>${metrics.length ? `<p><strong>Метрики:</strong></p><ul>${metrics.map((metric) => `<li><strong>${escapeHtml(metric.label || '')}:</strong> ${escapeHtml(metric.value || 'Доступно в рабочей отчётности')} ${metric.period ? `(${escapeHtml(metric.period)})` : ''}${metric.note ? ` — ${escapeHtml(metric.note)}` : ''}</li>`).join('')}</ul>` : '<p class="muted"><strong>Метрики:</strong> Публичные цифры не раскрываются; фиксируются в рабочей аналитике проекта.</p>'}<p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p>${evidence.note ? `<p class="muted"><strong>Пруф:</strong> ${escapeHtml(evidence.note)}</p>` : ''}${summary ? `<p class="muted">${escapeHtml(summary)}</p>` : ''}</article>`;
+    const anchor = normalizeCaseAnchor(item, index);
+    const fallbackMetrics = Array.isArray(item.metricsPreview) ? item.metricsPreview : [];
+    const renderedMetrics = metrics.length
+      ? metrics.map((metric) => `<li><strong>${escapeHtml(metric.label || '')}:</strong> ${escapeHtml(metric.value || 'Доступно в рабочей отчётности')} ${metric.period ? `(${escapeHtml(metric.period)})` : ''}${metric.note ? ` — ${escapeHtml(metric.note)}` : ''}</li>`).join('')
+      : fallbackMetrics.map((metric) => `<li>${escapeHtml(metric)}</li>`).join('');
+    return `<article class="card" id="${escapeHtml(anchor)}"><p class="muted">${escapeHtml(item.category || item.niche || '')}</p><h3>${escapeHtml(item.shortTitle || item.title || '')}</h3><p><strong>Клиент:</strong> ${escapeHtml(item.clientName || 'Под NDA')}</p><p><strong>Контекст:</strong> ${escapeHtml(context || item.shortSummary || '')}</p>${task ? `<p><strong>Задача:</strong> ${escapeHtml(task)}</p>` : ''}${actions.length ? `<p><strong>Что делали:</strong></p><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${implementation.length ? `<p><strong>Что внедряли:</strong></p><ul>${implementation.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}<p><strong>Результат:</strong> ${escapeHtml(result || item.result || '')}</p>${renderedMetrics ? `<p><strong>Метрики:</strong></p><ul>${renderedMetrics}</ul>` : '<p class="muted"><strong>Метрики:</strong> Публичные цифры не раскрываются; фиксируются в рабочей аналитике проекта.</p>'}<p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p>${evidence.note ? `<p class="muted"><strong>Пруф:</strong> ${escapeHtml(evidence.note)}</p>` : ''}${summary ? `<p class="muted">${escapeHtml(summary)}</p>` : ''}</article>`;
   }).join('')}</div>`, 'section-container');
 
   const evaluationSection = section('cases-evaluation', evaluation.title || 'Как оцениваем результат', `<div class="card"><p>${escapeHtml(evaluation.lead || 'Оцениваем не по одной метрике, а по связке продуктовых и коммерческих сигналов.')}</p><div class="cards-grid grid-1-2-3">${(evaluation.dimensions || []).map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div></div>`, 'section-container');

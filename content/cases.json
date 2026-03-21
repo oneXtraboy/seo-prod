@@ -1,0 +1,122 @@
+[
+  {
+    "id": "b2b-saas-sql-demand",
+    "slug": "b2b-saas-sql-demand",
+    "caseAnchor": "b2b-saas-sql-demand",
+    "clientName": "SaaS-платформа автоматизации",
+    "category": "B2B SaaS / подписочный продукт",
+    "shortTitle": "Небрендовый спрос как канал квалифицированных демо",
+    "shortSummary": "Развели интенты по JTBD-кластерам, пересобрали коммерческие посадочные и FAQ под ICP. Воронка из органики стала стабильнее по качеству — отдел продаж получает более релевантные обращения.",
+    "metricsPreview": [
+      "Рост доли целевых SQL из SEO",
+      "Меньше нерелевантных обращений в CRM",
+      "Подтверждено по ежемесячной аналитике"
+    ],
+    "topvisorImage": null,
+    "topvisorImageAlt": "Слот под скрин Topvisor для SaaS-кейса",
+    "featuredOnHome": true,
+    "orderOnHome": 1,
+    "duration": "~4 месяца",
+    "result": "Устойчивый рост качества входящих демо-заявок без раздувания шумового трафика."
+  },
+  {
+    "id": "local-services-multigeo",
+    "slug": "local-services-multigeo",
+    "caseAnchor": "local-services-multigeo",
+    "clientName": "Сеть локальных услуг",
+    "category": "Локальные услуги / мультигео",
+    "shortTitle": "Гео-структура для заявок из приоритетных районов",
+    "shortSummary": "Построили geo/service-архитектуру, отделили коммерческие и информационные кластеры, добавили локальные proof-блоки и контроль индексации. Спрос сместился в приоритетные локации.",
+    "metricsPreview": [
+      "Положительный тренд по лид-формам из целевых районов",
+      "Стабильная видимость по локальным коммерческим кластерам",
+      "Подтверждено гео-сегментами аналитики"
+    ],
+    "topvisorImage": null,
+    "topvisorImageAlt": "Слот под скрин Topvisor для мультигео-кейса",
+    "featuredOnHome": true,
+    "orderOnHome": 2,
+    "duration": "8–10 недель",
+    "result": "Рост релевантных локальных обращений и более предсказуемый поток лидов по приоритетным районам."
+  },
+  {
+    "id": "ecommerce-indexation-control",
+    "slug": "ecommerce-indexation-control",
+    "caseAnchor": "ecommerce-indexation-control",
+    "clientName": "E-commerce проект",
+    "category": "E-commerce / категории и фильтры",
+    "shortTitle": "Управление индексацией без потери коммерческого спроса",
+    "shortSummary": "Сделали ревизию URL-политики фильтров и категорий, внедрили правила index/noindex и шаблоны перелинковки на маржинальные разделы. Ключевые категории укрепили позиции без технического шума.",
+    "metricsPreview": [
+      "Снижение доли шумовых URL в индексе",
+      "Рост видимости приоритетных категорий",
+      "Подтверждено crawl-логами и отчётами индексации"
+    ],
+    "topvisorImage": null,
+    "topvisorImageAlt": "Слот под скрин Topvisor для e-commerce-кейса",
+    "featuredOnHome": true,
+    "orderOnHome": 3,
+    "duration": "~3 месяца",
+    "result": "Поисковая система фокусируется на коммерчески важных страницах, не расходуя бюджет обхода на шумовые URL."
+  },
+  {
+    "id": "fintech-overviews-leads",
+    "slug": "fintech-overviews-leads",
+    "caseAnchor": "fintech-overviews-leads",
+    "clientName": "Fintech-платформа SmartPay",
+    "category": "Финтех / лидогенерация",
+    "shortTitle": "GEO/AEO-сценарий для роста входящих лидов",
+    "shortSummary": "Собрали кластеризацию под коммерческие интенты, пересобрали экспертизу страниц и усилили блоки доверия для генеративной выдачи. Проект зафиксировал кратный рост входящих заявок в рабочей отчётности.",
+    "metricsPreview": [
+      "Кратный рост входящих лидов",
+      "Усиление доли брендовых запросов",
+      "Динамика подтверждена в CRM и BI"
+    ],
+    "topvisorImage": null,
+    "topvisorImageAlt": "Слот под скрин Topvisor для fintech-кейса",
+    "featuredOnHome": true,
+    "orderOnHome": 4,
+    "duration": "6–7 месяцев",
+    "result": "Органический канал стал одним из ключевых источников качественных обращений."
+  },
+  {
+    "id": "real-estate-cpl-optimization",
+    "slug": "real-estate-cpl-optimization",
+    "caseAnchor": "real-estate-cpl-optimization",
+    "clientName": "Девелопер премиум-недвижимости",
+    "category": "Недвижимость / лиды",
+    "shortTitle": "Снижение стоимости лида через структуру коммерческого спроса",
+    "shortSummary": "Пересобрали структуру посадочных под этапы выбора объекта, усилили коммерческие сценарии и аналитический контур по лид-флоу. Канал SEO стал давать более экономичные заявки.",
+    "metricsPreview": [
+      "Снижение CPL относительно стартовой точки",
+      "Рост доли целевых обращений",
+      "Подтверждено отчётами команды продаж"
+    ],
+    "topvisorImage": null,
+    "topvisorImageAlt": "Слот под скрин Topvisor для real estate-кейса",
+    "featuredOnHome": true,
+    "orderOnHome": 5,
+    "duration": "~5 месяцев",
+    "result": "Улучшилась экономика органического канала за счёт более релевантного спроса."
+  },
+  {
+    "id": "education-demand-capture",
+    "slug": "education-demand-capture",
+    "caseAnchor": "education-demand-capture",
+    "clientName": "EdTech-платформа",
+    "category": "Образование / enrollment",
+    "shortTitle": "Системный рост заявок из небрендового и брендового спроса",
+    "shortSummary": "Перестроили семантическое ядро по продуктовым сценариям, добавили контентные мосты к коммерческим страницам и выстроили ритм внедрений спринтами. Это усилило поток регистраций и заявок.",
+    "metricsPreview": [
+      "Поступательный рост заявок из SEO",
+      "Рост брендового спроса",
+      "Подтверждено в ежемесячной аналитике"
+    ],
+    "topvisorImage": null,
+    "topvisorImageAlt": "Слот под скрин Topvisor для edtech-кейса",
+    "featuredOnHome": true,
+    "orderOnHome": 6,
+    "duration": "~6 месяцев",
+    "result": "Органический канал стабильно поддерживает набор и прогрев потенциальных студентов."
+  }
+]
