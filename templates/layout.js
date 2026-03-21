@@ -170,13 +170,15 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 .clients-card-image-placeholder{width:100%;height:100%;min-height:248px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--text3);font-size:.95rem;border:1px dashed #b7bbc4;border-radius:10px;padding:16px;background:#fff}
 .clients-carousel-nav{width:40px;height:40px;border:1px solid var(--border);border-radius:999px;background:var(--surface);cursor:pointer}
 .clients-carousel-nav:hover,.clients-carousel-nav:focus-visible{background:var(--surface-muted)}
+.clients-section-flow{--clients-nav-size:40px;--clients-nav-gap:12px}
+.clients-intro{max-width:72ch;margin-inline:calc(var(--clients-nav-size) + var(--clients-nav-gap))}
 .section-container-clients h2{max-width:18ch}
 .section-container-clients .lead{max-width:72ch}
-.clients-cta-wrap{margin-top:var(--space-stack-lg);text-align:center}
+.clients-cta-wrap{margin-top:var(--space-stack-lg);text-align:center;margin-inline:calc(var(--clients-nav-size) + var(--clients-nav-gap))}
 .clients-cta-btn{margin:0 auto}
 @media (min-width:768px){.cards-grid{--cols:var(--cols-md,2)}}
 @media (min-width:1200px){.cards-grid{--cols:var(--cols-lg,3)}}
-@media (max-width:1100px){.clients-card{grid-template-columns:1fr}.clients-carousel-wrap{grid-template-columns:1fr}.clients-carousel-nav{display:none}}
+@media (max-width:1100px){.clients-card{grid-template-columns:1fr}.clients-carousel-wrap{grid-template-columns:1fr}.clients-carousel-nav{display:none}.clients-intro,.clients-cta-wrap{margin-inline:0}}
 @media (max-width:900px){.container,.section-container,.section-container-wide{padding:0 16px}.grid{grid-template-columns:1fr;gap:16px}.section{padding:48px 0}.scroll-rail{display:none}.rail-mobile-toggle{display:block;position:fixed;right:16px;bottom:16px;z-index:40;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:10px 14px;box-shadow:var(--shadow1)}.rail-mobile-sheet{display:grid;position:fixed;left:16px;right:16px;bottom:72px;z-index:40;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:var(--shadow1)}}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.rail-tick::before{transition:none}}
 @media (prefers-contrast: more){:root{--border:#8e8e93;--text3:#4a4a4f}}
