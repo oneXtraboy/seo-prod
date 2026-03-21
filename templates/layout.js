@@ -20,26 +20,32 @@ function normalizePath(pathname) {
 }
 
 const NAV_ITEMS = [
-  { key: 'home', href: '/', label: 'Главная', matchMode: 'exact' },
-  { key: 'services', href: '/services/', label: 'Услуги', matchMode: 'exact' },
-  { key: 'cases', href: '/cases/', label: 'Кейсы', matchMode: 'section' },
-  { key: 'pricing', href: '/pricing/', label: 'Цены', matchMode: 'exact' },
-  { key: 'journal', href: '/journal/', label: 'Журнал', matchMode: 'section' },
-  { key: 'contact', href: '/contact/', label: 'Контакты', matchMode: 'exact' }
+  { key: 'home', href: '/', label: 'Главная' },
+  { key: 'services', href: '/services/', label: 'Услуги' },
+  { key: 'cases', href: '/cases/', label: 'Кейсы' },
+  { key: 'pricing', href: '/pricing/', label: 'Цены' },
+  { key: 'journal', href: '/journal/', label: 'Журнал' },
+  { key: 'contact', href: '/contact/', label: 'Контакты' }
+];
+
+const NAV_PATH_ALIASES = [
+  { prefix: '/journal/', key: 'journal' }
 ];
 
 function navItemMatchesPath(item, currentPath) {
-  const basePath = normalizePath(item.href);
-  if (item.matchMode === 'section') {
-    return currentPath === basePath || currentPath.startsWith(basePath);
-  }
-  return currentPath === basePath;
+  return currentPath === normalizePath(item.href);
+}
+
+function resolveCurrentNavKey(currentPath) {
+  const alias = NAV_PATH_ALIASES.find((entry) => currentPath.startsWith(entry.prefix));
+  if (alias) return alias.key;
+  const currentNav = NAV_ITEMS.find((item) => navItemMatchesPath(item, currentPath));
+  return currentNav ? currentNav.key : null;
 }
 
 function getCurrentNavKey(currentSlug) {
   const currentPath = normalizePath(currentSlug);
-  const currentNav = NAV_ITEMS.find((item) => navItemMatchesPath(item, currentPath));
-  return currentNav ? currentNav.key : null;
+  return resolveCurrentNavKey(currentPath);
 }
 
 function renderHeaderNav(currentSlug) {
