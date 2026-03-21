@@ -171,9 +171,9 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 .clients-carousel-nav{width:40px;height:40px;border:1px solid var(--border);border-radius:999px;background:var(--surface);cursor:pointer}
 .clients-carousel-nav:hover,.clients-carousel-nav:focus-visible{background:var(--surface-muted)}
 .clients-section-flow{--clients-nav-size:40px;--clients-nav-gap:12px}
-.clients-intro{max-width:72ch;margin-inline:calc(var(--clients-nav-size) + var(--clients-nav-gap))}
-.section-container-clients h2{max-width:18ch}
-.section-container-clients .lead{max-width:72ch}
+.clients-intro{max-width:84ch;margin-inline:calc(var(--clients-nav-size) + var(--clients-nav-gap))}
+.section-container-clients h2{max-width:32ch}
+.section-container-clients .lead{max-width:68ch}
 .clients-cta-wrap{margin-top:var(--space-stack-lg);text-align:center;margin-inline:calc(var(--clients-nav-size) + var(--clients-nav-gap))}
 .clients-cta-btn{margin:0 auto}
 @media (min-width:768px){.cards-grid{--cols:var(--cols-md,2)}}
