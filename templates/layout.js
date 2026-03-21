@@ -19,18 +19,33 @@ function normalizePath(pathname) {
   return normalized.endsWith('/') ? normalized : `${normalized}/`;
 }
 
-function isCurrentPage(currentSlug, targetHref) {
-  const current = normalizePath(currentSlug);
-  const target = normalizePath(targetHref);
-  if (target === '/') return current === '/';
-  return current === target || current.startsWith(target);
+const NAV_ITEMS = [
+  { key: 'home', href: '/', label: 'Главная', matcher: (path) => path === '/' },
+  { key: 'services', href: '/services/', label: 'Услуги', matcher: (path) => path === '/services/' },
+  { key: 'cases', href: '/cases/', label: 'Кейсы', matcher: (path) => path === '/cases/' },
+  { key: 'pricing', href: '/pricing/', label: 'Цены', matcher: (path) => path === '/pricing/' },
+  { key: 'journal', href: '/journal/', label: 'Журнал', matcher: (path) => path === '/journal/' || path.startsWith('/journal/') },
+  { key: 'contact', href: '/contact/', label: 'Контакты', matcher: (path) => path === '/contact/' }
+];
+
+function getCurrentNavKey(currentSlug) {
+  const currentPath = normalizePath(currentSlug);
+  const currentNav = NAV_ITEMS.find((item) => item.matcher(currentPath));
+  return currentNav ? currentNav.key : null;
 }
 
-function navLink(currentSlug, href, label) {
-  if (isCurrentPage(currentSlug, href)) {
-    return `<span class="nav-current" aria-current="page">${escapeHtml(label)}</span>`;
-  }
-  return `<a href="${href}">${escapeHtml(label)}</a>`;
+function renderHeaderNav(currentSlug) {
+  const currentKey = getCurrentNavKey(currentSlug);
+  return NAV_ITEMS.map((item) => {
+    if (item.key === currentKey) {
+      return `<span class="nav-current" aria-current="page">${escapeHtml(item.label)}</span>`;
+    }
+    return `<a href="${item.href}">${escapeHtml(item.label)}</a>`;
+  }).join('');
+}
+
+function isHomePage(currentSlug) {
+  return normalizePath(currentSlug) === '/';
 }
 
 function renderLayout({ site, page, contentHtml, canonical = '', railSections = [] }) {
@@ -116,7 +131,7 @@ ${page.schema ? `<script type="application/ld+json">${JSON.stringify(page.schema
 .container{max-width:1200px;margin:0 auto;padding:0 24px}.section-container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}.cards-grid{display:grid;gap:var(--gap,var(--space-stack-md));width:100%;grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))}.cards-grid>*{min-width:0}.grid-1-2-3{--cols:1;--cols-md:2;--cols-lg:3}.grid-1-2-4{--cols:1;--cols-md:2;--cols-lg:4}.grid-lg-3{--cols-lg:3}.section{padding:var(--s48) 0;border-bottom:1px solid var(--divider)}
 h1,h2,h3{font-family:var(--font-rounded);letter-spacing:-.02em;color:var(--text);margin:0 0 var(--s16)}h1{font-size:clamp(2rem,4vw,3.5rem);line-height:1.08}h2{font-size:clamp(1.55rem,2.35vw,2.25rem);line-height:1.2;margin-bottom:var(--s20)}h3{font-size:clamp(1.15rem,1.7vw,1.4rem);line-height:1.3;margin-bottom:var(--s12)}p,li{margin:0 0 var(--s16)}small,.meta,.muted{font-size:.94rem;line-height:1.5;color:var(--text3)}
 .header{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--glass),#FFFFFFB5);backdrop-filter:blur(10px);border-bottom:1px solid var(--glass-border)}
-.header-in{display:flex;justify-content:space-between;align-items:center;min-height:74px}.brand{font-family:var(--font-rounded);font-weight:700;color:var(--text);text-decoration:none}.brand-current{cursor:default}.nav{display:flex;gap:18px}.nav a,.nav .nav-current{color:var(--text2);text-decoration:none;padding:6px 10px;border-radius:10px;transition:background-color .18s ease,color .18s ease}.nav a:hover,.nav a:focus-visible{background:var(--surface-muted);color:var(--text)}.nav .nav-current{color:var(--text);background:var(--surface-muted);font-weight:600;cursor:default}
+.header-in{display:flex;justify-content:space-between;align-items:center;min-height:74px}.brand{font-family:var(--font-rounded);font-weight:700;color:var(--text);text-decoration:none}.brand-current{cursor:default}.nav{display:flex;gap:18px}.nav a,.nav .nav-current{color:var(--text2);text-decoration:none;padding:6px 10px;border-radius:10px;border:1px solid transparent;transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease}.nav a:hover,.nav a:focus-visible{background:var(--surface-muted);color:var(--text)}.nav .nav-current{color:var(--text);background:var(--surface-muted);border-color:var(--border);box-shadow:0 1px 0 #FFFFFF80 inset;cursor:default}
 .content-flow>*{margin-bottom:0}.content-flow>*+*{margin-top:var(--space-stack-md)}.hero .content-flow>*+*{margin-top:var(--space-stack-lg)}h1+.lead{margin-top:var(--space-stack-sm)}h2+.cards-grid{margin-top:var(--space-stack-md)}.cards-grid+p,.lead+p,.lead+.cards-grid{margin-top:var(--space-stack-lg)}.hero h1{font-size:clamp(2.2rem,5vw,4rem);line-height:1.02;margin:0}.lead{font-size:1.13rem;color:var(--text2);line-height:1.62;max-width:68ch;margin-bottom:0}.hero p + .muted{margin-top:var(--space-stack-sm)}
 a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opacity .18s ease}a:hover{color:var(--accent-hover)}a:focus-visible,button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:var(--r12);border:1px solid var(--border);font-weight:600;letter-spacing:.01em;line-height:1.2;text-decoration:none;color:var(--text);background:linear-gradient(180deg,#fff,#f7f7fb);box-shadow:0 1px 0 #FFFFFFB3 inset;transition:transform .16s ease,box-shadow .2s ease,background .2s ease,color .2s ease,border-color .2s ease}.btn:hover{transform:translateY(-1px);box-shadow:0 1px 0 #FFFFFFB3 inset,var(--shadow1)}.btn:focus-visible{transform:translateY(-1px);box-shadow:0 1px 0 #FFFFFFB3 inset,var(--shadow1)}.btn:active{transform:translateY(0);box-shadow:0 1px 0 #FFFFFF80 inset,0 2px 8px #00000012}.btn + .btn{margin-left:var(--s12)}
@@ -153,7 +168,7 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 </style>
 </head>
 <body>
-<header class="header"><div class="container header-in">${isCurrentPage(page.slug, '/') ? `<span class="brand brand-current" aria-current="page">${escapeHtml(site.brandName || 'SEO-PROD')}</span>` : `<a class="brand" href="/">${escapeHtml(site.brandName || 'SEO-PROD')}</a>`}<nav class="nav">${navLink(page.slug, '/', 'Главная')}${navLink(page.slug, '/services/', 'Услуги')}${navLink(page.slug, '/cases/', 'Кейсы')}${navLink(page.slug, '/pricing/', 'Цены')}${navLink(page.slug, '/journal/', 'Журнал')}${navLink(page.slug, '/contact/', 'Контакты')}</nav></div></header>
+<header class="header"><div class="container header-in">${isHomePage(page.slug) ? `<span class="brand brand-current" aria-current="page">${escapeHtml(site.brandName || 'SEO-PROD')}</span>` : `<a class="brand" href="/">${escapeHtml(site.brandName || 'SEO-PROD')}</a>`}<nav class="nav">${renderHeaderNav(page.slug)}</nav></div></header>
 ${railHtml}
 <main>${contentHtml}</main>
 <footer class="site-footer">
