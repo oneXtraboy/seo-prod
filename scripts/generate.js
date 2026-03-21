@@ -76,7 +76,10 @@ function renderLanding(page) {
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const getStep = () => {
           const card = root.querySelector('.clients-card');
-          return card ? card.getBoundingClientRect().width + 20 : root.clientWidth;
+          if (!card) return root.clientWidth;
+          const styles = window.getComputedStyle(root);
+          const gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
+          return card.getBoundingClientRect().width + gap;
         };
         navButtons.forEach((button) => {
           button.addEventListener('click', () => {
@@ -91,7 +94,7 @@ function renderLanding(page) {
           root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
         });
       })();
-    </script>`, 'section-container');
+    </script>`, 'section-container section-container-wide section-container-clients');
   const reviews = section('reviews', data.reviews.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.reviews.text)}</p></article></div>`, 'section-container');
   const team = section('team', data.team.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.team.text)}</p></article></div>`, 'section-container');
   const faq = section('faq', 'FAQ', `<div class="cards-grid grid-1-2-3">${data.faq.map((item) => `<article class="card"><details><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details></article>`).join('')}</div>`, 'section-container');
