@@ -28,17 +28,13 @@ const NAV_ITEMS = [
   { key: 'contact', href: '/contact/', label: 'Контакты' }
 ];
 
-const NAV_PATH_ALIASES = [
-  { prefix: '/journal/', key: 'journal' }
-];
-
 function navItemMatchesPath(item, currentPath) {
   return currentPath === normalizePath(item.href);
 }
 
 function resolveCurrentNavKey(currentPath) {
-  const alias = NAV_PATH_ALIASES.find((entry) => currentPath.startsWith(entry.prefix));
-  if (alias) return alias.key;
+  if (currentPath === '/cases/') return 'cases';
+  if (currentPath === '/journal/' || currentPath.startsWith('/journal/')) return 'journal';
   const currentNav = NAV_ITEMS.find((item) => navItemMatchesPath(item, currentPath));
   return currentNav ? currentNav.key : null;
 }
