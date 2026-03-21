@@ -67,7 +67,7 @@ function renderLanding(page) {
       </div>
       <button class="clients-carousel-nav" type="button" data-dir="next" aria-label="Следующие кейсы">→</button>
     </div>
-    <p><a href="${escapeHtml((data.clients.cta && data.clients.cta.href) || '/cases/')}">${escapeHtml((data.clients.cta && data.clients.cta.text) || 'Смотреть все кейсы')}</a></p>
+    <p class="clients-cta-wrap"><a class="btn btn-primary clients-cta-btn" href="${escapeHtml((data.clients.cta && data.clients.cta.href) || '/cases/')}">${escapeHtml((data.clients.cta && data.clients.cta.text) || 'Смотреть все кейсы')}</a></p>
     <script>
       (() => {
         const root = document.querySelector('[data-clients-carousel]');
