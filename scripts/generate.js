@@ -54,7 +54,7 @@ function renderLanding(page) {
     const anchor = normalizeCaseAnchor(item, index);
     const href = `/cases/#${anchor}`;
     const metrics = Array.isArray(item.metricsPreview) ? item.metricsPreview.slice(0, 3) : [];
-    return `<article class="card clients-card" id="home-case-${escapeHtml(anchor)}">
+    return `<article class="clients-card" id="home-case-${escapeHtml(anchor)}">
               <div class="clients-card-copy">
                 <p class="clients-card-category">${escapeHtml(item.category || item.niche || '')}</p>
                 <h3>${escapeHtml(item.shortTitle || item.title || '')}</h3>
@@ -69,7 +69,6 @@ function renderLanding(page) {
         <div class="clients-carousel-progress" data-clients-progress role="slider" aria-label="Навигация по кейсам" aria-valuemin="1" aria-valuemax="${featuredCases.length || 1}" aria-valuenow="1" aria-valuetext="Кейс 1 из ${featuredCases.length || 1}" tabindex="0">
           <div class="clients-carousel-progress-track">
             <div class="clients-carousel-progress-fill" data-clients-progress-fill></div>
-            <div class="clients-carousel-progress-thumb" data-clients-progress-thumb aria-hidden="true"></div>
           </div>
         </div>
       </div>
@@ -81,8 +80,8 @@ function renderLanding(page) {
         const root = document.querySelector('[data-clients-carousel]');
         const progress = document.querySelector('[data-clients-progress]');
         const progressFill = document.querySelector('[data-clients-progress-fill]');
-        const progressThumb = document.querySelector('[data-clients-progress-thumb]');
         if (!root) return;
+        const totalSlides = Math.max(1, root.querySelectorAll('.clients-card').length);
         const navButtons = document.querySelectorAll('.clients-carousel-nav');
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -93,10 +92,13 @@ function renderLanding(page) {
           return clamp(root.scrollLeft / maxScroll, 0, 1);
         };
         const setProgressRatio = (ratio) => {
-          if (!progress || !progressFill || !progressThumb) return;
+          if (!progress || !progressFill) return;
           const nextRatio = clamp(ratio, 0, 1);
-          progressFill.style.width = (nextRatio * 100).toFixed(3) + '%';
-          progressThumb.style.left = (nextRatio * 100).toFixed(3) + '%';
+          const segmentRatio = 1 / totalSlides;
+          const maxOffset = 1 - segmentRatio;
+          const leftRatio = nextRatio * maxOffset;
+          progressFill.style.width = (segmentRatio * 100).toFixed(3) + '%';
+          progressFill.style.left = (leftRatio * 100).toFixed(3) + '%';
         };
         const getActiveIndex = () => {
           const step = getStep();
