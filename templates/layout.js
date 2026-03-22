@@ -152,7 +152,7 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 .home-final-cta-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,320px);gap:var(--space-stack-md);align-items:stretch}
 .home-final-cta-copy ul{margin:0;padding-left:20px;display:grid;gap:8px}
 .home-final-cta-copy li{margin:0}
-.home-final-cta-action-wrap{display:flex;align-items:center;justify-content:center;padding:var(--s20);border:1px solid #d7e5ff;border-radius:var(--r20);background:linear-gradient(180deg,#FFFFFF,#F6F9FF);min-height:100%}
+.home-final-cta-action-wrap{display:flex;align-items:center;justify-content:center;min-height:100%}
 .home-final-cta-action{width:clamp(170px,100%,220px);aspect-ratio:1 / 1;padding:20px;border-radius:var(--r20);font-size:1.06rem;line-height:1.25;text-align:center;white-space:normal}
 .kpi{font:700 clamp(1.8rem,3.2vw,2.4rem)/1.05 var(--font-rounded);letter-spacing:-.02em}.muted{color:var(--text3)}
 .toc{padding:var(--s20);border-radius:var(--r12)}
