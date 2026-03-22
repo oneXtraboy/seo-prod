@@ -211,16 +211,20 @@ function renderLanding(page) {
     const quote = testimonial.quote || 'Публичный отзыв по этому кейсу в процессе согласования. Используем реальный кейс и компанию без вымышленных цитат.';
     const anchor = normalizeCaseAnchor(item, index);
     return `<article class="reviews-card">
-              <div class="reviews-card-header">
-                <div class="reviews-card-photo-slot">${renderTestimonialVisual(item, personName)}</div>
-                <div class="reviews-card-meta">
-                  <p class="reviews-card-company">${escapeHtml(item.clientName || 'Клиент под NDA')}</p>
-                  <p class="reviews-card-person">${escapeHtml(personName)}</p>
-                  <p class="reviews-card-role">${escapeHtml(role)}</p>
+              <div class="reviews-card-body">
+                <div class="reviews-card-content">
+                  <div class="reviews-card-meta">
+                    <p class="reviews-card-company">${escapeHtml(item.clientName || 'Клиент под NDA')}</p>
+                    <p class="reviews-card-person">${escapeHtml(personName)}</p>
+                    <p class="reviews-card-role">${escapeHtml(role)}</p>
+                  </div>
+                  <blockquote class="reviews-card-quote">“${escapeHtml(quote)}”</blockquote>
+                  <p class="reviews-card-link"><a href="/cases/#${escapeHtml(anchor)}">Перейти к кейсу</a></p>
+                </div>
+                <div class="reviews-card-media">
+                  <div class="reviews-card-photo-slot">${renderTestimonialVisual(item, personName)}</div>
                 </div>
               </div>
-              <blockquote class="reviews-card-quote">“${escapeHtml(quote)}”</blockquote>
-              <p class="reviews-card-link"><a href="/cases/#${escapeHtml(anchor)}">Перейти к кейсу</a></p>
             </article>`;
   }).join('')}
         </div>
