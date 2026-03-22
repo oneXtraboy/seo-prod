@@ -206,10 +206,23 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 .reviews-carousel-progress{position:relative;height:14px;border:0;padding:0;margin:0;background:transparent;cursor:pointer;touch-action:none}
 .reviews-carousel-progress-track{position:absolute;left:0;right:0;top:50%;height:6px;transform:translateY(-50%);background:#dce9fb;border-radius:999px}
 .reviews-carousel-progress-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#0F7DE6,#0066CC);border-radius:999px;transition:left .2s ease}
+.team-section-flow{display:grid;gap:var(--space-stack-lg)}
+.team-intro{display:grid;gap:var(--space-stack-sm);padding:var(--space-stack-md)}
+.team-intro p{margin:0;color:var(--text2)}
+.team-cards{display:grid;gap:var(--space-stack-md)}
+.team-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,30%);gap:var(--s20);align-items:stretch;padding:var(--space-stack-md);border:1px solid var(--border);border-radius:var(--r20);background:var(--surface);box-shadow:var(--shadow1)}
+.team-card-copy{display:grid;gap:var(--s12);align-content:start;min-width:0}
+.team-card-role{margin:0;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);font-weight:600}
+.team-card-name{margin:0}
+.team-card-description{margin:0;color:var(--text2)}
+.team-card-media{display:flex;justify-content:flex-end}
+.team-card-media-slot{width:100%;min-height:170px;border:1px dashed #b7bbc4;border-radius:14px;background:linear-gradient(180deg,#FFFFFF,#F6F7FB);padding:14px;display:grid;align-content:center;gap:8px;text-align:center}
+.team-card-media-label{margin:0;font-size:.92rem;font-weight:600;color:var(--text2)}
+.team-card-media-note{margin:0;font-size:.83rem;line-height:1.45;color:var(--text3)}
 @media (min-width:768px){.cards-grid{--cols:var(--cols-md,2)}}
 @media (min-width:1200px){.cards-grid{--cols:var(--cols-lg,3)}}
 @media (min-width:1024px){.reviews-card{min-width:calc((100% - 20px) / 2);max-width:calc((100% - 20px) / 2)}}
-@media (max-width:760px){.reviews-card-body{grid-template-columns:1fr}.reviews-card-media{justify-content:flex-start}.reviews-card-photo-slot{max-width:124px}}
+@media (max-width:760px){.reviews-card-body{grid-template-columns:1fr}.reviews-card-media{justify-content:flex-start}.reviews-card-photo-slot{max-width:124px}.team-card{grid-template-columns:1fr}.team-card-media{justify-content:flex-start}.team-card-media-slot{max-width:220px;min-height:148px}}
 @media (max-width:1100px){.clients-card{grid-template-columns:1fr}.clients-carousel-wrap{grid-template-columns:1fr}.clients-carousel-nav{display:none}.clients-intro,.clients-cta-wrap{margin-inline:0}.reviews-carousel-wrap{grid-template-columns:1fr}.reviews-carousel-nav{display:none}.reviews-intro{margin-inline:0}}
 @media (max-width:900px){.container,.section-container,.section-container-wide{padding:0 16px}.grid{grid-template-columns:1fr;gap:16px}.section{padding:48px 0}.scroll-rail{display:none}.rail-mobile-toggle{display:block;position:fixed;right:16px;bottom:16px;z-index:40;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:10px 14px;box-shadow:var(--shadow1)}.rail-mobile-sheet{display:grid;position:fixed;left:16px;right:16px;bottom:72px;z-index:40;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:var(--shadow1)}}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.rail-tick::before{transition:none}}

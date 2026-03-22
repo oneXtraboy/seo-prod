@@ -336,7 +336,33 @@ function renderLanding(page) {
         setProgress();
       })();
     </script></div></section>`;
-  const team = section('team', data.team.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.team.text)}</p></article></div>`, 'section-container');
+  const teamMembers = String(data.team.text || '')
+    .split(/\n+/)
+    .map((line) => line.replace(/^\s*•\s*/, '').trim())
+    .filter(Boolean)
+    .map((line, index) => {
+      const [namePart, rolePart] = line.split(/\s+—\s+/);
+      const name = namePart && namePart.trim() ? namePart.trim() : `Сотрудник ${index + 1}`;
+      const description = rolePart && rolePart.trim()
+        ? rolePart.trim()
+        : 'Профиль и вклад в проекты уточняются. Слот оставлен как честный placeholder без вымышленных регалий.';
+      return {
+        name,
+        role: description.split('.')[0] || 'Профиль уточняется',
+        description
+      };
+    });
+  const teamIntroLines = Array.isArray(data.team.introLines) && data.team.introLines.length
+    ? data.team.introLines
+    : [
+      'Команда SEO-PROD работает как единая продакшн-группа: стратегия, контент, техника и PR синхронизированы в одном ритме.',
+      'Мы не собираем «универсальный отдел», а формируем роли под цель проекта: лиды, качество спроса, окупаемость внедрений.',
+      'Каждый специалист отвечает за свой участок и фиксирует вклад в общей системе приоритетов и проверок качества.',
+      'Описание ниже — рабочие профили и зоны ответственности. Формулировки могут обновляться по мере расширения команды.',
+      'Фото и награды показываем только когда есть подтверждённые материалы; до этого оставляем прозрачные placeholder-слоты.',
+      'Это помогает сохранить честный контракт: без вымышленных достижений, но с понятной структурой и ответственными ролями.'
+    ];
+  const team = section('team', data.team.title, `<div class="content-flow team-section-flow"><div class="team-intro card">${teamIntroLines.map((line) => `<p>${escapeHtml(line)}</p>`).join('')}</div><div class="team-cards">${teamMembers.map((member) => `<article class="team-card"><div class="team-card-copy"><p class="team-card-role">${escapeHtml(member.role)}</p><h3 class="team-card-name">${escapeHtml(member.name)}</h3><p class="team-card-description">${escapeHtml(member.description)}</p></div><aside class="team-card-media" aria-label="Слот фото и наград"><div class="team-card-media-slot"><p class="team-card-media-label">Слот под фото / награды</p><p class="team-card-media-note">Добавим подтверждённые материалы после согласования.</p></div></aside></article>`).join('')}</div></div>`, 'section-container');
   const faq = section('faq', 'FAQ', `<div class="cards-grid grid-1-2-3">${data.faq.map((item) => `<article class="card"><details><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details></article>`).join('')}</div>`, 'section-container');
   const contact = section('contact', data.finalCta.title, `<div class="card"><ul>${data.finalCta.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join('')}</ul><p><a class="btn btn-primary" href="${escapeHtml(data.finalCta.cta.href)}">${escapeHtml(data.finalCta.cta.text)}</a></p></div>`, 'section-container');
   return hero + eeat + results + process + pricing + clients + reviews + team + faq + contact;
