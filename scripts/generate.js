@@ -48,8 +48,9 @@ function renderLanding(page) {
   const clients = `<section id="clients" class="section"><div class="section-container section-container-wide section-container-clients content-flow clients-section-flow"><div class="clients-intro"><h2>${escapeHtml(data.clients.title)}</h2><p class="lead">${escapeHtml(data.clients.lead || '')}</p></div>
     <div class="clients-carousel-wrap">
       <button class="clients-carousel-nav" type="button" data-dir="prev" aria-label="Предыдущие кейсы">←</button>
-      <div class="clients-carousel-track" data-clients-carousel tabindex="0" aria-label="Карусель кейсов клиентов">
-        ${featuredCases.map((item, index) => {
+      <div class="clients-carousel-main">
+        <div class="clients-carousel-track" data-clients-carousel tabindex="0" aria-label="Карусель кейсов клиентов">
+          ${featuredCases.map((item, index) => {
     const anchor = normalizeCaseAnchor(item, index);
     const href = `/cases/#${anchor}`;
     const metrics = Array.isArray(item.metricsPreview) ? item.metricsPreview.slice(0, 3) : [];
@@ -64,6 +65,12 @@ function renderLanding(page) {
               <div class="clients-card-visual">${renderCaseVisual(item)}</div>
             </article>`;
   }).join('')}
+        </div>
+        <div class="clients-carousel-progress" data-clients-progress role="slider" aria-label="Навигация по кейсам" aria-valuemin="1" aria-valuemax="${featuredCases.length || 1}" aria-valuenow="1" aria-valuetext="Кейс 1 из ${featuredCases.length || 1}" tabindex="0">
+          <div class="clients-carousel-progress-track">
+            <div class="clients-carousel-progress-segment" data-clients-progress-segment aria-hidden="true"></div>
+          </div>
+        </div>
       </div>
       <button class="clients-carousel-nav" type="button" data-dir="next" aria-label="Следующие кейсы">→</button>
     </div>
@@ -71,9 +78,60 @@ function renderLanding(page) {
     <script>
       (() => {
         const root = document.querySelector('[data-clients-carousel]');
+        const progress = document.querySelector('[data-clients-progress]');
+        const progressSegment = document.querySelector('[data-clients-progress-segment]');
         if (!root) return;
         const navButtons = document.querySelectorAll('.clients-carousel-nav');
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+        const getCardsCount = () => Math.max(root.querySelectorAll('.clients-card').length, 1);
+        const getSegmentRatio = () => 1 / getCardsCount();
+        const getMaxScroll = () => Math.max(root.scrollWidth - root.clientWidth, 0);
+        const getRatioFromScroll = () => {
+          const maxScroll = getMaxScroll();
+          if (!maxScroll) return 0;
+          return clamp(root.scrollLeft / maxScroll, 0, 1);
+        };
+        const setProgressRatio = (ratio) => {
+          if (!progress || !progressSegment) return;
+          const nextRatio = clamp(ratio, 0, 1);
+          const segmentRatio = getSegmentRatio();
+          const maxOffset = Math.max(1 - segmentRatio, 0);
+          progressSegment.style.width = (segmentRatio * 100).toFixed(3) + '%';
+          progressSegment.style.left = ((maxOffset ? nextRatio * maxOffset : 0) * 100).toFixed(3) + '%';
+        };
+        const getActiveIndex = () => {
+          const step = getStep();
+          if (!step) return 0;
+          return Math.round(root.scrollLeft / step);
+        };
+        const syncProgress = () => {
+          const ratio = getRatioFromScroll();
+          setProgressRatio(ratio);
+          if (!progress) return;
+          const cards = root.querySelectorAll('.clients-card');
+          const maxIndex = Math.max(cards.length - 1, 0);
+          const currentIndex = clamp(getActiveIndex(), 0, maxIndex);
+          progress.setAttribute('aria-valuemin', '1');
+          progress.setAttribute('aria-valuemax', String(maxIndex + 1));
+          progress.setAttribute('aria-valuenow', String(currentIndex + 1));
+          progress.setAttribute('aria-valuetext', 'Кейс ' + (currentIndex + 1) + ' из ' + (maxIndex + 1));
+        };
+        const scrollToRatio = (ratio) => {
+          const maxScroll = getMaxScroll();
+          root.scrollTo({ left: clamp(ratio, 0, 1) * maxScroll, behavior: prefersReduced ? 'auto' : 'smooth' });
+        };
+        const getPointerRatio = (clientX, useSegmentCenter = false) => {
+          if (!progress) return 0;
+          const rect = progress.getBoundingClientRect();
+          if (!rect.width) return 0;
+          const rawRatio = clamp((clientX - rect.left) / rect.width, 0, 1);
+          if (!useSegmentCenter) return rawRatio;
+          const segmentRatio = getSegmentRatio();
+          const maxOffset = 1 - segmentRatio;
+          if (maxOffset <= 0) return 0;
+          return clamp((rawRatio - (segmentRatio / 2)) / maxOffset, 0, 1);
+        };
         const getStep = () => {
           const card = root.querySelector('.clients-card');
           if (!card) return root.clientWidth;
@@ -87,12 +145,72 @@ function renderLanding(page) {
             root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
           });
         });
+        if (progress) {
+          progress.addEventListener('click', (event) => {
+            scrollToRatio(getPointerRatio(event.clientX, true));
+          });
+          progress.addEventListener('keydown', (event) => {
+            if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft' && event.key !== 'Home' && event.key !== 'End') return;
+            event.preventDefault();
+            if (event.key === 'Home') {
+              scrollToRatio(0);
+              return;
+            }
+            if (event.key === 'End') {
+              scrollToRatio(1);
+              return;
+            }
+            const dir = event.key === 'ArrowRight' ? 1 : -1;
+            root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
+          });
+          let dragging = false;
+          let dragOffset = 0;
+          const startDrag = (event) => {
+            dragging = true;
+            progress.setPointerCapture(event.pointerId);
+            const segmentRatio = getSegmentRatio();
+            const maxOffset = 1 - segmentRatio;
+            if (maxOffset <= 0) {
+              dragOffset = 0;
+              return;
+            }
+            const pointerRatio = getPointerRatio(event.clientX);
+            dragOffset = pointerRatio - (getRatioFromScroll() * maxOffset);
+            const nextOffset = clamp(pointerRatio - dragOffset, 0, maxOffset);
+            scrollToRatio(nextOffset / maxOffset);
+          };
+          const onDrag = (event) => {
+            if (!dragging) return;
+            const segmentRatio = getSegmentRatio();
+            const maxOffset = 1 - segmentRatio;
+            if (maxOffset <= 0) {
+              scrollToRatio(0);
+              return;
+            }
+            const pointerRatio = getPointerRatio(event.clientX);
+            const nextOffset = clamp(pointerRatio - dragOffset, 0, maxOffset);
+            scrollToRatio(nextOffset / maxOffset);
+          };
+          const stopDrag = (event) => {
+            dragging = false;
+            if (progress.hasPointerCapture(event.pointerId)) {
+              progress.releasePointerCapture(event.pointerId);
+            }
+          };
+          progress.addEventListener('pointerdown', startDrag);
+          progress.addEventListener('pointermove', onDrag);
+          progress.addEventListener('pointerup', stopDrag);
+          progress.addEventListener('pointercancel', stopDrag);
+        }
         root.addEventListener('keydown', (event) => {
           if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
           event.preventDefault();
           const dir = event.key === 'ArrowRight' ? 1 : -1;
           root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
         });
+        root.addEventListener('scroll', syncProgress, { passive: true });
+        window.addEventListener('resize', syncProgress);
+        syncProgress();
       })();
     </script></div></section>`;
   const reviews = section('reviews', data.reviews.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.reviews.text)}</p></article></div>`, 'section-container');
