@@ -181,9 +181,33 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 .section-container-clients .lead{max-width:68ch}
 .clients-cta-wrap{margin-top:var(--space-stack-lg);text-align:center;margin-inline:calc(var(--clients-nav-size) + var(--clients-nav-gap))}
 .clients-cta-btn{margin:0 auto}
+.reviews-section-flow{--reviews-nav-size:40px;--reviews-nav-gap:12px}
+.reviews-intro{max-width:84ch;margin-inline:calc(var(--reviews-nav-size) + var(--reviews-nav-gap))}
+.reviews-carousel-wrap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.reviews-carousel-main{display:grid;gap:14px;min-width:0}
+.reviews-carousel-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;min-width:0}
+.reviews-carousel-track::-webkit-scrollbar{display:none}
+.reviews-carousel-track:focus{outline:0}
+.reviews-card{min-width:100%;max-width:100%;scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow1);border-radius:var(--r20);padding:var(--space-stack-md);display:grid;gap:var(--s16)}
+.reviews-card-header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--s16);align-items:center}
+.reviews-card-photo-slot{width:68px;height:68px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--surface-muted);border:1px solid var(--border)}
+.reviews-card-photo{width:100%;height:100%;object-fit:cover}
+.reviews-card-photo-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.75rem;line-height:1.2;color:var(--text3);padding:6px}
+.reviews-card-meta p{margin:0}
+.reviews-card-company{font-size:.83rem;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);font-weight:600}
+.reviews-card-person{font-weight:600;color:var(--text)}
+.reviews-card-role{font-size:.93rem;color:var(--text3)}
+.reviews-card-quote{margin:0;font-size:1rem;line-height:1.7;color:var(--text2)}
+.reviews-card-link{margin:0}
+.reviews-carousel-nav{width:40px;height:40px;border:1px solid var(--border);border-radius:999px;background:var(--surface);cursor:pointer}
+.reviews-carousel-nav:hover,.reviews-carousel-nav:focus-visible{background:var(--surface-muted)}
+.reviews-carousel-progress{position:relative;height:14px;border:0;padding:0;margin:0;background:transparent;cursor:pointer;touch-action:none}
+.reviews-carousel-progress-track{position:absolute;left:0;right:0;top:50%;height:6px;transform:translateY(-50%);background:#dce9fb;border-radius:999px}
+.reviews-carousel-progress-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#0F7DE6,#0066CC);border-radius:999px;transition:left .2s ease}
 @media (min-width:768px){.cards-grid{--cols:var(--cols-md,2)}}
 @media (min-width:1200px){.cards-grid{--cols:var(--cols-lg,3)}}
-@media (max-width:1100px){.clients-card{grid-template-columns:1fr}.clients-carousel-wrap{grid-template-columns:1fr}.clients-carousel-nav{display:none}.clients-intro,.clients-cta-wrap{margin-inline:0}}
+@media (min-width:1024px){.reviews-card{min-width:calc((100% - 20px) / 2);max-width:calc((100% - 20px) / 2)}}
+@media (max-width:1100px){.clients-card{grid-template-columns:1fr}.clients-carousel-wrap{grid-template-columns:1fr}.clients-carousel-nav{display:none}.clients-intro,.clients-cta-wrap{margin-inline:0}.reviews-carousel-wrap{grid-template-columns:1fr}.reviews-carousel-nav{display:none}.reviews-intro{margin-inline:0}}
 @media (max-width:900px){.container,.section-container,.section-container-wide{padding:0 16px}.grid{grid-template-columns:1fr;gap:16px}.section{padding:48px 0}.scroll-rail{display:none}.rail-mobile-toggle{display:block;position:fixed;right:16px;bottom:16px;z-index:40;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:10px 14px;box-shadow:var(--shadow1)}.rail-mobile-sheet{display:grid;position:fixed;left:16px;right:16px;bottom:72px;z-index:40;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:var(--shadow1)}}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.rail-tick::before{transition:none}}
 @media (prefers-contrast: more){:root{--border:#8e8e93;--text3:#4a4a4f}}

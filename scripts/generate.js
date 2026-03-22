@@ -34,6 +34,14 @@ function renderCaseVisual(item) {
   return `<div class="clients-card-image-placeholder" role="img" aria-label="${escapeHtml(item.topvisorImageAlt || item.shortTitle || item.title || 'Слот под визуал кейса')}">Слот под реальный скрин Topvisor</div>`;
 }
 
+function renderTestimonialVisual(item, personName) {
+  const testimonial = item.testimonial || {};
+  if (testimonial.photo) {
+    return `<img class="reviews-card-photo" src="${escapeHtml(testimonial.photo)}" alt="${escapeHtml(testimonial.photoAlt || personName || 'Фото представителя клиента')}" loading="lazy" decoding="async" />`;
+  }
+  return `<div class="reviews-card-photo-placeholder" role="img" aria-label="Слот под фото представителя клиента">Фото клиента</div>`;
+}
+
 function renderLanding(page) {
   const data = page.landing;
   const hero = `<section id="hero" class="section hero"><div class="section-container content-flow"><h1>${escapeHtml(data.hero.title)}</h1><p class="lead">${escapeHtml(data.hero.lead)}</p><div class="cards-grid grid-1-2-3">${(data.hero.stats || []).map((stat) => `<article class="card"><p class="kpi">${escapeHtml(stat)}</p></article>`).join('')}</div><p><a class="btn btn-primary" href="${escapeHtml(data.hero.ctaPrimary.href)}">${escapeHtml(data.hero.ctaPrimary.text)}</a> <a class="btn" href="${escapeHtml(data.hero.ctaSecondary.href)}">${escapeHtml(data.hero.ctaSecondary.text)}</a></p><p class="muted">${escapeHtml(data.hero.micro)}</p></div></section>`;
@@ -190,7 +198,140 @@ function renderLanding(page) {
         syncProgress();
       })();
     </script></div></section>`;
-  const reviews = section('reviews', data.reviews.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.reviews.text)}</p></article></div>`, 'section-container');
+  const reviewCases = featuredCases.slice(0, 6);
+  const reviews = `<section id="reviews" class="section"><div class="section-container section-container-wide content-flow reviews-section-flow"><div class="reviews-intro"><h2>${escapeHtml(data.reviews.title)}</h2><p class="lead">${escapeHtml(data.reviews.lead || 'Отзывы привязаны к тем же компаниям, что и в кейсах. Если отзыв ещё не согласован, показываем честный статус публикации.')}</p></div>
+    <div class="reviews-carousel-wrap">
+      <button class="reviews-carousel-nav" type="button" data-reviews-dir="prev" aria-label="Предыдущие отзывы">←</button>
+      <div class="reviews-carousel-main">
+        <div class="reviews-carousel-track" data-reviews-carousel tabindex="0" aria-label="Карусель отзывов клиентов">
+          ${reviewCases.map((item, index) => {
+    const testimonial = item.testimonial || {};
+    const personName = testimonial.name || 'Представитель клиента';
+    const role = testimonial.role || 'Отзыв подтверждается и готовится к публикации';
+    const quote = testimonial.quote || 'Публичный отзыв по этому кейсу в процессе согласования. Используем реальный кейс и компанию без вымышленных цитат.';
+    const anchor = normalizeCaseAnchor(item, index);
+    return `<article class="reviews-card">
+              <div class="reviews-card-header">
+                <div class="reviews-card-photo-slot">${renderTestimonialVisual(item, personName)}</div>
+                <div class="reviews-card-meta">
+                  <p class="reviews-card-company">${escapeHtml(item.clientName || 'Клиент под NDA')}</p>
+                  <p class="reviews-card-person">${escapeHtml(personName)}</p>
+                  <p class="reviews-card-role">${escapeHtml(role)}</p>
+                </div>
+              </div>
+              <blockquote class="reviews-card-quote">“${escapeHtml(quote)}”</blockquote>
+              <p class="reviews-card-link"><a href="/cases/#${escapeHtml(anchor)}">Перейти к кейсу</a></p>
+            </article>`;
+  }).join('')}
+        </div>
+        <div class="reviews-carousel-progress" data-reviews-progress role="slider" aria-label="Навигация по отзывам" aria-valuemin="1" aria-valuemax="${reviewCases.length || 1}" aria-valuenow="1" aria-valuetext="Отзыв 1 из ${reviewCases.length || 1}" tabindex="0">
+          <div class="reviews-carousel-progress-track">
+            <div class="reviews-carousel-progress-fill" data-reviews-progress-fill></div>
+          </div>
+        </div>
+      </div>
+      <button class="reviews-carousel-nav" type="button" data-reviews-dir="next" aria-label="Следующие отзывы">→</button>
+    </div>
+    <script>
+      (() => {
+        const root = document.querySelector('[data-reviews-carousel]');
+        const progress = document.querySelector('[data-reviews-progress]');
+        const progressFill = document.querySelector('[data-reviews-progress-fill]');
+        if (!root) return;
+        const navButtons = document.querySelectorAll('[data-reviews-dir]');
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+        const getMaxScroll = () => Math.max(root.scrollWidth - root.clientWidth, 0);
+        const getVisibleCount = () => window.matchMedia('(min-width: 1024px)').matches ? 2 : 1;
+        const getTotalPages = () => Math.max(root.querySelectorAll('.reviews-card').length - getVisibleCount() + 1, 1);
+        const getStep = () => {
+          const card = root.querySelector('.reviews-card');
+          if (!card) return root.clientWidth;
+          const styles = window.getComputedStyle(root);
+          const gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
+          return card.getBoundingClientRect().width + gap;
+        };
+        const setProgress = () => {
+          const maxScroll = getMaxScroll();
+          const ratio = maxScroll ? clamp(root.scrollLeft / maxScroll, 0, 1) : 0;
+          const totalPages = getTotalPages();
+          const segmentRatio = 1 / totalPages;
+          const maxOffset = 1 - segmentRatio;
+          if (progressFill) {
+            progressFill.style.width = (segmentRatio * 100).toFixed(3) + '%';
+            progressFill.style.left = (ratio * maxOffset * 100).toFixed(3) + '%';
+          }
+          if (progress) {
+            const currentIndex = clamp(Math.round(ratio * (totalPages - 1)), 0, totalPages - 1);
+            progress.setAttribute('aria-valuemin', '1');
+            progress.setAttribute('aria-valuemax', String(totalPages));
+            progress.setAttribute('aria-valuenow', String(currentIndex + 1));
+            progress.setAttribute('aria-valuetext', 'Отзыв ' + (currentIndex + 1) + ' из ' + totalPages);
+          }
+        };
+        const scrollToRatio = (ratio) => {
+          root.scrollTo({ left: clamp(ratio, 0, 1) * getMaxScroll(), behavior: prefersReduced ? 'auto' : 'smooth' });
+        };
+        const getPointerRatio = (clientX) => {
+          if (!progress) return 0;
+          const rect = progress.getBoundingClientRect();
+          if (!rect.width) return 0;
+          return clamp((clientX - rect.left) / rect.width, 0, 1);
+        };
+        navButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const dir = button.dataset.reviewsDir === 'next' ? 1 : -1;
+            root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
+          });
+        });
+        root.addEventListener('scroll', setProgress, { passive: true });
+        root.addEventListener('keydown', (event) => {
+          if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+          event.preventDefault();
+          const dir = event.key === 'ArrowRight' ? 1 : -1;
+          root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
+        });
+        if (progress) {
+          progress.addEventListener('click', (event) => {
+            scrollToRatio(getPointerRatio(event.clientX));
+          });
+          progress.addEventListener('keydown', (event) => {
+            if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft' && event.key !== 'Home' && event.key !== 'End') return;
+            event.preventDefault();
+            if (event.key === 'Home') {
+              scrollToRatio(0);
+              return;
+            }
+            if (event.key === 'End') {
+              scrollToRatio(1);
+              return;
+            }
+            const dir = event.key === 'ArrowRight' ? 1 : -1;
+            root.scrollBy({ left: getStep() * dir, behavior: prefersReduced ? 'auto' : 'smooth' });
+          });
+          let dragging = false;
+          progress.addEventListener('pointerdown', (event) => {
+            dragging = true;
+            progress.setPointerCapture(event.pointerId);
+            scrollToRatio(getPointerRatio(event.clientX));
+          });
+          progress.addEventListener('pointermove', (event) => {
+            if (!dragging) return;
+            scrollToRatio(getPointerRatio(event.clientX));
+          });
+          const stopDrag = (event) => {
+            dragging = false;
+            if (progress.hasPointerCapture(event.pointerId)) {
+              progress.releasePointerCapture(event.pointerId);
+            }
+          };
+          progress.addEventListener('pointerup', stopDrag);
+          progress.addEventListener('pointercancel', stopDrag);
+        }
+        window.addEventListener('resize', setProgress);
+        setProgress();
+      })();
+    </script></div></section>`;
   const team = section('team', data.team.title, `<div class="cards-grid grid-1-2-3"><article class="card"><p>${escapeHtml(data.team.text)}</p></article></div>`, 'section-container');
   const faq = section('faq', 'FAQ', `<div class="cards-grid grid-1-2-3">${data.faq.map((item) => `<article class="card"><details><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details></article>`).join('')}</div>`, 'section-container');
   const contact = section('contact', data.finalCta.title, `<div class="card"><ul>${data.finalCta.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join('')}</ul><p><a class="btn btn-primary" href="${escapeHtml(data.finalCta.cta.href)}">${escapeHtml(data.finalCta.cta.text)}</a></p></div>`, 'section-container');
