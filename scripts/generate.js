@@ -27,6 +27,11 @@ function normalizeCaseAnchor(item, index) {
   return String(raw).trim().toLowerCase().replace(/[^a-z0-9-_]+/g, '-');
 }
 
+function getCaseHref(item, index) {
+  if (index === 0) return '/cases/1/';
+  return `/cases/#${normalizeCaseAnchor(item, index)}`;
+}
+
 function renderCaseVisual(item) {
   if (item.topvisorImage) {
     return `<img class="clients-card-image" src="${escapeHtml(item.topvisorImage)}" alt="${escapeHtml(item.topvisorImageAlt || item.shortTitle || item.title || 'Визуал кейса')}" loading="lazy" decoding="async" />`;
@@ -60,7 +65,7 @@ function renderLanding(page) {
         <div class="clients-carousel-track" data-clients-carousel tabindex="0" aria-label="Карусель кейсов клиентов">
           ${featuredCases.map((item, index) => {
     const anchor = normalizeCaseAnchor(item, index);
-    const href = `/cases/#${anchor}`;
+    const href = getCaseHref(item, index);
     const metrics = Array.isArray(item.metricsPreview) ? item.metricsPreview.slice(0, 3) : [];
     return `<article class="clients-card" id="home-case-${escapeHtml(anchor)}">
               <div class="clients-card-copy">
@@ -219,7 +224,7 @@ function renderLanding(page) {
                     <p class="reviews-card-role">${escapeHtml(role)}</p>
                   </div>
                   <blockquote class="reviews-card-quote">“${escapeHtml(quote)}”</blockquote>
-                  <p class="reviews-card-link"><a href="/cases/#${escapeHtml(anchor)}">Перейти к кейсу</a></p>
+                  <p class="reviews-card-link"><a href="${escapeHtml(getCaseHref(item, index))}">Перейти к кейсу</a></p>
                 </div>
                 <div class="reviews-card-media">
                   <div class="reviews-card-photo-slot">${renderTestimonialVisual(item, personName)}</div>
@@ -435,9 +440,12 @@ function renderCasesProofPage(page) {
     const anchor = normalizeCaseAnchor(item, index);
     const fallbackMetrics = Array.isArray(item.metricsPreview) ? item.metricsPreview : [];
     const renderedMetrics = metrics.length
-      ? metrics.map((metric) => `<li><strong>${escapeHtml(metric.label || '')}:</strong> ${escapeHtml(metric.value || 'Доступно в рабочей отчётности')} ${metric.period ? `(${escapeHtml(metric.period)})` : ''}${metric.note ? ` — ${escapeHtml(metric.note)}` : ''}</li>`).join('')
+      ? metrics.map((metric) => {
+        if (typeof metric === 'string') return `<li>${escapeHtml(metric)}</li>`;
+        return `<li><strong>${escapeHtml(metric.label || '')}:</strong> ${escapeHtml(metric.value || 'Доступно в рабочей отчётности')} ${metric.period ? `(${escapeHtml(metric.period)})` : ''}${metric.note ? ` — ${escapeHtml(metric.note)}` : ''}</li>`;
+      }).join('')
       : fallbackMetrics.map((metric) => `<li>${escapeHtml(metric)}</li>`).join('');
-    return `<article class="card" id="${escapeHtml(anchor)}"><p class="muted">${escapeHtml(item.category || item.niche || '')}</p><h3>${escapeHtml(item.shortTitle || item.title || '')}</h3><p><strong>Клиент:</strong> ${escapeHtml(item.clientName || 'Под NDA')}</p><p><strong>Контекст:</strong> ${escapeHtml(context || item.shortSummary || '')}</p>${task ? `<p><strong>Задача:</strong> ${escapeHtml(task)}</p>` : ''}${actions.length ? `<p><strong>Что делали:</strong></p><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${implementation.length ? `<p><strong>Что внедряли:</strong></p><ul>${implementation.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}<p><strong>Результат:</strong> ${escapeHtml(result || item.result || '')}</p>${renderedMetrics ? `<p><strong>Метрики:</strong></p><ul>${renderedMetrics}</ul>` : '<p class="muted"><strong>Метрики:</strong> Публичные цифры не раскрываются; фиксируются в рабочей аналитике проекта.</p>'}<p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p>${evidence.note ? `<p class="muted"><strong>Пруф:</strong> ${escapeHtml(evidence.note)}</p>` : ''}${summary ? `<p class="muted">${escapeHtml(summary)}</p>` : ''}</article>`;
+    return `<article class="card" id="${escapeHtml(anchor)}"><p class="muted">${escapeHtml(item.category || item.niche || '')}</p><h3>${escapeHtml(item.shortTitle || item.title || '')}</h3><p><strong>Клиент:</strong> ${escapeHtml(item.clientName || 'Под NDA')}</p><p><strong>Контекст:</strong> ${escapeHtml(context || item.shortSummary || '')}</p>${task ? `<p><strong>Задача:</strong> ${escapeHtml(task)}</p>` : ''}${actions.length ? `<p><strong>Что делали:</strong></p><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${implementation.length ? `<p><strong>Что внедряли:</strong></p><ul>${implementation.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}<p><strong>Результат:</strong> ${escapeHtml(result || item.result || '')}</p>${renderedMetrics ? `<p><strong>Метрики:</strong></p><ul>${renderedMetrics}</ul>` : '<p class="muted"><strong>Метрики:</strong> Публичные цифры не раскрываются; фиксируются в рабочей аналитике проекта.</p>'}<p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p>${evidence.note ? `<p class="muted"><strong>Пруф:</strong> ${escapeHtml(evidence.note)}</p>` : ''}${summary ? `<p class="muted">${escapeHtml(summary)}</p>` : ''}${index === 0 ? '<p><a href="/cases/1/">Открыть полный кейс →</a></p>' : ''}</article>`;
   }).join('')}</div>`, 'section-container');
 
   const evaluationSection = section('cases-evaluation', evaluation.title || 'Как оцениваем результат', `<div class="card"><p>${escapeHtml(evaluation.lead || 'Оцениваем не по одной метрике, а по связке продуктовых и коммерческих сигналов.')}</p><div class="cards-grid grid-1-2-3">${(evaluation.dimensions || []).map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div></div>`, 'section-container');
@@ -449,6 +457,28 @@ function renderCasesProofPage(page) {
   ${section('approach-patterns', data.patternsTitle || 'Повторяющиеся подходы', `<div class="cards-grid grid-1-2-3">${patterns.map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div>`, 'section-container')}
   ${section('fit-filter', fit.title || 'Кому релевантны кейсы', `<div class="cards-grid grid-1-2-2"><article class="card"><h3>${escapeHtml(fit.goodTitle || 'Релевантно, если')}</h3><ul>${(fit.good || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></article><article class="card"><h3>${escapeHtml(fit.badTitle || 'Не стоит переносить напрямую, если')}</h3><ul>${(fit.bad || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></article></div>`, 'section-container')}
   ${section('final-cta', finalCta.title || 'Следующий шаг', `<div class="card"><p>${escapeHtml(finalCta.text || '')}</p><p><a class="btn btn-primary" href="${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.href) || site.telegram)}">${escapeHtml((finalCta.primaryCta && finalCta.primaryCta.text) || 'Написать в Telegram')}</a> <a class="btn" href="${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.href) || '/contact/')}">${escapeHtml((finalCta.secondaryCta && finalCta.secondaryCta.text) || 'Перейти в /contact/')}</a></p></div>`, 'section-container')}`;
+}
+
+function renderCaseDetailPage(page) {
+  const caseItem = Array.isArray(casesData) && casesData.length ? casesData[0] : null;
+  if (!caseItem) {
+    return `<section class="section"><div class="section-container content-flow"><h1>${escapeHtml(page.h1 || page.title || 'Кейс')}</h1><p class="lead">Кейс временно недоступен.</p><p><a href="/cases/">← Назад к кейсам</a></p></div></section>`;
+  }
+
+  const actions = Array.isArray(caseItem.actionsList) ? caseItem.actionsList : [];
+  const metrics = Array.isArray(caseItem.metrics) ? caseItem.metrics : [];
+
+  return `<section id="case-hero" class="section hero"><div class="section-container content-flow"><p class="muted">Founder-led case • Proof-first</p><h1>${escapeHtml(caseItem.shortTitle || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(caseItem.shortSummary || caseItem.context || '')}</p><p><strong>Клиент:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>Категория:</strong> ${escapeHtml(caseItem.category || '')}</p></div></section>
+  ${section('case-context', 'Context / starting point', `<div class="card"><p>${escapeHtml(caseItem.context || '')}</p></div>`, 'section-container')}
+  ${section('case-task', 'Task', `<div class="card"><p>${escapeHtml(caseItem.task || '')}</p></div>`, 'section-container')}
+  ${section('case-actions', 'What we did', `<div class="card"><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul></div>`, 'section-container')}
+  ${section('case-implementation', 'Implementation', `<div class="card"><p>${escapeHtml(caseItem.implementation || '')}</p></div>`, 'section-container')}
+  ${section('case-result', 'Result', `<div class="card"><p class="kpi">${escapeHtml(caseItem.result || '')}</p></div>`, 'section-container')}
+  ${section('case-metrics', 'Metrics / proof block', `<div class="card">${metrics.length ? `<ul>${metrics.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : '<p>Публичные абсолютные цифры не раскрываются; эффект подтверждён в рабочей отчётности.</p>'}</div>`, 'section-container')}
+  ${section('case-duration', 'Duration', `<div class="card"><p>${escapeHtml(caseItem.duration || '')}</p></div>`, 'section-container')}
+  ${section('case-evidence', 'Evidence', `<div class="card"><p>${escapeHtml(caseItem.evidence || 'Подтверждено в аналитике и CRM.')}</p></div>`, 'section-container')}
+  ${section('case-takeaway', 'Takeaway', `<div class="card"><p>${escapeHtml(caseItem.takeaway || '')}</p></div>`, 'section-container')}
+  <section id="case-cta" class="section"><div class="section-container content-flow"><p><a class="btn" href="/cases/">← Назад в /cases/</a> <a class="btn btn-primary" href="/contact/">Перейти в /contact/</a></p></div></section>`;
 }
 function renderJournalIndex(page) {
   const data = page.journal || {};
@@ -535,6 +565,7 @@ function main() {
   pages.filter((p) => p.template === 'services-offer').forEach((p) => writePage(p, renderServicesOfferPage(p)));
   pages.filter((p) => p.template === 'cases-proof').forEach((p) => writePage(p, renderCasesProofPage(p)));
   pages.filter((p) => p.template === 'pricing-offer').forEach((p) => writePage(p, renderPricingOfferPage(p)));
+  pages.filter((p) => p.template === 'case-detail').forEach((p) => writePage(p, renderCaseDetailPage(p)));
   pages.filter((p) => p.template === 'simple' && p.slug !== '/contact/').forEach((p) => writePage(p, renderSimplePage(p)));
   pages.filter((p) => p.template === 'journal-index').forEach((p) => writePage(p, renderJournalIndex(p)));
   blog.forEach((post) => writePage({ slug: `/blog/${post.slug}/`, title: post.title, description: post.lead }, renderPost(post)));
