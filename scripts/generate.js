@@ -96,6 +96,7 @@ function renderLanding(page) {
       </div>
       <button class="clients-carousel-nav" type="button" data-dir="next" aria-label="Следующие кейсы">→</button>
     </div>
+    <p class="clients-cta"><a class="btn" href="/cases/">Смотреть все кейсы</a></p>
     <script>
       (() => {
         const root = document.querySelector('[data-clients-carousel]');
