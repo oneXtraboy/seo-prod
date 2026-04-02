@@ -29,6 +29,7 @@ function normalizeCaseAnchor(item, index) {
 
 function getCaseHref(item, index) {
   if (index === 0) return '/cases/1/';
+  if (index === 1) return '/cases/2/';
   return `/cases/#${normalizeCaseAnchor(item, index)}`;
 }
 
@@ -445,7 +446,9 @@ function renderCasesProofPage(page) {
         return `<li><strong>${escapeHtml(metric.label || '')}:</strong> ${escapeHtml(metric.value || 'Доступно в рабочей отчётности')} ${metric.period ? `(${escapeHtml(metric.period)})` : ''}${metric.note ? ` — ${escapeHtml(metric.note)}` : ''}</li>`;
       }).join('')
       : fallbackMetrics.map((metric) => `<li>${escapeHtml(metric)}</li>`).join('');
-    return `<article class="card" id="${escapeHtml(anchor)}"><p class="muted">${escapeHtml(item.category || item.niche || '')}</p><h3>${escapeHtml(item.shortTitle || item.title || '')}</h3><p><strong>Клиент:</strong> ${escapeHtml(item.clientName || 'Под NDA')}</p><p><strong>Контекст:</strong> ${escapeHtml(context || item.shortSummary || '')}</p>${task ? `<p><strong>Задача:</strong> ${escapeHtml(task)}</p>` : ''}${actions.length ? `<p><strong>Что делали:</strong></p><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${implementation.length ? `<p><strong>Что внедряли:</strong></p><ul>${implementation.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}<p><strong>Результат:</strong> ${escapeHtml(result || item.result || '')}</p>${renderedMetrics ? `<p><strong>Метрики:</strong></p><ul>${renderedMetrics}</ul>` : '<p class="muted"><strong>Метрики:</strong> Публичные цифры не раскрываются; фиксируются в рабочей аналитике проекта.</p>'}<p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p>${evidence.note ? `<p class="muted"><strong>Пруф:</strong> ${escapeHtml(evidence.note)}</p>` : ''}${summary ? `<p class="muted">${escapeHtml(summary)}</p>` : ''}${index === 0 ? '<p><a href="/cases/1/">Открыть полный кейс →</a></p>' : ''}</article>`;
+    const detailHref = getCaseHref(item, index);
+    const hasStandaloneCase = detailHref.startsWith('/cases/') && !detailHref.startsWith('/cases/#');
+    return `<article class="card" id="${escapeHtml(anchor)}"><p class="muted">${escapeHtml(item.category || item.niche || '')}</p><h3>${escapeHtml(item.shortTitle || item.title || '')}</h3><p><strong>Клиент:</strong> ${escapeHtml(item.clientName || 'Под NDA')}</p><p><strong>Контекст:</strong> ${escapeHtml(context || item.shortSummary || '')}</p>${task ? `<p><strong>Задача:</strong> ${escapeHtml(task)}</p>` : ''}${actions.length ? `<p><strong>Что делали:</strong></p><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${implementation.length ? `<p><strong>Что внедряли:</strong></p><ul>${implementation.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}<p><strong>Результат:</strong> ${escapeHtml(result || item.result || '')}</p>${renderedMetrics ? `<p><strong>Метрики:</strong></p><ul>${renderedMetrics}</ul>` : '<p class="muted"><strong>Метрики:</strong> Публичные цифры не раскрываются; фиксируются в рабочей аналитике проекта.</p>'}<p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p>${evidence.note ? `<p class="muted"><strong>Пруф:</strong> ${escapeHtml(evidence.note)}</p>` : ''}${summary ? `<p class="muted">${escapeHtml(summary)}</p>` : ''}${hasStandaloneCase ? `<p><a href="${escapeHtml(detailHref)}">Открыть полный кейс →</a></p>` : ''}</article>`;
   }).join('')}</div>`, 'section-container');
 
   const evaluationSection = section('cases-evaluation', evaluation.title || 'Как оцениваем результат', `<div class="card"><p>${escapeHtml(evaluation.lead || 'Оцениваем не по одной метрике, а по связке продуктовых и коммерческих сигналов.')}</p><div class="cards-grid grid-1-2-3">${(evaluation.dimensions || []).map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div></div>`, 'section-container');
@@ -460,7 +463,9 @@ function renderCasesProofPage(page) {
 }
 
 function renderCaseDetailPage(page) {
-  const caseItem = Array.isArray(casesData) && casesData.length ? casesData[0] : null;
+  const caseIndexRaw = Number(page.caseIndex);
+  const caseIndex = Number.isInteger(caseIndexRaw) && caseIndexRaw >= 0 ? caseIndexRaw : 0;
+  const caseItem = Array.isArray(casesData) && casesData.length ? casesData[caseIndex] : null;
   if (!caseItem) {
     return `<section class="section"><div class="section-container content-flow"><h1>${escapeHtml(page.h1 || page.title || 'Кейс')}</h1><p class="lead">Кейс временно недоступен.</p><p><a href="/cases/">← Назад к кейсам</a></p></div></section>`;
   }
