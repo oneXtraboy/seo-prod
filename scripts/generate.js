@@ -28,9 +28,17 @@ function normalizeCaseAnchor(item, index) {
 }
 
 function getCaseHref(item, index) {
-  if (index === 0) return '/cases/1/';
-  if (index === 1) return '/cases/2/';
+  if (Number.isInteger(index) && index >= 0 && index < 6) {
+    return `/cases/${index + 1}/`;
+  }
   return `/cases/#${normalizeCaseAnchor(item, index)}`;
+}
+
+function buildCaseEvidenceText(caseItem) {
+  const base = 'Данные подтверждены web-аналитикой и CRM-статусами. В кейсе показаны реальные рабочие значения и фактическая динамика; название компании, домен и идентифицирующие признаки проекта скрыты по модели обезличенного кейса.';
+  const specific = String(caseItem.evidence || '').trim();
+  if (!specific) return base;
+  return `${base} ${specific}`;
 }
 
 function renderCaseVisual(item) {
@@ -481,7 +489,7 @@ function renderCaseDetailPage(page) {
   ${section('case-result', 'Результат', `<div class="card"><p class="case-result-lead">${escapeHtml(caseItem.result || '')}</p></div>`, 'section-container')}
   ${section('case-metrics', 'Метрики и подтверждение', `<div class="card">${metrics.length ? `<ul>${metrics.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : '<p>Публичные абсолютные цифры не раскрываются; эффект подтверждён в рабочей отчётности.</p>'}</div>`, 'section-container')}
   ${section('case-duration', 'Срок и формат работы', `<div class="card"><p>${escapeHtml(caseItem.duration || '')}</p></div>`, 'section-container')}
-  ${section('case-evidence', 'Подтверждение', `<div class="card"><p>${escapeHtml(caseItem.evidence || 'Подтверждено в аналитике и CRM.')}</p></div>`, 'section-container')}
+  ${section('case-evidence', 'Подтверждение', `<div class="card"><p>${escapeHtml(buildCaseEvidenceText(caseItem))}</p></div>`, 'section-container')}
   ${section('case-takeaway', 'Вывод', `<div class="card"><p>${escapeHtml(caseItem.takeaway || '')}</p></div>`, 'section-container')}
   <section id="case-cta" class="section"><div class="section-container content-flow"><p><a class="btn" href="/cases/">← Назад в /cases/</a> <a class="btn btn-primary" href="/contact/">Перейти в /contact/</a></p></div></section>`;
 }
