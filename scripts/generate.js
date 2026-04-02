@@ -468,16 +468,16 @@ function renderCaseDetailPage(page) {
   const actions = Array.isArray(caseItem.actionsList) ? caseItem.actionsList : [];
   const metrics = Array.isArray(caseItem.metrics) ? caseItem.metrics : [];
 
-  return `<section id="case-hero" class="section hero"><div class="section-container content-flow"><p class="muted">Founder-led case • Proof-first</p><h1>${escapeHtml(caseItem.shortTitle || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(caseItem.shortSummary || caseItem.context || '')}</p><p><strong>Клиент:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>Категория:</strong> ${escapeHtml(caseItem.category || '')}</p></div></section>
-  ${section('case-context', 'Context / starting point', `<div class="card"><p>${escapeHtml(caseItem.context || '')}</p></div>`, 'section-container')}
-  ${section('case-task', 'Task', `<div class="card"><p>${escapeHtml(caseItem.task || '')}</p></div>`, 'section-container')}
-  ${section('case-actions', 'What we did', `<div class="card"><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul></div>`, 'section-container')}
-  ${section('case-implementation', 'Implementation', `<div class="card"><p>${escapeHtml(caseItem.implementation || '')}</p></div>`, 'section-container')}
-  ${section('case-result', 'Result', `<div class="card"><p class="kpi">${escapeHtml(caseItem.result || '')}</p></div>`, 'section-container')}
-  ${section('case-metrics', 'Metrics / proof block', `<div class="card">${metrics.length ? `<ul>${metrics.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : '<p>Публичные абсолютные цифры не раскрываются; эффект подтверждён в рабочей отчётности.</p>'}</div>`, 'section-container')}
-  ${section('case-duration', 'Duration', `<div class="card"><p>${escapeHtml(caseItem.duration || '')}</p></div>`, 'section-container')}
-  ${section('case-evidence', 'Evidence', `<div class="card"><p>${escapeHtml(caseItem.evidence || 'Подтверждено в аналитике и CRM.')}</p></div>`, 'section-container')}
-  ${section('case-takeaway', 'Takeaway', `<div class="card"><p>${escapeHtml(caseItem.takeaway || '')}</p></div>`, 'section-container')}
+  return `<section id="case-hero" class="section hero"><div class="section-container content-flow"><p class="muted">Кейс с прямым участием фаундера • Подход на базе подтверждений</p><h1>${escapeHtml(caseItem.shortTitle || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(caseItem.shortSummary || caseItem.context || '')}</p><p><strong>Клиент:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>Категория:</strong> ${escapeHtml(caseItem.category || '')}</p></div></section>
+  ${section('case-context', 'Контекст и стартовая точка', `<div class="card"><p>${escapeHtml(caseItem.context || '')}</p></div>`, 'section-container')}
+  ${section('case-task', 'Задача', `<div class="card"><p>${escapeHtml(caseItem.task || '')}</p></div>`, 'section-container')}
+  ${section('case-actions', 'Что сделали', `<div class="card"><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul></div>`, 'section-container')}
+  ${section('case-implementation', 'Внедрение', `<div class="card"><p>${escapeHtml(caseItem.implementation || '')}</p></div>`, 'section-container')}
+  ${section('case-result', 'Результат', `<div class="card"><p class="case-result-lead">${escapeHtml(caseItem.result || '')}</p></div>`, 'section-container')}
+  ${section('case-metrics', 'Метрики и подтверждение', `<div class="card">${metrics.length ? `<ul>${metrics.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : '<p>Публичные абсолютные цифры не раскрываются; эффект подтверждён в рабочей отчётности.</p>'}</div>`, 'section-container')}
+  ${section('case-duration', 'Срок и формат работы', `<div class="card"><p>${escapeHtml(caseItem.duration || '')}</p></div>`, 'section-container')}
+  ${section('case-evidence', 'Подтверждение', `<div class="card"><p>${escapeHtml(caseItem.evidence || 'Подтверждено в аналитике и CRM.')}</p></div>`, 'section-container')}
+  ${section('case-takeaway', 'Вывод', `<div class="card"><p>${escapeHtml(caseItem.takeaway || '')}</p></div>`, 'section-container')}
   <section id="case-cta" class="section"><div class="section-container content-flow"><p><a class="btn" href="/cases/">← Назад в /cases/</a> <a class="btn btn-primary" href="/contact/">Перейти в /contact/</a></p></div></section>`;
 }
 function renderJournalIndex(page) {
