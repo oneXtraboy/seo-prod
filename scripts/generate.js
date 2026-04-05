@@ -437,25 +437,13 @@ function renderCasesProofPage(page) {
   const finalCta = data.finalCta || {};
 
   const casesSection = section('cases-list', data.casesTitle || 'Кейсы', `<div class="cards-grid grid-1-2-3">${cases.map((item, index) => {
-    const context = item.context || item.start || '';
-    const task = item.task || '';
-    const actions = Array.isArray(item.actionsList) ? item.actionsList : (item.actions ? [item.actions] : []);
-    const implementation = Array.isArray(item.implementation) ? item.implementation : [];
-    const result = item.result || '';
-    const metrics = Array.isArray(item.metrics) ? item.metrics : [];
-    const evidence = item.evidence || {};
-    const summary = item.takeaway || item.summary || '';
-
     const anchor = normalizeCaseAnchor(item, index);
-    const fallbackMetrics = Array.isArray(item.metricsPreview) ? item.metricsPreview : [];
-    const renderedMetrics = metrics.length
-      ? metrics.map((metric) => {
-        if (typeof metric === 'string') return `<li>${escapeHtml(metric)}</li>`;
-        return `<li><strong>${escapeHtml(metric.label || '')}:</strong> ${escapeHtml(metric.value || 'Доступно в рабочей отчётности')} ${metric.period ? `(${escapeHtml(metric.period)})` : ''}${metric.note ? ` — ${escapeHtml(metric.note)}` : ''}</li>`;
-      }).join('')
-      : fallbackMetrics.map((metric) => `<li>${escapeHtml(metric)}</li>`).join('');
+    const previewLead = item.shortSummary || item.summary || item.context || item.start || '';
+    const previewPoints = Array.isArray(item.metricsPreview) && item.metricsPreview.length
+      ? item.metricsPreview.slice(0, 3)
+      : (Array.isArray(item.actionsList) ? item.actionsList.slice(0, 2) : []);
     const detailHref = getCaseHref(item, index);
-    return `<article class="card case-list-card" id="${escapeHtml(anchor)}"><p class="muted">${escapeHtml(item.category || item.niche || '')}</p><h3>${escapeHtml(item.shortTitle || item.title || '')}</h3><p><strong>Клиент:</strong> ${escapeHtml(item.clientName || 'Под NDA')}</p><p><strong>Контекст:</strong> ${escapeHtml(context || item.shortSummary || '')}</p>${task ? `<p><strong>Задача:</strong> ${escapeHtml(task)}</p>` : ''}${actions.length ? `<p><strong>Что делали:</strong></p><ul>${actions.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${implementation.length ? `<p><strong>Что внедряли:</strong></p><ul>${implementation.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}<p><strong>Результат:</strong> ${escapeHtml(result || item.result || '')}</p>${renderedMetrics ? `<p><strong>Метрики:</strong></p><ul>${renderedMetrics}</ul>` : '<p class="muted"><strong>Метрики:</strong> Публичные цифры не раскрываются; фиксируются в рабочей аналитике проекта.</p>'}<p><strong>Срок / формат:</strong> ${escapeHtml(item.duration || '')}</p>${evidence.note ? `<p class="muted"><strong>Пруф:</strong> ${escapeHtml(evidence.note)}</p>` : ''}${summary ? `<p class="muted">${escapeHtml(summary)}</p>` : ''}<p class="case-list-card-cta"><a class="btn btn-primary case-list-card-link" href="${escapeHtml(detailHref)}">Смотреть кейс</a></p></article>`;
+    return `<article class="card case-list-card" id="${escapeHtml(anchor)}"><p class="muted">${escapeHtml(item.category || item.niche || '')}</p><h3>${escapeHtml(item.shortTitle || item.title || '')}</h3>${item.clientName ? `<p><strong>Клиент:</strong> ${escapeHtml(item.clientName)}</p>` : ''}${previewLead ? `<p>${escapeHtml(previewLead)}</p>` : ''}${previewPoints.length ? `<ul>${previewPoints.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''}${item.duration ? `<p class="muted"><strong>Срок / формат:</strong> ${escapeHtml(item.duration)}</p>` : ''}<p class="case-list-card-cta"><a class="btn btn-primary case-list-card-link" href="${escapeHtml(detailHref)}">Смотреть кейс</a></p></article>`;
   }).join('')}</div>`, 'section-container');
 
   const evaluationSection = section('cases-evaluation', evaluation.title || 'Как оцениваем результат', `<div class="card"><p>${escapeHtml(evaluation.lead || 'Оцениваем не по одной метрике, а по связке продуктовых и коммерческих сигналов.')}</p><div class="cards-grid grid-1-2-3">${(evaluation.dimensions || []).map((item) => `<article class="card"><h3>${escapeHtml(item.title || '')}</h3><p>${escapeHtml(item.text || '')}</p></article>`).join('')}</div></div>`, 'section-container');
