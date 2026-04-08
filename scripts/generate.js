@@ -469,6 +469,7 @@ function renderCaseDetailPage(page) {
   const metrics = Array.isArray(caseItem.metrics) ? caseItem.metrics : [];
   const keyResultsCards = Array.isArray(caseItem.keyResultsCards) ? caseItem.keyResultsCards.slice(0, 2) : [];
   const startingBase = Array.isArray(caseItem.startingBase) ? caseItem.startingBase : [];
+  const contextList = Array.isArray(caseItem.contextList) ? caseItem.contextList : [];
   const businessProblem = Array.isArray(caseItem.businessProblem) ? caseItem.businessProblem : [];
   const projectGoals = Array.isArray(caseItem.projectGoals) ? caseItem.projectGoals : [];
   const businessGrowth = Array.isArray(caseItem.businessGrowth) ? caseItem.businessGrowth : [];
@@ -493,7 +494,7 @@ function renderCaseDetailPage(page) {
 
   return `<section id="case-hero" class="section hero"><div class="section-container content-flow"><p class="muted">Кейс с прямым участием фаундера • Подход на базе подтверждений</p><h1>${escapeHtml(caseItem.shortTitle || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(caseItem.shortSummary || caseItem.context || '')}</p><p><strong>Клиент:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>Категория:</strong> ${escapeHtml(caseItem.category || '')}</p></div></section>
   ${keyResultsCards.length ? section('case-key-results', 'Ключевые результаты', `<div class="cards-grid grid-1-2-2">${keyResultsCards.map((card) => `<article class="card case-premium-result-card"><h3>${escapeHtml(card.title || '')}</h3><ul>${(Array.isArray(card.items) ? card.items : []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></article>`).join('')}</div>`, 'section-container') : ''}
-  ${section('case-context', 'Контекст и стартовая точка', `<div class="card"><p>${escapeHtml(caseItem.context || '')}</p></div>`, 'section-container')}
+  ${section('case-context', 'Контекст и стартовая точка', `<div class="card"><p>${escapeHtml(caseItem.context || '')}</p>${contextList.length ? `<ul>${contextList.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}</div>`, 'section-container')}
   ${startingBase.length ? section('case-starting-base', 'База на старте', `<div class="card"><ul>${startingBase.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>`, 'section-container') : ''}
   ${(Array.isArray(scaleSegments.clients) && scaleSegments.clients.length) || (Array.isArray(scaleSegments.geography) && scaleSegments.geography.length) ? section('case-scaling', 'Как был масштабирован проект после работы агентства', `<div class="cards-grid grid-1-2-2">${renderNamedListCard('Основные сегменты клиентов', scaleSegments.clients)}${renderNamedListCard('География работы', scaleSegments.geography)}</div>`, 'section-container') : ''}
   ${businessProblem.length ? section('case-business-problem', 'Проблема бизнеса', `<div class="card"><ul>${businessProblem.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>`, 'section-container') : ''}
