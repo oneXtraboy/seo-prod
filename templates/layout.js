@@ -165,6 +165,19 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 section[id^="case-"] .card{padding:var(--s24);border-radius:18px}
 #case-result .card{background:linear-gradient(180deg,#FFFFFF,#F9FAFC);border-color:#CDD7E5}
 .case-result-lead{margin:0;font:600 clamp(1.2rem,1.9vw,1.55rem)/1.5 var(--font-rounded);letter-spacing:-.01em;color:var(--text)}
+.case-premium-result-card{position:relative;overflow:hidden;border:1px solid #cdb27a;background:linear-gradient(155deg,#fffdf7 0%,#f4e7c8 36%,#efe0bc 58%,#fff7e6 100%);box-shadow:inset 0 1px 0 #ffffffc7,inset 0 -18px 28px #d2b06a26,0 14px 34px #7e5f1f1c}
+.case-premium-result-card::before{content:"";position:absolute;inset:0;background:linear-gradient(118deg,transparent 0%,#fff8df8c 45%,transparent 72%);pointer-events:none}
+.case-premium-result-card h3{position:relative;margin-bottom:var(--s16);color:#4a3313}
+.case-premium-result-card ul{position:relative;margin:0;padding-left:20px;display:grid;gap:10px}
+.case-premium-result-card li{margin:0;color:#2f2416}
+.case-premium-result-card li::marker{color:#8a672e}
+#case-key-results .case-premium-result-card li{font-weight:540}
+#case-key-results .case-premium-result-card li strong{font-weight:700;color:#3b2a10}
+.case-table-wrap{overflow:auto}
+.case-table{width:100%;border-collapse:collapse;min-width:680px;font-size:.95rem}
+.case-table th,.case-table td{padding:10px 12px;border:1px solid var(--border);vertical-align:top;text-align:left}
+.case-table th{background:#f4f6fb;color:var(--text);font-weight:700}
+.case-table-card h3{margin-bottom:var(--s16)}
 .toc{padding:var(--s20);border-radius:var(--r12)}
 .scroll-rail{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:30;background:linear-gradient(180deg,var(--glass),#FFFFFFA8);backdrop-filter:blur(8px);border:1px solid var(--glass-border);box-shadow:var(--shadow1);border-radius:24px;padding:10px 9px;display:flex;flex-direction:column;gap:10px}
 .rail-track{display:flex;flex-direction:column;gap:10px}.rail-tick{position:relative;width:30px;height:10px;border:0;background:transparent;cursor:pointer}.rail-tick::before{content:"";display:block;height:2px;width:13px;background:var(--text3);border-radius:2px;margin-left:auto;transition:.2s}
