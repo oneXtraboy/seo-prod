@@ -504,6 +504,87 @@ function renderCaseDetailPage(page) {
     if (!columns.length || !rows.length) return '';
     return `<article class="card case-table-card"><h3>${escapeHtml(table.title || 'Таблица')}</h3><div class="case-table-wrap"><table class="case-table"><thead><tr>${columns.map((column) => `<th>${escapeHtml(column)}</th>`).join('')}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></article>`;
   };
+  const caseOneScreenshotFiles = isCaseOne
+    ? ['voda 1.jpg', 'voda 2.jpg', 'voda 3.jpg', 'voda 4.jpg', 'voda 5.jpg', 'voda 6.jpg', 'voda 7.jpg']
+    : [];
+  const caseOneScreenshotsSection = caseOneScreenshotFiles.length
+    ? section(
+      'case-project-screenshots',
+      'Скриншоты проекта',
+      `<div class="case-screenshots-gallery" data-case-screenshots>${caseOneScreenshotFiles.map((fileName, index) => {
+        const imageSrc = `/cases/1/screenshots/${encodeURIComponent(fileName)}`;
+        const imageAlt = `Скриншот проекта ${index + 1}`;
+        return `<button class="case-screenshot-card" type="button" data-screenshot-index="${index}" data-screenshot-src="${escapeHtml(imageSrc)}" aria-label="Открыть ${escapeHtml(imageAlt)}"><img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(imageAlt)}" loading="lazy"></button>`;
+      }).join('')}</div>
+      <div class="case-screenshot-lightbox" data-screenshot-lightbox hidden aria-hidden="true">
+        <button class="case-screenshot-lightbox-overlay" type="button" data-lightbox-close aria-label="Закрыть просмотр"></button>
+        <div class="case-screenshot-lightbox-dialog" role="dialog" aria-modal="true" aria-label="Просмотр скриншотов проекта">
+          <button class="case-screenshot-lightbox-close" type="button" data-lightbox-close aria-label="Закрыть просмотр">×</button>
+          <button class="case-screenshot-lightbox-nav case-screenshot-lightbox-prev" type="button" data-lightbox-prev aria-label="Предыдущий скриншот">‹</button>
+          <figure class="case-screenshot-lightbox-figure">
+            <img data-lightbox-image src="" alt="">
+          </figure>
+          <button class="case-screenshot-lightbox-nav case-screenshot-lightbox-next" type="button" data-lightbox-next aria-label="Следующий скриншот">›</button>
+        </div>
+      </div>
+      <script>
+        (() => {
+          const gallery = document.querySelector('[data-case-screenshots]');
+          if (!gallery) return;
+          const lightbox = document.querySelector('[data-screenshot-lightbox]');
+          const imageNode = lightbox ? lightbox.querySelector('[data-lightbox-image]') : null;
+          if (!lightbox || !imageNode) return;
+          const items = [...gallery.querySelectorAll('[data-screenshot-src]')];
+          if (!items.length) return;
+          let activeIndex = 0;
+          let lastTrigger = null;
+          const updateImage = (index) => {
+            const nextIndex = (index + items.length) % items.length;
+            activeIndex = nextIndex;
+            const source = items[nextIndex];
+            imageNode.src = source.dataset.screenshotSrc || '';
+            imageNode.alt = source.querySelector('img')?.alt || '';
+          };
+          const openLightbox = (index, trigger) => {
+            updateImage(index);
+            lightbox.hidden = false;
+            lightbox.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('lightbox-open');
+            lastTrigger = trigger || null;
+          };
+          const closeLightbox = () => {
+            lightbox.hidden = true;
+            lightbox.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('lightbox-open');
+            if (lastTrigger) lastTrigger.focus();
+          };
+          items.forEach((item, index) => {
+            item.addEventListener('click', () => openLightbox(index, item));
+          });
+          lightbox.addEventListener('click', (event) => {
+            if (event.target.closest('[data-lightbox-close]')) closeLightbox();
+          });
+          lightbox.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => updateImage(activeIndex - 1));
+          lightbox.querySelector('[data-lightbox-next]')?.addEventListener('click', () => updateImage(activeIndex + 1));
+          document.addEventListener('keydown', (event) => {
+            if (lightbox.hidden) return;
+            if (event.key === 'Escape') {
+              closeLightbox();
+              return;
+            }
+            if (event.key === 'ArrowLeft') {
+              updateImage(activeIndex - 1);
+              return;
+            }
+            if (event.key === 'ArrowRight') {
+              updateImage(activeIndex + 1);
+            }
+          });
+        })();
+      </script>`,
+      'section-container'
+    )
+    : '';
 
   return `<section id="case-hero" class="section hero"><div class="section-container content-flow"><p class="muted">Кейс с прямым участием фаундера • Подход на базе подтверждений</p><h1>${escapeHtml(caseItem.shortTitle || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(caseItem.shortSummary || caseItem.context || '')}</p><p><strong>Клиент:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>Категория:</strong> ${escapeHtml(caseItem.category || '')}</p></div></section>
   ${keyResultsCards.length ? section('case-key-results', 'Ключевые результаты', `<div class="cards-grid grid-1-2-2">${keyResultsCards.map((card) => `<article class="card case-premium-result-card"><h3>${escapeHtml(card.title || '')}</h3><ul>${(Array.isArray(card.items) ? card.items : []).map(renderListItem).join('')}</ul></article>`).join('')}</div>`, 'section-container') : ''}
@@ -521,7 +602,7 @@ function renderCaseDetailPage(page) {
   ${!isCaseOne ? section('case-metrics', 'Метрики и подтверждение', `<div class="card">${metrics.length ? `<ul>${metrics.map(renderListItem).join('')}</ul>` : '<p>Публичные абсолютные цифры не раскрываются; эффект подтверждён в рабочей отчётности.</p>'}</div>`, 'section-container') : ''}
   ${businessGrowth.length ? section('case-growth', 'Как вырос бизнес', `<div class="card"><ul>${businessGrowth.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
   ${tables.length ? section('case-tables', 'Таблицы результатов', `<div class="cards-grid${isCaseOne ? ' case-tables-stack' : ''}">${tables.map(renderCaseTable).join('')}</div>`, 'section-container') : ''}
-  ${charts.length || screenshots.length ? section('case-proof', 'Графики и скриншоты для proof section', `<div class="cards-grid grid-1-2-2">${charts.length ? `<article class="card"><h3>Графики</h3><div class="content-flow">${charts.map((chart) => `<div><p><strong>${escapeHtml(chart.title || '')}</strong></p><ul>${(Array.isArray(chart.items) ? chart.items : []).map(renderListItem).join('')}</ul></div>`).join('')}</div></article>` : ''}${screenshots.length ? `<article class="card"><h3>Скриншоты</h3><ul>${screenshots.map(renderListItem).join('')}</ul></article>` : ''}</div>`, 'section-container') : ''}
+  ${isCaseOne ? caseOneScreenshotsSection : (charts.length || screenshots.length ? section('case-proof', 'Графики и скриншоты для proof section', `<div class="cards-grid grid-1-2-2">${charts.length ? `<article class="card"><h3>Графики</h3><div class="content-flow">${charts.map((chart) => `<div><p><strong>${escapeHtml(chart.title || '')}</strong></p><ul>${(Array.isArray(chart.items) ? chart.items : []).map(renderListItem).join('')}</ul></div>`).join('')}</div></article>` : ''}${screenshots.length ? `<article class="card"><h3>Скриншоты</h3><ul>${screenshots.map(renderListItem).join('')}</ul></article>` : ''}</div>`, 'section-container') : '')}
   ${!isCaseOne ? section('case-duration', 'Срок и формат работы', `<div class="card"><p>${escapeHtml(caseItem.duration || '')}</p></div>`, 'section-container') : ''}
   ${!isCaseOne ? section('case-evidence', 'Подтверждение', `<div class="card"><p>${escapeHtml(buildCaseEvidenceText(caseItem))}</p></div>`, 'section-container') : ''}
   ${!isCaseOne ? section('case-takeaway', 'Вывод', `<div class="card"><p>${escapeHtml(caseItem.takeaway || caseItem.finalBlock || '')}</p></div>`, 'section-container') : ''}
