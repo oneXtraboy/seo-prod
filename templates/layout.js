@@ -178,6 +178,7 @@ section[id^="case-"] .card{padding:var(--s24);border-radius:18px}
 .case-table th,.case-table td{padding:10px 12px;border:1px solid var(--border);vertical-align:top;text-align:left}
 .case-table th{background:#f4f6fb;color:var(--text);font-weight:700}
 .case-table-card h3{margin-bottom:var(--s16)}
+.case-tables-stack{--cols-md:1;--cols-lg:1}
 .toc{padding:var(--s20);border-radius:var(--r12)}
 .scroll-rail{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:30;background:linear-gradient(180deg,var(--glass),#FFFFFFA8);backdrop-filter:blur(8px);border:1px solid var(--glass-border);box-shadow:var(--shadow1);border-radius:24px;padding:10px 9px;display:flex;flex-direction:column;gap:10px}
 .rail-track{display:flex;flex-direction:column;gap:10px}.rail-tick{position:relative;width:30px;height:10px;border:0;background:transparent;cursor:pointer}.rail-tick::before{content:"";display:block;height:2px;width:13px;background:var(--text3);border-radius:2px;margin-left:auto;transition:.2s}
