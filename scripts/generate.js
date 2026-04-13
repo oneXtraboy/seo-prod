@@ -460,39 +460,13 @@ function renderCasesProofPage(page) {
 function renderCaseDetailPage(page) {
   const caseIndexRaw = Number(page.caseIndex);
   const caseIndex = Number.isInteger(caseIndexRaw) && caseIndexRaw >= 0 ? caseIndexRaw : 0;
-  const isCaseOne = caseIndex === 0;
   const caseItem = Array.isArray(casesData) && casesData.length ? casesData[caseIndex] : null;
   if (!caseItem) {
     return `<section class="section"><div class="section-container content-flow"><h1>${escapeHtml(page.h1 || page.title || 'Кейс')}</h1><p class="lead">Кейс временно недоступен.</p><p><a href="/cases/">← Назад к кейсам</a></p></div></section>`;
   }
 
-  const actions = Array.isArray(caseItem.actionsList) ? caseItem.actionsList : [];
-  const metrics = Array.isArray(caseItem.metrics) ? caseItem.metrics : [];
-  const keyResultsCards = Array.isArray(caseItem.keyResultsCards) ? caseItem.keyResultsCards.slice(0, 2) : [];
-  const startingBase = Array.isArray(caseItem.startingBase) ? caseItem.startingBase : [];
-  const contextList = Array.isArray(caseItem.contextList) ? caseItem.contextList : [];
-  const businessProblem = Array.isArray(caseItem.businessProblem) ? caseItem.businessProblem : [];
-  const projectGoals = Array.isArray(caseItem.projectGoals) ? caseItem.projectGoals : [];
-  const businessGrowth = Array.isArray(caseItem.businessGrowth) ? caseItem.businessGrowth : [];
-  const tables = Array.isArray(caseItem.resultTables) ? caseItem.resultTables : [];
-  const proofSection = caseItem.proofSection || {};
-  const charts = Array.isArray(proofSection.charts) ? proofSection.charts : [];
-  const screenshots = Array.isArray(proofSection.screenshots) ? proofSection.screenshots : [];
-  const audits = caseItem.audits || {};
-  const strengthening = caseItem.strengthening || {};
-  const scaleSegments = caseItem.scaleSegments || {};
-  const normalizeCaseListItem = (value) => {
-    if (!isCaseOne || typeof value !== 'string') return value;
-    const chars = Array.from(value);
-    const firstLetterIndex = chars.findIndex((char) => /[A-Za-zА-Яа-яЁё]/.test(char));
-    if (firstLetterIndex < 0) return value;
-    const firstLetter = chars[firstLetterIndex];
-    const firstLetterUpper = firstLetter.toLocaleUpperCase('ru-RU');
-    if (firstLetter === firstLetterUpper) return value;
-    chars[firstLetterIndex] = firstLetterUpper;
-    return chars.join('');
-  };
-  const renderListItem = (item) => `<li>${escapeHtml(normalizeCaseListItem(item))}</li>`;
+  const detail = caseItem.caseDetail || {};
+  const renderListItem = (item) => `<li>${escapeHtml(item)}</li>`;
 
   const renderNamedListCard = (title, items) => {
     if (!Array.isArray(items) || !items.length) return '';
@@ -504,16 +478,17 @@ function renderCaseDetailPage(page) {
     if (!columns.length || !rows.length) return '';
     return `<article class="card case-table-card"><h3>${escapeHtml(table.title || 'Таблица')}</h3><div class="case-table-wrap"><table class="case-table"><thead><tr>${columns.map((column) => `<th>${escapeHtml(column)}</th>`).join('')}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></article>`;
   };
-  const caseOneScreenshotFiles = isCaseOne
-    ? ['voda 1.jpg', 'voda 2.jpg', 'voda 3.jpg', 'voda 4.jpg', 'voda 5.jpg', 'voda 6.jpg', 'voda 7.jpg']
-    : [];
-  const caseOneScreenshotsSection = caseOneScreenshotFiles.length
+  const proof = detail.proof || {};
+  const proofCharts = Array.isArray(proof.charts) ? proof.charts : [];
+  const screenshotGallery = Array.isArray(proof.screenshots && proof.screenshots.gallery) ? proof.screenshots.gallery : [];
+  const screenshotList = Array.isArray(proof.screenshots && proof.screenshots.list) ? proof.screenshots.list : [];
+  const screenshotsSection = screenshotGallery.length
     ? section(
       'case-project-screenshots',
-      'Скриншоты проекта',
-      `<div class="case-screenshots-gallery" data-case-screenshots>${caseOneScreenshotFiles.map((fileName, index) => {
-        const imageSrc = `/cases/1/screenshots/${encodeURIComponent(fileName)}`;
-        const imageAlt = `Скриншот проекта ${index + 1}`;
+      proof.title || 'Скриншоты проекта',
+      `<div class="case-screenshots-gallery" data-case-screenshots>${screenshotGallery.map((shot, index) => {
+        const imageSrc = shot.src || '';
+        const imageAlt = shot.alt || `Скриншот проекта ${index + 1}`;
         return `<button class="case-screenshot-card" type="button" data-screenshot-index="${index}" data-screenshot-src="${escapeHtml(imageSrc)}" aria-label="Открыть ${escapeHtml(imageAlt)}"><img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(imageAlt)}" loading="lazy"></button>`;
       }).join('')}</div>
       <div class="case-screenshot-lightbox" data-screenshot-lightbox hidden aria-hidden="true">
@@ -584,29 +559,40 @@ function renderCaseDetailPage(page) {
       </script>`,
       'section-container'
     )
-    : '';
+    : ((proofCharts.length || screenshotList.length)
+      ? section('case-proof', proof.title || 'Графики и скриншоты для proof section', `<div class="cards-grid grid-1-2-2">${proofCharts.length ? `<article class="card"><h3>Графики</h3><div class="content-flow">${proofCharts.map((chart) => `<div><p><strong>${escapeHtml(chart.title || '')}</strong></p><ul>${(Array.isArray(chart.items) ? chart.items : []).map(renderListItem).join('')}</ul></div>`).join('')}</div></article>` : ''}${screenshotList.length ? `<article class="card"><h3>Скриншоты</h3><ul>${screenshotList.map(renderListItem).join('')}</ul></article>` : ''}</div>`, 'section-container')
+      : '');
+  const metrics = detail.metrics || {};
+  const tableBlock = detail.tables || {};
+  const tables = Array.isArray(tableBlock.items) ? tableBlock.items : [];
+  const namedGroupSection = (id, block, fallbackTitle) => {
+    const groups = Array.isArray(block && block.groups) ? block.groups : [];
+    const cards = groups.map((group) => renderNamedListCard(group.title || '', group.items || [])).join('');
+    if (!cards) return '';
+    return section(id, block.title || fallbackTitle, `<div class="cards-grid grid-1-2-2">${cards}</div>`, 'section-container');
+  };
 
-  return `<section id="case-hero" class="section hero"><div class="section-container content-flow"><p class="muted">Кейс с прямым участием фаундера • Подход на базе подтверждений</p><h1>${escapeHtml(caseItem.shortTitle || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml(caseItem.shortSummary || caseItem.context || '')}</p><p><strong>Клиент:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>Категория:</strong> ${escapeHtml(caseItem.category || '')}</p></div></section>
-  ${keyResultsCards.length ? section('case-key-results', 'Ключевые результаты', `<div class="cards-grid grid-1-2-2">${keyResultsCards.map((card) => `<article class="card case-premium-result-card"><h3>${escapeHtml(card.title || '')}</h3><ul>${(Array.isArray(card.items) ? card.items : []).map(renderListItem).join('')}</ul></article>`).join('')}</div>`, 'section-container') : ''}
-  ${section('case-context', 'Контекст и стартовая точка', `<div class="card"><p>${escapeHtml(caseItem.context || '')}</p>${contextList.length ? `<ul>${contextList.map(renderListItem).join('')}</ul>` : ''}</div>`, 'section-container')}
-  ${!isCaseOne && startingBase.length ? section('case-starting-base', 'База на старте', `<div class="card"><ul>${startingBase.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
-  ${(isCaseOne || businessProblem.length) ? section('case-business-problem', 'Проблема бизнеса', `<div class="card"><p>Бизнес уже вкладывал деньги в продвижение сайта через подрядчиков, которые не дали системного результата.</p><p><strong>Что было на старте</strong></p><ul>${businessProblem.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
-  ${section('case-task', 'Задача', `<div class="card"><p>${escapeHtml(caseItem.task || '')}</p></div>`, 'section-container')}
-  ${projectGoals.length ? section('case-goals', 'Задача проекта', `<div class="card"><ul>${projectGoals.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
-  ${(Array.isArray(audits.technical) && audits.technical.length) || (Array.isArray(audits.seo) && audits.seo.length) || (Array.isArray(audits.ux) && audits.ux.length) || (Array.isArray(audits.commercial) && audits.commercial.length) ? section('case-audits', 'Что было сделано: аудиты', `<div class="cards-grid grid-1-2-2">${renderNamedListCard('Технический аудит', audits.technical)}${renderNamedListCard('SEO-аудит', audits.seo)}${renderNamedListCard('UX-аудит', audits.ux)}${renderNamedListCard('Коммерческий аудит', audits.commercial)}</div>`, 'section-container') : ''}
-  ${actions.length ? section('case-actions', 'Что сделали', `<div class="card"><ul>${actions.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
-  ${(Array.isArray(strengthening.mainPages) && strengthening.mainPages.length) || (Array.isArray(strengthening.catalog) && strengthening.catalog.length) || (Array.isArray(strengthening.content) && strengthening.content.length) || (Array.isArray(strengthening.localStructure) && strengthening.localStructure.length) || (Array.isArray(strengthening.dynamics) && strengthening.dynamics.length) ? section('case-strengthening', 'Усилили сайт по ключевым направлениям', `<div class="cards-grid grid-1-2-2">${renderNamedListCard('Главные страницы', strengthening.mainPages)}${renderNamedListCard('Карточки товаров и каталог', strengthening.catalog)}${renderNamedListCard('Контент', strengthening.content)}${renderNamedListCard('Локальная структура', strengthening.localStructure)}${renderNamedListCard('Постоянная работа по динамике', strengthening.dynamics)}</div>`, 'section-container') : ''}
-  ${(Array.isArray(scaleSegments.clients) && scaleSegments.clients.length) || (Array.isArray(scaleSegments.geography) && scaleSegments.geography.length) ? section('case-scaling', 'Как был масштабирован проект после работы агентства', `<div class="cards-grid grid-1-2-2">${renderNamedListCard('Основные сегменты клиентов', scaleSegments.clients)}${renderNamedListCard('География работы', scaleSegments.geography)}</div>`, 'section-container') : ''}
-  ${!isCaseOne ? section('case-implementation', 'Внедрение', `<div class="card"><p>${escapeHtml(caseItem.implementation || '')}</p></div>`, 'section-container') : ''}
-  ${!isCaseOne ? section('case-result', 'Результат', `<div class="card"><p class="case-result-lead">${escapeHtml(caseItem.result || '')}</p></div>`, 'section-container') : ''}
-  ${!isCaseOne ? section('case-metrics', 'Метрики и подтверждение', `<div class="card">${metrics.length ? `<ul>${metrics.map(renderListItem).join('')}</ul>` : '<p>Публичные абсолютные цифры не раскрываются; эффект подтверждён в рабочей отчётности.</p>'}</div>`, 'section-container') : ''}
-  ${businessGrowth.length ? section('case-growth', 'Как вырос бизнес', `<div class="card"><ul>${businessGrowth.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
-  ${tables.length ? section('case-tables', 'Таблицы результатов', `<div class="cards-grid${isCaseOne ? ' case-tables-stack' : ''}">${tables.map(renderCaseTable).join('')}</div>`, 'section-container') : ''}
-  ${isCaseOne ? caseOneScreenshotsSection : (charts.length || screenshots.length ? section('case-proof', 'Графики и скриншоты для proof section', `<div class="cards-grid grid-1-2-2">${charts.length ? `<article class="card"><h3>Графики</h3><div class="content-flow">${charts.map((chart) => `<div><p><strong>${escapeHtml(chart.title || '')}</strong></p><ul>${(Array.isArray(chart.items) ? chart.items : []).map(renderListItem).join('')}</ul></div>`).join('')}</div></article>` : ''}${screenshots.length ? `<article class="card"><h3>Скриншоты</h3><ul>${screenshots.map(renderListItem).join('')}</ul></article>` : ''}</div>`, 'section-container') : '')}
-  ${!isCaseOne ? section('case-duration', 'Срок и формат работы', `<div class="card"><p>${escapeHtml(caseItem.duration || '')}</p></div>`, 'section-container') : ''}
-  ${!isCaseOne ? section('case-evidence', 'Подтверждение', `<div class="card"><p>${escapeHtml(buildCaseEvidenceText(caseItem))}</p></div>`, 'section-container') : ''}
-  ${!isCaseOne ? section('case-takeaway', 'Вывод', `<div class="card"><p>${escapeHtml(caseItem.takeaway || caseItem.finalBlock || '')}</p></div>`, 'section-container') : ''}
-  ${!isCaseOne && caseItem.finalBlock ? section('case-final-block', 'Финальный блок', `<div class="card"><p>${escapeHtml(caseItem.finalBlock)}</p></div>`, 'section-container') : ''}
+  return `<section id="case-hero" class="section hero"><div class="section-container content-flow"><p class="muted">${escapeHtml((detail.hero && detail.hero.eyebrow) || 'Кейс с прямым участием фаундера • Подход на базе подтверждений')}</p><h1>${escapeHtml((detail.hero && detail.hero.title) || caseItem.shortTitle || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml((detail.hero && detail.hero.lead) || caseItem.shortSummary || caseItem.context || '')}</p><p><strong>${escapeHtml((detail.hero && detail.hero.clientLabel) || 'Клиент')}:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>${escapeHtml((detail.hero && detail.hero.categoryLabel) || 'Категория')}:</strong> ${escapeHtml(caseItem.category || '')}</p></div></section>
+  ${Array.isArray(detail.premiumResults) && detail.premiumResults.length ? section('case-key-results', 'Ключевые результаты', `<div class="cards-grid grid-1-2-2">${detail.premiumResults.map((card) => `<article class="card case-premium-result-card"><h3>${escapeHtml(card.title || '')}</h3><ul>${(Array.isArray(card.items) ? card.items : []).map(renderListItem).join('')}</ul></article>`).join('')}</div>`, 'section-container') : ''}
+  ${(detail.context && (detail.context.text || (Array.isArray(detail.context.list) && detail.context.list.length))) ? section('case-context', detail.context.title || 'Контекст и стартовая точка', `<div class="card">${detail.context.text ? `<p>${escapeHtml(detail.context.text)}</p>` : ''}${Array.isArray(detail.context.list) && detail.context.list.length ? `<ul>${detail.context.list.map(renderListItem).join('')}</ul>` : ''}</div>`, 'section-container') : ''}
+  ${(detail.startingBase && Array.isArray(detail.startingBase.items) && detail.startingBase.items.length) ? section('case-starting-base', detail.startingBase.title || 'База на старте', `<div class="card"><ul>${detail.startingBase.items.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
+  ${(detail.businessProblem && Array.isArray(detail.businessProblem.items) && detail.businessProblem.items.length) ? section('case-business-problem', detail.businessProblem.title || 'Проблема бизнеса', `<div class="card">${detail.businessProblem.lead ? `<p>${escapeHtml(detail.businessProblem.lead)}</p>` : ''}${detail.businessProblem.listTitle ? `<p><strong>${escapeHtml(detail.businessProblem.listTitle)}</strong></p>` : ''}<ul>${detail.businessProblem.items.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
+  ${(detail.taskBlock && detail.taskBlock.text) ? section('case-task', detail.taskBlock.title || 'Задача', `<div class="card"><p>${escapeHtml(detail.taskBlock.text)}</p></div>`, 'section-container') : ''}
+  ${(detail.goals && Array.isArray(detail.goals.items) && detail.goals.items.length) ? section('case-goals', detail.goals.title || 'Задача проекта', `<div class="card"><ul>${detail.goals.items.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
+  ${namedGroupSection('case-audits', detail.audits, 'Что было сделано: аудиты')}
+  ${(detail.actions && Array.isArray(detail.actions.items) && detail.actions.items.length) ? section('case-actions', detail.actions.title || 'Что сделали', `<div class="card"><ul>${detail.actions.items.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
+  ${namedGroupSection('case-strengthening', detail.strengthening, 'Усилили сайт по ключевым направлениям')}
+  ${namedGroupSection('case-scaling', detail.scaling, 'Как был масштабирован проект после работы агентства')}
+  ${(detail.implementation && detail.implementation.text) ? section('case-implementation', detail.implementation.title || 'Внедрение', `<div class="card"><p>${escapeHtml(detail.implementation.text)}</p></div>`, 'section-container') : ''}
+  ${(detail.result && detail.result.lead) ? section('case-result', detail.result.title || 'Результат', `<div class="card"><p class="case-result-lead">${escapeHtml(detail.result.lead)}</p></div>`, 'section-container') : ''}
+  ${section('case-metrics', metrics.title || 'Метрики и подтверждение', `<div class="card">${Array.isArray(metrics.items) && metrics.items.length ? `<ul>${metrics.items.map(renderListItem).join('')}</ul>` : '<p>Публичные абсолютные цифры не раскрываются; эффект подтверждён в рабочей отчётности.</p>'}</div>`, 'section-container')}
+  ${(detail.growth && Array.isArray(detail.growth.items) && detail.growth.items.length) ? section('case-growth', detail.growth.title || 'Как вырос бизнес', `<div class="card"><ul>${detail.growth.items.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
+  ${tables.length ? section('case-tables', tableBlock.title || 'Таблицы результатов', `<div class="cards-grid${tableBlock.stacked ? ' case-tables-stack' : ''}">${tables.map(renderCaseTable).join('')}</div>`, 'section-container') : ''}
+  ${screenshotsSection}
+  ${(detail.duration && detail.duration.text) ? section('case-duration', detail.duration.title || 'Срок и формат работы', `<div class="card"><p>${escapeHtml(detail.duration.text)}</p></div>`, 'section-container') : ''}
+  ${(detail.evidence && (detail.evidence.text || caseItem.evidence)) ? section('case-evidence', detail.evidence.title || 'Подтверждение', `<div class="card"><p>${escapeHtml(buildCaseEvidenceText({ evidence: detail.evidence.text || caseItem.evidence }))}</p></div>`, 'section-container') : ''}
+  ${(detail.takeaway && detail.takeaway.text) ? section('case-takeaway', detail.takeaway.title || 'Вывод', `<div class="card"><p>${escapeHtml(detail.takeaway.text)}</p></div>`, 'section-container') : ''}
+  ${(detail.finalBlock && detail.finalBlock.text) ? section('case-final-block', detail.finalBlock.title || 'Финальный блок', `<div class="card"><p>${escapeHtml(detail.finalBlock.text)}</p></div>`, 'section-container') : ''}
   <section id="case-cta" class="section"><div class="section-container content-flow"><p><a class="btn" href="/cases/">← Назад в /cases/</a> <a class="btn btn-primary" href="/contact/">Перейти в /contact/</a></p></div></section>`;
 }
 function renderJournalIndex(page) {
