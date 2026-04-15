@@ -467,6 +467,10 @@ function renderCaseDetailPage(page) {
 
   const detail = caseItem.caseDetail || {};
   const renderListItem = (item) => `<li>${escapeHtml(item)}</li>`;
+  const renderParagraphItems = (items) => (Array.isArray(items) ? items : [])
+    .filter(Boolean)
+    .map((item) => `<p>${escapeHtml(item)}</p>`)
+    .join('');
 
   const renderNamedListCard = (title, items) => {
     if (!Array.isArray(items) || !items.length) return '';
@@ -571,8 +575,45 @@ function renderCaseDetailPage(page) {
     if (!cards) return '';
     return section(id, block.title || fallbackTitle, `<div class="cards-grid grid-1-2-2">${cards}</div>`, 'section-container');
   };
+  const customSections = Array.isArray(detail.customSections) ? detail.customSections : [];
+  const renderCustomSection = (block, index) => {
+    const sectionId = String(block.id || '').trim() || `case-custom-${index + 1}`;
+    const paragraphsHtml = renderParagraphItems(block.paragraphs);
+    const listItems = Array.isArray(block.list) ? block.list : [];
+    const listHtml = listItems.length ? `<ul>${listItems.map(renderListItem).join('')}</ul>` : '';
+    const subsections = Array.isArray(block.subsections) ? block.subsections : [];
+    const subsectionsHtml = subsections
+      .map((sub) => {
+        const subParagraphs = renderParagraphItems(sub.paragraphs);
+        const subListItems = Array.isArray(sub.list) ? sub.list : [];
+        const subListHtml = subListItems.length ? `<ul>${subListItems.map(renderListItem).join('')}</ul>` : '';
+        if (!subParagraphs && !subListHtml) return '';
+        return `<div class="content-flow"><h3>${escapeHtml(sub.title || '')}</h3>${subParagraphs}${subListHtml}</div>`;
+      })
+      .join('');
+    const blockBody = `<div class="card content-flow">${paragraphsHtml}${listHtml}${subsectionsHtml}</div>`;
+    return section(sectionId, block.title || '', blockBody, 'section-container');
+  };
 
-  return `<section id="case-hero" class="section hero"><div class="section-container content-flow"><p class="muted">${escapeHtml((detail.hero && detail.hero.eyebrow) || 'Кейс с прямым участием фаундера • Подход на базе подтверждений')}</p><h1>${escapeHtml((detail.hero && detail.hero.title) || caseItem.shortTitle || page.h1 || page.title || '')}</h1><p class="lead">${escapeHtml((detail.hero && detail.hero.lead) || caseItem.shortSummary || caseItem.context || '')}</p><p><strong>${escapeHtml((detail.hero && detail.hero.clientLabel) || 'Клиент')}:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>${escapeHtml((detail.hero && detail.hero.categoryLabel) || 'Категория')}:</strong> ${escapeHtml(caseItem.category || '')}</p></div></section>
+  const hero = detail.hero || {};
+  const introParagraphs = Array.isArray(hero.introParagraphs) && hero.introParagraphs.length
+    ? hero.introParagraphs
+    : [hero.lead || caseItem.shortSummary || caseItem.context || ''].filter(Boolean);
+  const heroIntroHtml = introParagraphs
+    .map((text, index) => `<p${index === 0 ? ' class="lead"' : ''}>${escapeHtml(text)}</p>`)
+    .join('');
+  const heroMetaHtml = hero.showMeta === false
+    ? ''
+    : `<p><strong>${escapeHtml(hero.clientLabel || 'Клиент')}:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>${escapeHtml(hero.categoryLabel || 'Категория')}:</strong> ${escapeHtml(caseItem.category || '')}</p>`;
+  const heroSection = `<section id="case-hero" class="section hero"><div class="section-container content-flow">${hero.eyebrow ? `<p class="muted">${escapeHtml(hero.eyebrow)}</p>` : ''}<h1>${escapeHtml(hero.title || caseItem.shortTitle || page.h1 || page.title || '')}</h1>${heroIntroHtml}${heroMetaHtml}</div></section>`;
+
+  if (customSections.length) {
+    return `${heroSection}
+    ${customSections.map(renderCustomSection).join('')}
+    <section id="case-cta" class="section"><div class="section-container content-flow"><p><a class="btn" href="/cases/">← Назад в /cases/</a> <a class="btn btn-primary" href="/contact/">Перейти в /contact/</a></p></div></section>`;
+  }
+
+  return `${heroSection}
   ${Array.isArray(detail.premiumResults) && detail.premiumResults.length ? section('case-key-results', 'Ключевые результаты', `<div class="cards-grid grid-1-2-2">${detail.premiumResults.map((card) => `<article class="card case-premium-result-card"><h3>${escapeHtml(card.title || '')}</h3><ul>${(Array.isArray(card.items) ? card.items : []).map(renderListItem).join('')}</ul></article>`).join('')}</div>`, 'section-container') : ''}
   ${(detail.context && (detail.context.text || (Array.isArray(detail.context.list) && detail.context.list.length))) ? section('case-context', detail.context.title || 'Контекст и стартовая точка', `<div class="card">${detail.context.text ? `<p>${escapeHtml(detail.context.text)}</p>` : ''}${Array.isArray(detail.context.list) && detail.context.list.length ? `<ul>${detail.context.list.map(renderListItem).join('')}</ul>` : ''}</div>`, 'section-container') : ''}
   ${(detail.startingBase && Array.isArray(detail.startingBase.items) && detail.startingBase.items.length) ? section('case-starting-base', detail.startingBase.title || 'База на старте', `<div class="card"><ul>${detail.startingBase.items.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
