@@ -588,20 +588,24 @@ function renderCaseDetailPage(page) {
         const subListItems = Array.isArray(sub.list) ? sub.list : [];
         const subListHtml = subListItems.length ? `<ul>${subListItems.map(renderListItem).join('')}</ul>` : '';
         if (!subParagraphs && !subListHtml) return '';
-        return `<div class="content-flow"><h3>${escapeHtml(sub.title || '')}</h3>${subParagraphs}${subListHtml}</div>`;
+        return `<article class="case-subsection-card content-flow"><h3>${escapeHtml(sub.title || '')}</h3>${subParagraphs}${subListHtml}</article>`;
       })
       .join('');
-    const blockBody = `<div class="card content-flow">${paragraphsHtml}${listHtml}${subsectionsHtml}</div>`;
+    const blockBody = `<div class="card content-flow">${paragraphsHtml}${listHtml}${subsectionsHtml ? `<div class="case-subsections">${subsectionsHtml}</div>` : ''}</div>`;
     return section(sectionId, block.title || '', blockBody, 'section-container');
   };
 
   const hero = detail.hero || {};
+  const introBodyParagraphs = Array.isArray(detail.introBodyParagraphs) ? detail.introBodyParagraphs : [];
   const introParagraphs = Array.isArray(hero.introParagraphs) && hero.introParagraphs.length
     ? hero.introParagraphs
-    : [hero.lead || caseItem.shortSummary || caseItem.context || ''].filter(Boolean);
+    : [hero.lead || ''].filter(Boolean);
   const heroIntroHtml = introParagraphs
     .map((text, index) => `<p${index === 0 ? ' class="lead"' : ''}>${escapeHtml(text)}</p>`)
     .join('');
+  const introBodySection = introBodyParagraphs.length
+    ? `<section id="case-intro" class="section"><div class="section-container"><div class="card content-flow">${introBodyParagraphs.map((text) => `<p>${escapeHtml(text)}</p>`).join('')}</div></div></section>`
+    : '';
   const heroMetaHtml = hero.showMeta === false
     ? ''
     : `<p><strong>${escapeHtml(hero.clientLabel || 'Клиент')}:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>${escapeHtml(hero.categoryLabel || 'Категория')}:</strong> ${escapeHtml(caseItem.category || '')}</p>`;
@@ -609,11 +613,13 @@ function renderCaseDetailPage(page) {
 
   if (customSections.length) {
     return `${heroSection}
+    ${introBodySection}
     ${customSections.map(renderCustomSection).join('')}
     <section id="case-cta" class="section"><div class="section-container content-flow"><p><a class="btn" href="/cases/">← Назад в /cases/</a> <a class="btn btn-primary" href="/contact/">Перейти в /contact/</a></p></div></section>`;
   }
 
   return `${heroSection}
+  ${introBodySection}
   ${Array.isArray(detail.premiumResults) && detail.premiumResults.length ? section('case-key-results', 'Ключевые результаты', `<div class="cards-grid grid-1-2-2">${detail.premiumResults.map((card) => `<article class="card case-premium-result-card"><h3>${escapeHtml(card.title || '')}</h3><ul>${(Array.isArray(card.items) ? card.items : []).map(renderListItem).join('')}</ul></article>`).join('')}</div>`, 'section-container') : ''}
   ${(detail.context && (detail.context.text || (Array.isArray(detail.context.list) && detail.context.list.length))) ? section('case-context', detail.context.title || 'Контекст и стартовая точка', `<div class="card">${detail.context.text ? `<p>${escapeHtml(detail.context.text)}</p>` : ''}${Array.isArray(detail.context.list) && detail.context.list.length ? `<ul>${detail.context.list.map(renderListItem).join('')}</ul>` : ''}</div>`, 'section-container') : ''}
   ${(detail.startingBase && Array.isArray(detail.startingBase.items) && detail.startingBase.items.length) ? section('case-starting-base', detail.startingBase.title || 'База на старте', `<div class="card"><ul>${detail.startingBase.items.map(renderListItem).join('')}</ul></div>`, 'section-container') : ''}
