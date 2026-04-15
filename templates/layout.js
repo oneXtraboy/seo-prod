@@ -163,6 +163,10 @@ a{color:var(--accent);text-underline-offset:3px;transition:color .18s ease,opaci
 .kpi{font:700 clamp(1.8rem,3.2vw,2.4rem)/1.05 var(--font-rounded);letter-spacing:-.02em}.muted{color:var(--text3)}
 #case-hero .muted{font-size:.9rem;letter-spacing:.02em;text-transform:uppercase}
 section[id^="case-"] .card{padding:var(--s24);border-radius:18px}
+.case-subsections{display:grid;gap:var(--s16)}
+.case-subsection-card{margin:0;padding:var(--s16) var(--s18);border:1px solid #d8dde8;border-radius:14px;background:linear-gradient(180deg,#ffffff,#f8faff);box-shadow:0 1px 2px #00000008}
+.case-subsection-card h3{margin-bottom:var(--s8)}
+.case-subsection-card p:last-child,.case-subsection-card ul:last-child{margin-bottom:0}
 #case-result .card{background:linear-gradient(180deg,#FFFFFF,#F9FAFC);border-color:#CDD7E5}
 .case-result-lead{margin:0;font:600 clamp(1.2rem,1.9vw,1.55rem)/1.5 var(--font-rounded);letter-spacing:-.01em;color:var(--text)}
 .case-premium-result-card{position:relative;overflow:hidden;border:1px solid #cdb27a;background:linear-gradient(155deg,#fffdf7 0%,#f4e7c8 36%,#efe0bc 58%,#fff7e6 100%);box-shadow:inset 0 1px 0 #ffffffc7,inset 0 -18px 28px #d2b06a26,0 14px 34px #7e5f1f1c}
