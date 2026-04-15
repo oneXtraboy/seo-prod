@@ -466,10 +466,15 @@ function renderCaseDetailPage(page) {
   }
 
   const detail = caseItem.caseDetail || {};
-  const renderListItem = (item) => `<li>${escapeHtml(item)}</li>`;
+  const renderInlineEmphasis = (text) => {
+    const safe = escapeHtml(String(text || ''));
+    const withStrong = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    return withStrong.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  };
+  const renderListItem = (item) => `<li>${renderInlineEmphasis(item)}</li>`;
   const renderParagraphItems = (items) => (Array.isArray(items) ? items : [])
     .filter(Boolean)
-    .map((item) => `<p>${escapeHtml(item)}</p>`)
+    .map((item) => `<p>${renderInlineEmphasis(item)}</p>`)
     .join('');
 
   const renderNamedListCard = (title, items) => {
@@ -588,7 +593,7 @@ function renderCaseDetailPage(page) {
         const subListItems = Array.isArray(sub.list) ? sub.list : [];
         const subListHtml = subListItems.length ? `<ul>${subListItems.map(renderListItem).join('')}</ul>` : '';
         if (!subParagraphs && !subListHtml) return '';
-        return `<article class="case-subsection-card content-flow"><h3>${escapeHtml(sub.title || '')}</h3>${subParagraphs}${subListHtml}</article>`;
+        return `<article class="case-subsection-card content-flow"><h3>${renderInlineEmphasis(sub.title || '')}</h3>${subParagraphs}${subListHtml}</article>`;
       })
       .join('');
     const blockBody = `<div class="card content-flow">${paragraphsHtml}${listHtml}${subsectionsHtml ? `<div class="case-subsections">${subsectionsHtml}</div>` : ''}</div>`;
@@ -601,15 +606,15 @@ function renderCaseDetailPage(page) {
     ? hero.introParagraphs
     : [hero.lead || ''].filter(Boolean);
   const heroIntroHtml = introParagraphs
-    .map((text, index) => `<p${index === 0 ? ' class="lead"' : ''}>${escapeHtml(text)}</p>`)
+    .map((text, index) => `<p${index === 0 ? ' class="lead"' : ''}>${renderInlineEmphasis(text)}</p>`)
     .join('');
   const introBodySection = introBodyParagraphs.length
-    ? `<section id="case-intro" class="section"><div class="section-container"><div class="card content-flow">${introBodyParagraphs.map((text) => `<p>${escapeHtml(text)}</p>`).join('')}</div></div></section>`
+    ? `<section id="case-intro" class="section"><div class="section-container"><div class="card content-flow">${introBodyParagraphs.map((text) => `<p>${renderInlineEmphasis(text)}</p>`).join('')}</div></div></section>`
     : '';
   const heroMetaHtml = hero.showMeta === false
     ? ''
     : `<p><strong>${escapeHtml(hero.clientLabel || 'Клиент')}:</strong> ${escapeHtml(caseItem.clientName || 'Под NDA')}</p><p><strong>${escapeHtml(hero.categoryLabel || 'Категория')}:</strong> ${escapeHtml(caseItem.category || '')}</p>`;
-  const heroSection = `<section id="case-hero" class="section hero"><div class="section-container content-flow">${hero.eyebrow ? `<p class="muted">${escapeHtml(hero.eyebrow)}</p>` : ''}<h1>${escapeHtml(hero.title || caseItem.shortTitle || page.h1 || page.title || '')}</h1>${heroIntroHtml}${heroMetaHtml}</div></section>`;
+  const heroSection = `<section id="case-hero" class="section hero"><div class="section-container content-flow">${hero.eyebrow ? `<p class="muted">${escapeHtml(hero.eyebrow)}</p>` : ''}<h1>${renderInlineEmphasis(hero.title || caseItem.shortTitle || page.h1 || page.title || '')}</h1>${heroIntroHtml}${heroMetaHtml}</div></section>`;
 
   if (customSections.length) {
     return `${heroSection}
