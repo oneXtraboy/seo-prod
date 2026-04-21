@@ -592,8 +592,9 @@ function renderCaseDetailPage(page) {
         const subParagraphs = renderParagraphItems(sub.paragraphs);
         const subListItems = Array.isArray(sub.list) ? sub.list : [];
         const subListHtml = subListItems.length ? `<ul>${subListItems.map(renderListItem).join('')}</ul>` : '';
-        if (!subParagraphs && !subListHtml) return '';
-        return `<article class="case-subsection-card content-flow"><h3>${renderInlineEmphasis(sub.title || '')}</h3>${subParagraphs}${subListHtml}</article>`;
+        const subParagraphsAfterList = renderParagraphItems(sub.paragraphsAfterList);
+        if (!subParagraphs && !subListHtml && !subParagraphsAfterList) return '';
+        return `<article class="case-subsection-card content-flow"><h3>${renderInlineEmphasis(sub.title || '')}</h3>${subParagraphs}${subListHtml}${subParagraphsAfterList}</article>`;
       })
       .join('');
     const blockBody = `<div class="card content-flow">${paragraphsHtml}${listHtml}${subsectionsHtml ? `<div class="case-subsections">${subsectionsHtml}</div>` : ''}</div>`;
@@ -617,9 +618,13 @@ function renderCaseDetailPage(page) {
   const heroSection = `<section id="case-hero" class="section hero"><div class="section-container content-flow">${hero.eyebrow ? `<p class="muted">${escapeHtml(hero.eyebrow)}</p>` : ''}<h1>${renderInlineEmphasis(hero.title || caseItem.shortTitle || page.h1 || page.title || '')}</h1>${heroIntroHtml}${heroMetaHtml}</div></section>`;
 
   if (customSections.length) {
+    const customFinalBlock = (detail.finalBlock && detail.finalBlock.text)
+      ? `<section id="case-final-block" class="section"><div class="section-container content-flow">${detail.finalBlock.title ? `<h2>${escapeHtml(detail.finalBlock.title)}</h2>` : ''}<div class="card"><p>${escapeHtml(detail.finalBlock.text)}</p></div></div></section>`
+      : '';
     return `${heroSection}
     ${introBodySection}
     ${customSections.map(renderCustomSection).join('')}
+    ${customFinalBlock}
     <section id="case-cta" class="section"><div class="section-container content-flow"><p><a class="btn" href="/cases/">← Назад в /cases/</a> <a class="btn btn-primary" href="/contact/">Перейти в /contact/</a></p></div></section>`;
   }
 
@@ -644,7 +649,7 @@ function renderCaseDetailPage(page) {
   ${(detail.duration && detail.duration.text) ? section('case-duration', detail.duration.title || 'Срок и формат работы', `<div class="card"><p>${escapeHtml(detail.duration.text)}</p></div>`, 'section-container') : ''}
   ${(detail.evidence && (detail.evidence.text || caseItem.evidence)) ? section('case-evidence', detail.evidence.title || 'Подтверждение', `<div class="card"><p>${escapeHtml(buildCaseEvidenceText({ evidence: detail.evidence.text || caseItem.evidence }))}</p></div>`, 'section-container') : ''}
   ${(detail.takeaway && detail.takeaway.text) ? section('case-takeaway', detail.takeaway.title || 'Вывод', `<div class="card"><p>${escapeHtml(detail.takeaway.text)}</p></div>`, 'section-container') : ''}
-  ${(detail.finalBlock && detail.finalBlock.text) ? section('case-final-block', detail.finalBlock.title || 'Финальный блок', `<div class="card"><p>${escapeHtml(detail.finalBlock.text)}</p></div>`, 'section-container') : ''}
+  ${(detail.finalBlock && detail.finalBlock.text) ? `<section id="case-final-block" class="section"><div class="section-container content-flow">${detail.finalBlock.title ? `<h2>${escapeHtml(detail.finalBlock.title)}</h2>` : ''}<div class="card"><p>${escapeHtml(detail.finalBlock.text)}</p></div></div></section>` : ''}
   <section id="case-cta" class="section"><div class="section-container content-flow"><p><a class="btn" href="/cases/">← Назад в /cases/</a> <a class="btn btn-primary" href="/contact/">Перейти в /contact/</a></p></div></section>`;
 }
 function renderJournalIndex(page) {
