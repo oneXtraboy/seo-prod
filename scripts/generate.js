@@ -597,7 +597,8 @@ function renderCaseDetailPage(page) {
         return `<article class="case-subsection-card content-flow"><h3>${renderInlineEmphasis(sub.title || '')}</h3>${subParagraphs}${subListHtml}${subParagraphsAfterList}</article>`;
       })
       .join('');
-    const blockBody = `<div class="card content-flow">${paragraphsHtml}${listHtml}${subsectionsHtml ? `<div class="case-subsections">${subsectionsHtml}</div>` : ''}</div>`;
+    const paragraphsAfterSubsectionsHtml = renderParagraphItems(block.paragraphsAfterSubsections);
+    const blockBody = `<div class="card content-flow">${paragraphsHtml}${listHtml}${subsectionsHtml ? `<div class="case-subsections">${subsectionsHtml}</div>` : ''}${paragraphsAfterSubsectionsHtml}</div>`;
     return section(sectionId, block.title || '', blockBody, 'section-container');
   };
 
