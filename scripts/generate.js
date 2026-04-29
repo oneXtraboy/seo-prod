@@ -603,6 +603,17 @@ function renderCaseDetailPage(page) {
     const subsections = Array.isArray(block.subsections) ? block.subsections : [];
     const subsectionsHtml = subsections
       .map((sub) => {
+        const subFlow = Array.isArray(sub.flow) ? sub.flow : [];
+        const subFlowHtml = subFlow.map((item) => {
+          if (!item || typeof item !== 'object') return '';
+          if (item.type === 'paragraph') return `<p>${renderInlineEmphasis(item.text || '')}</p>`;
+          if (item.type === 'list') {
+            const items = Array.isArray(item.items) ? item.items : [];
+            return items.length ? `<ul>${items.map(renderListItem).join('')}</ul>` : '';
+          }
+          if (item.type === 'table' && item.table) return renderCaseTable(item.table);
+          return '';
+        }).join('');
         const subParagraphs = renderParagraphItems(sub.paragraphs);
         const subListItems = Array.isArray(sub.list) ? sub.list : [];
         const subListHtml = subListItems.length ? `<ul>${subListItems.map(renderListItem).join('')}</ul>` : '';
@@ -610,8 +621,8 @@ function renderCaseDetailPage(page) {
         const subListAfterParagraphsItems = Array.isArray(sub.listAfterParagraphs) ? sub.listAfterParagraphs : [];
         const subListAfterParagraphsHtml = subListAfterParagraphsItems.length ? `<ul>${subListAfterParagraphsItems.map(renderListItem).join('')}</ul>` : '';
         const subTableHtml = sub.table ? renderCaseTable(sub.table) : '';
-        if (!subParagraphs && !subListHtml && !subParagraphsAfterList && !subListAfterParagraphsHtml && !subTableHtml) return '';
-        return `<article class="case-subsection-card content-flow"><h3>${renderInlineEmphasis(sub.title || '')}</h3>${subParagraphs}${subListHtml}${subParagraphsAfterList}${subListAfterParagraphsHtml}${subTableHtml}</article>`;
+        if (!subFlowHtml && !subParagraphs && !subListHtml && !subParagraphsAfterList && !subListAfterParagraphsHtml && !subTableHtml && !sub.title) return '';
+        return `<article class="case-subsection-card content-flow"><h3>${renderInlineEmphasis(sub.title || '')}</h3>${subFlowHtml || `${subParagraphs}${subListHtml}${subParagraphsAfterList}${subListAfterParagraphsHtml}`}${subTableHtml}</article>`;
       })
       .join('');
     const tableHtml = block.table ? renderCaseTable(block.table) : '';
@@ -652,8 +663,18 @@ function renderCaseDetailPage(page) {
     const finalBlockParagraphs = renderParagraphItems(detail.finalBlock && detail.finalBlock.paragraphs);
     const finalBlockList = Array.isArray(detail.finalBlock && detail.finalBlock.list) ? detail.finalBlock.list : [];
     const finalBlockListHtml = finalBlockList.length ? `<ul>${finalBlockList.map(renderListItem).join('')}</ul>` : '';
-    const customFinalBlock = (detail.finalBlock && (detail.finalBlock.text || finalBlockParagraphs || finalBlockListHtml || finalBlockFlowHtml))
-      ? `<section id="case-final-block" class="section"><div class="section-container content-flow">${detail.finalBlock.title ? `<h2>${escapeHtml(detail.finalBlock.title)}</h2>` : ''}<div class="card content-flow">${detail.finalBlock.text ? `<p>${escapeHtml(detail.finalBlock.text)}</p>` : ''}${finalBlockFlowHtml || `${finalBlockParagraphs}${finalBlockListHtml}`}</div></div></section>`
+    const finalSubsections = Array.isArray(detail.finalBlock && detail.finalBlock.subsections) ? detail.finalBlock.subsections : [];
+    const finalSubsectionsHtml = finalSubsections
+      .map((sub) => {
+        const paragraphs = renderParagraphItems(sub && sub.paragraphs);
+        const listItems = Array.isArray(sub && sub.list) ? sub.list : [];
+        const listHtml = listItems.length ? `<ul>${listItems.map(renderListItem).join('')}</ul>` : '';
+        if (!paragraphs && !listHtml) return '';
+        return `<article class="case-subsection-card content-flow"><h3>${renderInlineEmphasis((sub && sub.title) || '')}</h3>${paragraphs}${listHtml}</article>`;
+      })
+      .join('');
+    const customFinalBlock = (detail.finalBlock && (detail.finalBlock.text || finalBlockParagraphs || finalBlockListHtml || finalBlockFlowHtml || finalSubsectionsHtml))
+      ? `<section id="case-final-block" class="section"><div class="section-container content-flow">${detail.finalBlock.title ? `<h2>${escapeHtml(detail.finalBlock.title)}</h2>` : ''}<div class="card content-flow">${detail.finalBlock.text ? `<p>${escapeHtml(detail.finalBlock.text)}</p>` : ''}${finalBlockFlowHtml || `${finalBlockParagraphs}${finalBlockListHtml}`}${finalSubsectionsHtml ? `<div class="case-subsections">${finalSubsectionsHtml}</div>` : ''}</div></div></section>`
       : '';
     return `${heroSection}
     ${introBodySection}
