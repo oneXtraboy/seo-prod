@@ -8,7 +8,7 @@ INCOMING_DIR="/var/www/seo-prod/incoming"
 RELEASES_DIR="/var/www/seo-prod/releases"
 LIVE_DIR="/var/www/seo-prod/live"
 PROMOTE_CMD="/usr/local/sbin/seo-prod-promote-release"
-PUBLIC_URL="http://94.228.112.75/"
+PUBLIC_URL="https://synapsee.ru/"
 
 mode="dry-run"
 if [[ $# -gt 1 ]]; then
@@ -62,6 +62,7 @@ if [[ "$mode" == "dry-run" ]]; then
   echo "DRY RUN: release id would be: $release_id"
   echo "DRY RUN: would upload public/ to $INCOMING_DIR/$release_id/"
   echo "DRY RUN: would promote with sudo -n $PROMOTE_CMD $release_id"
+  echo "DRY RUN: would check public HTTPS status at $PUBLIC_URL"
   exit 0
 fi
 
@@ -78,13 +79,13 @@ ssh "$SSH_ALIAS" "test -f '$remote_release_dir/index.html' && test -f '$remote_r
 echo "Promoting release: $release_id"
 ssh "$SSH_ALIAS" "sudo -n '$PROMOTE_CMD' '$release_id'"
 
-echo "Checking public HTTP status..."
+echo "Checking public HTTPS status..."
 http_status="$(curl -sS -o /dev/null -w '%{http_code}' "$PUBLIC_URL")"
 if [[ "$http_status" != "200" ]]; then
-  echo "HTTP check failed after promote: $http_status" >&2
+  echo "HTTPS check failed after promote: $http_status" >&2
   exit 1
 fi
 
 echo "Release pointers:"
 ssh "$SSH_ALIAS" 'printf "current="; readlink -f /var/www/seo-prod/live/current; printf "previous="; readlink -f /var/www/seo-prod/live/previous 2>/dev/null || printf "none\n"'
-echo "Deploy completed: HTTP $http_status"
+echo "Deploy completed: HTTPS $http_status"
