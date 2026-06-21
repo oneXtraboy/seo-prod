@@ -1,5 +1,5 @@
 module.exports = {
 
-  SITE_URL: "http://94.228.112.75"
+  SITE_URL: "https://synapsee.ru"
 
 };
