@@ -1,9 +1,71 @@
 {
-  "brandName": "SEO-PROD",
-  "phone": "+7 (999) 000-00-00",
-  "telegram": "https://t.me/seo-prod",
-  "defaultTitle": "SEO-PROD — Agency OS landing",
-  "defaultDescription": "SEO-PROD builds conversion-focused landing systems with transparent delivery and business reporting.",
+  "brandName": "Synapsee",
+  "defaultTitle": "Частный SEO-специалист в СПб — продвижение сайтов | Synapsee",
+  "defaultDescription": "SEO-продвижение сайтов в Санкт-Петербурге: стратегия, техника, контент и аналитика до внедрения. Только 2 проекта одновременно. Первый разбор — бесплатно.",
   "language": "ru",
-  "email": "hello@seo-prod.ru"
+  "email": "1extraboy@gmail.com",
+  "leadEmail": "1extraboy@gmail.com",
+  "telegram": "https://t.me/oneXtraboy",
+  "telegramHandle": "@oneXtraboy",
+  "phone": "+79819466247",
+  "brandSlogan": "Система роста из поиска.",
+  "brandTagline": "SEO-продвижение, техническая оптимизация, удобство и ИИ-видимость для роста заявок.",
+  "ogImage": "/assets/images/seo-growth-system.webp",
+  "logo": "/og.png",
+  "areaServed": [
+    "Санкт-Петербург",
+    "Ленинградская область",
+    "Россия"
+  ],
+  "serviceTypes": [
+    "SEO-продвижение сайтов",
+    "SEO-аудит сайта",
+    "Техническое SEO",
+    "Локальное SEO",
+    "генеративная оптимизация и ИИ-видимость",
+    "удобство-аудит коммерческих страниц",
+    "Контентная стратегия для поиска",
+    "Продвижение сайта в Яндексе",
+    "Продвижение сайта в Google",
+    "SEO-стратегия",
+    "SEO-консультация",
+    "SEO для корпоративных",
+    "SEO для малого бизнеса",
+    "SEO-продвижение интернет-магазинов",
+    "SEO-продвижение новых сайтов"
+  ],
+  "knowsAbout": [
+    "Яндекс SEO",
+    "Google SEO",
+    "локальное SEO в Санкт-Петербурге",
+    "техническое SEO",
+    "семантическое SEO",
+    "генеративная оптимизация для нейроответов",
+    "оптимизация для ИИ-ответов",
+    "коммерческие страницы услуг",
+    "поисковая аналитика"
+  ],
+  "sameAs": [
+    "https://t.me/oneXtraboy"
+  ],
+  "foundingLocation": "Санкт-Петербург",
+  "founder": {
+    "name": "Фёдор",
+    "jobTitle": "SEO-специалист и стратег ИИ-видимости Synapsee",
+    "url": "/about/",
+    "sameAs": [
+      "https://t.me/oneXtraboy"
+    ],
+    "knowsAbout": [
+      "Яндекс SEO",
+      "Google SEO",
+      "локальное SEO в Санкт-Петербурге",
+      "техническое SEO",
+      "семантическое SEO",
+      "генеративная оптимизация для нейроответов",
+      "оптимизация для ИИ-ответов",
+      "коммерческие страницы услуг",
+      "поисковая аналитика"
+    ]
+  }
 }

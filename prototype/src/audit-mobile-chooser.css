@@ -1,0 +1,6 @@
+@media (max-width: 720px) {
+  .service-chooser__options {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}

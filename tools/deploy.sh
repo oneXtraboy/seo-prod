@@ -4,6 +4,9 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export PATH="$HOME/.local/bin:$PATH"
 SSH_ALIAS="seo-prod-deploy"
+SSH_CONNECT_TIMEOUT="${SSH_CONNECT_TIMEOUT:-30}"
+SSH_CMD=(ssh -o "ConnectTimeout=$SSH_CONNECT_TIMEOUT" -o "ServerAliveInterval=10" -o "ServerAliveCountMax=3")
+RSYNC_SSH="ssh -o ConnectTimeout=$SSH_CONNECT_TIMEOUT -o ServerAliveInterval=10 -o ServerAliveCountMax=3"
 INCOMING_DIR="/var/www/seo-prod/incoming"
 RELEASES_DIR="/var/www/seo-prod/releases"
 LIVE_DIR="/var/www/seo-prod/live"
@@ -34,10 +37,24 @@ fi
 
 cd "$ROOT_DIR"
 
+ssh_retry() {
+  local attempt
+  for attempt in 1 2 3; do
+    if "${SSH_CMD[@]}" "$@"; then
+      return 0
+    fi
+    if [[ "$attempt" -lt 3 ]]; then
+      echo "SSH attempt $attempt failed; retrying..." >&2
+      sleep "$((attempt * 3))"
+    fi
+  done
+  return 1
+}
+
 echo "Building local site..."
 bash tools/build.sh
 
-for artifact in public/index.html public/sitemap.xml public/404.html; do
+for artifact in prototype/dist/index.html prototype/dist/sitemap.xml prototype/dist/404.html; do
   if [[ ! -f "$artifact" ]]; then
     echo "Build artifact missing: $artifact" >&2
     exit 1
@@ -46,7 +63,7 @@ done
 echo "Build artifacts OK."
 
 echo "Checking SSH deploy boundary..."
-ssh "$SSH_ALIAS" 'set -e
+ssh_retry "$SSH_ALIAS" 'set -e
   test "$(id -un)" = "seo-deploy"
   test -w /var/www/seo-prod/incoming
   ! test -w /var/www/seo-prod/releases
@@ -60,7 +77,7 @@ ssh "$SSH_ALIAS" 'set -e
 
 if [[ "$mode" == "dry-run" ]]; then
   echo "DRY RUN: release id would be: $release_id"
-  echo "DRY RUN: would upload public/ to $INCOMING_DIR/$release_id/"
+  echo "DRY RUN: would upload prototype/dist/ to $INCOMING_DIR/$release_id/"
   echo "DRY RUN: would promote with sudo -n $PROMOTE_CMD $release_id"
   echo "DRY RUN: would check public HTTPS status at $PUBLIC_URL"
   exit 0
@@ -68,16 +85,16 @@ fi
 
 remote_release_dir="$INCOMING_DIR/$release_id"
 echo "Creating incoming release: $remote_release_dir"
-ssh "$SSH_ALIAS" "mkdir -- '$remote_release_dir'"
+ssh_retry "$SSH_ALIAS" "mkdir -- '$remote_release_dir'"
 
-echo "Uploading public/ to incoming release..."
-rsync -az --delete -e ssh public/ "$SSH_ALIAS:$remote_release_dir/"
+echo "Uploading prototype/dist/ to incoming release..."
+rsync -az --delete -e "$RSYNC_SSH" prototype/dist/ "$SSH_ALIAS:$remote_release_dir/"
 
 echo "Verifying uploaded artifacts..."
-ssh "$SSH_ALIAS" "test -f '$remote_release_dir/index.html' && test -f '$remote_release_dir/sitemap.xml' && test -f '$remote_release_dir/404.html'"
+ssh_retry "$SSH_ALIAS" "test -f '$remote_release_dir/index.html' && test -f '$remote_release_dir/sitemap.xml' && test -f '$remote_release_dir/404.html'"
 
 echo "Promoting release: $release_id"
-ssh "$SSH_ALIAS" "sudo -n '$PROMOTE_CMD' '$release_id'"
+ssh_retry "$SSH_ALIAS" "sudo -n '$PROMOTE_CMD' '$release_id'"
 
 echo "Checking public HTTPS status..."
 http_status="$(curl -sS -o /dev/null -w '%{http_code}' "$PUBLIC_URL")"
@@ -87,5 +104,5 @@ if [[ "$http_status" != "200" ]]; then
 fi
 
 echo "Release pointers:"
-ssh "$SSH_ALIAS" 'printf "current="; readlink -f /var/www/seo-prod/live/current; printf "previous="; readlink -f /var/www/seo-prod/live/previous 2>/dev/null || printf "none\n"'
+ssh_retry "$SSH_ALIAS" 'printf "current="; readlink -f /var/www/seo-prod/live/current; printf "previous="; readlink -f /var/www/seo-prod/live/previous 2>/dev/null || printf "none\n"'
 echo "Deploy completed: HTTPS $http_status"

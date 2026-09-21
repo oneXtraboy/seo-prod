@@ -1,5 +1,3 @@
 User-agent: *
 Allow: /
-
-Sitemap: /sitemap.xml
-# deploy trigger
+Sitemap: https://synapsee.ru/sitemap.xml

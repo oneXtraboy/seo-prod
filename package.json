@@ -1,0 +1,17 @@
+{
+  "name": "synapsee-analytics-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gsc": "node tools/gsc.mjs"
+  },
+  "dependencies": {
+    "@google-cloud/local-auth": "3.0.1",
+    "googleapis": "170.1.0"
+  },
+  "overrides": {
+    "@google-cloud/local-auth": {
+      "google-auth-library": "10.9.1"
+    }
+  }
+}

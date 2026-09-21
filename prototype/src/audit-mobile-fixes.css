@@ -1,0 +1,13 @@
+@media (max-width: 720px) {
+  .service-chooser__options,
+  .filter-bar,
+  .variant-switcher {
+    max-width: 100%;
+    padding-right: 0;
+    margin-right: 0;
+  }
+
+  .page-hero--compact h1 {
+    font-size: clamp(1.9rem, 9vw, 2.25rem);
+  }
+}

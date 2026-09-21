@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 620" role="img" aria-labelledby="title desc">
+  <title id="title">Цикл работы из четырёх этапов</title>
+  <desc id="desc">Диагностика, план, внедрение и измерение образуют повторяющийся рабочий цикл.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7fbf9"/>
+      <stop offset="1" stop-color="#fff9ea"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#1d1d1f" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#18745d"/>
+    </marker>
+    <style>
+      .title{font:700 24px/1.2 ui-rounded,system-ui,sans-serif;fill:#1d1d1f}
+      .copy{font:500 17px/1.35 system-ui,sans-serif;fill:#6e6e73}
+      .index{font:700 16px/1 system-ui,sans-serif;fill:#18745d;letter-spacing:.08em}
+      .loop{font:600 16px/1 system-ui,sans-serif;fill:#18745d}
+    </style>
+  </defs>
+  <rect width="720" height="620" rx="32" fill="url(#bg)"/>
+  <g filter="url(#shadow)">
+    <rect x="48" y="48" width="280" height="170" rx="22" fill="#fff" stroke="#d2d2d7"/>
+    <rect x="392" y="48" width="280" height="170" rx="22" fill="#fff" stroke="#d2d2d7"/>
+    <rect x="392" y="324" width="280" height="170" rx="22" fill="#fff" stroke="#d2d2d7"/>
+    <rect x="48" y="324" width="280" height="170" rx="22" fill="#fff" stroke="#d2d2d7"/>
+  </g>
+  <text x="76" y="82" class="index">01</text>
+  <text x="76" y="121" class="title">Диагностика</text>
+  <text x="76" y="156" class="copy">Сайт · спрос · аналитика</text>
+  <text x="76" y="183" class="copy">конкуренты · воронка</text>
+  <text x="420" y="82" class="index">02</text>
+  <text x="420" y="121" class="title">План</text>
+  <text x="420" y="156" class="copy">Приоритеты · критерии</text>
+  <text x="420" y="183" class="copy">владелец внедрения</text>
+  <text x="420" y="358" class="index">03</text>
+  <text x="420" y="397" class="title">Внедрение</text>
+  <text x="420" y="432" class="copy">Страницы · техника · контент</text>
+  <text x="420" y="459" class="copy">удобство · контроль релизов</text>
+  <text x="76" y="358" class="index">04</text>
+  <text x="76" y="397" class="title">Измерение</text>
+  <text x="76" y="432" class="copy">Видимость · трафик · заявки</text>
+  <text x="76" y="459" class="copy">качество лида</text>
+  <path d="M338 133H376" stroke="#18745d" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M532 228V308" stroke="#18745d" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M382 409H344" stroke="#18745d" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M188 504V548H532V510" fill="none" stroke="#18745d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <text x="285" y="578" class="loop">следующий цикл</text>
+</svg>

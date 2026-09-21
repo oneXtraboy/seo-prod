@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Build static site into /public
-node scripts/generate.js
-echo "OK: generated public/"
+export PATH="/home/onextra/.local/bin:/usr/local/bin:/usr/bin:/bin"
+cd /home/onextra/seo-prod/prototype
+
+if [[ ! -d node_modules ]]; then
+  npm ci --ignore-scripts
+fi
+
+npm run check
+node scripts/audit-dist.mjs
+
+echo "OK: production site generated in prototype/dist/"

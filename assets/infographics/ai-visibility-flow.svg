@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" role="img" aria-labelledby="title desc">
+  <title id="title">Как данные сайта переходят в карточки и нейроответы</title>
+  <desc id="desc">Три этапа: данные на сайте, обработка Яндексом и нейросервисами, карточки и ответы для пользователя.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffdf7"/>
+      <stop offset="0.55" stop-color="#f1faf6"/>
+      <stop offset="1" stop-color="#eaf3ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#1d1d1f" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#18745d"/>
+    </marker>
+    <style>
+      .title{font:700 25px/1.2 ui-rounded,system-ui,sans-serif;fill:#1d1d1f}
+      .copy{font:500 18px/1.35 system-ui,sans-serif;fill:#6e6e73}
+      .index{font:700 16px/1 system-ui,sans-serif;fill:#18745d;letter-spacing:.08em}
+    </style>
+  </defs>
+  <rect width="720" height="520" rx="32" fill="url(#bg)"/>
+  <g filter="url(#shadow)">
+    <rect x="80" y="42" width="560" height="112" rx="22" fill="#fff" stroke="#d2d2d7"/>
+    <rect x="80" y="204" width="560" height="112" rx="22" fill="#fff" stroke="#d2d2d7"/>
+    <rect x="80" y="366" width="560" height="112" rx="22" fill="#fff" stroke="#d2d2d7"/>
+  </g>
+  <text x="112" y="76" class="index">01</text>
+  <text x="112" y="111" class="title">Данные на сайте</text>
+  <text x="112" y="139" class="copy">Услуги · авторство · кейсы · цены</text>
+  <path d="M360 163V190" stroke="#18745d" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <text x="112" y="238" class="index">02</text>
+  <text x="112" y="273" class="title">Яндекс и нейросервисы</text>
+  <text x="112" y="301" class="copy">Индексация · факты · экспертные материалы</text>
+  <path d="M360 325V352" stroke="#18745d" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <text x="112" y="400" class="index">03</text>
+  <text x="112" y="435" class="title">Карточки и ответы</text>
+  <text x="112" y="463" class="copy">Понятные сведения в момент выбора</text>
+</svg>
