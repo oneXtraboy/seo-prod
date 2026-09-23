@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'es2020',
-    sourcemap: true,
+    sourcemap: false,
   },
   server: {
     host: '127.0.0.1',

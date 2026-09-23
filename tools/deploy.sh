@@ -12,6 +12,7 @@ RELEASES_DIR="/var/www/seo-prod/releases"
 LIVE_DIR="/var/www/seo-prod/live"
 PROMOTE_CMD="/usr/local/sbin/seo-prod-promote-release"
 PUBLIC_URL="https://synapsee.ru/"
+INDEXNOW_SCRIPT="tools/indexnow.mjs"
 
 mode="dry-run"
 if [[ $# -gt 1 ]]; then
@@ -74,6 +75,27 @@ ssh_retry "$SSH_ALIAS" 'set -e
   printf "releases_write=no\n"
   printf "live_write=no\n"
 '
+indexnow_work_dir="$(mktemp -d)"
+indexnow_previous_dir="$indexnow_work_dir/previous"
+indexnow_urls_file="$indexnow_work_dir/urls.txt"
+mkdir -p "$indexnow_previous_dir"
+: > "$indexnow_urls_file"
+trap 'rm -rf -- "$indexnow_work_dir"' EXIT
+
+echo "Detecting changed indexable URLs for IndexNow..."
+if rsync -az --delete --prune-empty-dirs \
+  --include='*/' \
+  --include='index.html' \
+  --exclude='*' \
+  -e "$RSYNC_SSH" \
+  "$SSH_ALIAS:$LIVE_DIR/current/" "$indexnow_previous_dir/"; then
+  if ! node "$INDEXNOW_SCRIPT" diff --before "$indexnow_previous_dir" --after prototype/dist --output "$indexnow_urls_file"; then
+    echo "WARNING: IndexNow URL detection failed; deployment will continue without notification." >&2
+    : > "$indexnow_urls_file"
+  fi
+else
+  echo "WARNING: Previous release could not be read; deployment will continue without IndexNow notification." >&2
+fi
 
 if [[ "$mode" == "dry-run" ]]; then
   echo "DRY RUN: release id would be: $release_id"
@@ -97,10 +119,20 @@ echo "Promoting release: $release_id"
 ssh_retry "$SSH_ALIAS" "sudo -n '$PROMOTE_CMD' '$release_id'"
 
 echo "Checking public HTTPS status..."
-http_status="$(curl -sS -o /dev/null -w '%{http_code}' "$PUBLIC_URL")"
+http_status="$(curl -sS --connect-timeout 10 --max-time 20 -o /dev/null -w '%{http_code}' "$PUBLIC_URL")"
 if [[ "$http_status" != "200" ]]; then
   echo "HTTPS check failed after promote: $http_status" >&2
   exit 1
+fi
+
+
+echo "Notifying IndexNow..."
+if node "$INDEXNOW_SCRIPT" verify-key; then
+  if ! node "$INDEXNOW_SCRIPT" submit --urls-file "$indexnow_urls_file"; then
+    echo "WARNING: IndexNow request failed; deployment remains successful." >&2
+  fi
+else
+  echo "WARNING: IndexNow key verification failed; deployment remains successful." >&2
 fi
 
 echo "Release pointers:"

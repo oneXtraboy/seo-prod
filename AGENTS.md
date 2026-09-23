@@ -77,8 +77,9 @@
 
 
 ## Последнее production-состояние
-- Деплой: release-20260920-230534 (HTTPS 200), previous release-20260920-213506.
+- Деплой: release-20260923-220947 (HTTPS 200), previous release-20260921-230453.
 - Яндекс Метрика 112847372 подключена один раз в `prototype/index.html`; SPA-просмотры при смене pathname/search отправляет общий `AnalyticsBridge`, без повторного hit на первой загрузке.
+- IndexNow подключён через `tools/indexnow.mjs` и post-deploy шаг в `tools/deploy.sh`: перед публикацией сравниваются indexable HTML текущего и нового релиза, после успешного promote отправляются только добавленные, изменённые и удалённые canonical URL; key-файл находится в `prototype/public/671cb5b4f4d70cae668eb28c8890f013051df9b1472fbf9dc19371614a8847a1.txt`.
 - Journal rich content uses prototype/src/data/newArticles.generated.ts and prototype/src/components/ArticleContent.tsx; 12 Journal articles are registered, with semantic tables, responsive figures and Article JSON-LD.
 - Контакты опубликованы только на `/contacts/`; старый `/contact/` отсутствует и возвращает 404 без редиректа.
 - Кейсы используют ЧПУ из `prototype/src/data/cases.ts`; числовые `/cases/1/`–`/cases/6/` отсутствуют и возвращают 404.

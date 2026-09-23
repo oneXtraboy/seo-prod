@@ -1,8 +1,13 @@
 
-public/
+/public/
 .env.local
 reports/metrika/
 secrets/
 .gsc-token.json
 reports/gsc/
 node_modules/
+
+/prototype/dist-ssr/
+/reports/
+*.orig
+/NUL
